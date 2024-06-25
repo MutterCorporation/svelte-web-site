@@ -23,7 +23,7 @@
   </style>
   
   <div class="container">
-    <Header logoSrc="../static/logo.png"  />
+    <Header logoSrc="/logo.png"  />
     <Body />
     <Footer />
   </div>

@@ -1,5 +1,10 @@
 <script>
-  export let logoSrc = '/assets/logo.png';
+  export let logoSrc = '/logo.png';
+
+  function handleClick() {
+    // @ts-ignore
+    navigator('/');
+  }
 </script>
 
 <style>
@@ -13,6 +18,36 @@
     border-bottom: 1px solid #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
+  
+  img {
+  position: relative;
+  top: 5px;
+  width: 300px; /* Largura inicial da imagem */
+  height: auto; /* Ajusta a altura proporcionalmente */
+  transition: transform 0.5s ease-in-out; /* Transição suave para o zoom */
+}
+
+img:hover {
+  transform: scale(1.2); /* Aplica o zoom quando o mouse está sobre a imagem */
+}
+
+/* Animação de zoom contínuo */
+@keyframes zoom {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.2);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* Aplicar animação à imagem */
+img.zoom {
+  animation: zoom 5s infinite;
+}
 
   .logo-container {
     display: flex;
@@ -30,32 +65,7 @@
     margin: 0; /* Remove margem padrão */
   }
 
-  nav {
-    flex-grow: 1; /* Ocupa o espaço disponível */
-    text-align: right; /* Alinha os links à direita em telas pequenas */
-  }
-
-  nav ul {
-    display: flex;
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    justify-content: flex-end; /* Alinha os itens à direita */
-  }
-
-  nav ul li {
-    margin-left: 2rem;
-  }
-
-  nav ul li a {
-    color: #fff;
-    text-decoration: none;
-    font-weight: bold;
-  }
-
-  nav ul li a:hover {
-    text-decoration: underline;
-  }
+ 
 
   /* Media query para telas menores */
   @media (max-width: 768px) {
@@ -82,7 +92,9 @@
 
 <header>
   <div class="logo-container">
-    <img src={logoSrc} alt="MutterCorp Logo" class="logo" />
+    <!-- svelte-ignore a11y-click-events-have-key-events -->
+    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
+    <img src={logoSrc} on:click={handleClick} alt="MutterCorp Logo" class="logo" />
     <h1>MutterCorp</h1>
   </div>
 

@@ -21,10 +21,11 @@
     import Hero from './Hero.svelte';
     import Products from './Products.svelte';
     import About from './About.svelte';
-  </script>
+    
+    </script>
   
   <div class="body">
-    <Hero />
+    <Hero/>
     <Products />
     <About />
   </div>

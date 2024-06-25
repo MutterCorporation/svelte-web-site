@@ -24,7 +24,7 @@
   </style>
   
   <div class="hero">
-    <h1>Bem-vindo à MutterCorp</h1>
-    <p>Buscando Soluções de Negócios e Somer uma Software House</p>
+    <h1>Inovação em Soluções de Negócios e Desenvolvimento de Software</h1>
+    <p>Transformando ideias em realidade, impulsionando o futuro dos negócios.</p>
   </div>
   
