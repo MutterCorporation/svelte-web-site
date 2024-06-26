@@ -21,10 +21,14 @@
   
   img {
   position: relative;
-  top: 5px;
+  top: 2px;
   width: 300px; /* Largura inicial da imagem */
   height: auto; /* Ajusta a altura proporcionalmente */
-  transition: transform 0.5s ease-in-out; /* Transição suave para o zoom */
+  transition: transform 0.5s ease-in-out; 
+  margin-left: 5px;/* Transição suave para o zoom */
+  width: 50px;
+  height: 50px;
+  margin-right: 1.1rem;
 }
 
 img:hover {
@@ -54,12 +58,7 @@ img.zoom {
     align-items: center;
   }
 
-  .logo {
-    width: 50px;
-    height: 50px;
-    margin-right: 1rem;
-  }
-
+ 
   h1 {
     font-size: 1.4rem; /* Ajuste o tamanho conforme necessário */
     margin: 0; /* Remove margem padrão */
@@ -74,18 +73,19 @@ img.zoom {
     
     }
 
+    h1 {
+      position: relative;
+      top:6px
+    }
     .logo-container {
       margin-bottom: 1rem;
     }
 
-    .logo {
-      margin-right: 0;
-    }
-
-    nav ul li {
-      display: none;
-      margin-left: 0;
-      margin-bottom: 1rem;
+    img {
+      position: relative;
+      top: 10px;
+      margin-right: 1.1rem;
+      margin-left: 1rem;
     }
   }
 </style>
@@ -94,7 +94,7 @@ img.zoom {
   <div class="logo-container">
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <img src={logoSrc} on:click={handleClick} alt="MutterCorp Logo" class="logo" />
+    <img class="zoom" src={logoSrc} on:click={handleClick} alt="MutterCorp Logo"  />
     <h1>MutterCorp</h1>
   </div>
 
