@@ -12,8 +12,8 @@
         };
     }
 
-    async function fetchVideos() {
-        const res = await fetch('http://localhost:3001/videos', {
+    async function fetchVideos(page = 1, size = 100) {
+        const res = await fetch(`http://localhost:3001/video/get-videos/${page}/${size}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -22,26 +22,33 @@
         });
         if (res.ok) {
             const data = await res.json();
-            videos = data;
+            videos = data.data;
+            console.log(videos);
         } else {
+            if (res.status === 403 || res.status === 401) {
+                localStorage.removeItem('MutterCorp');
+            }
             console.error('Failed to fetch videos');
         }
     }
 
     async function createVideo() {
-        const res = await fetch('http://localhost:3001/videos', {
-            method: 'POST',
+        const res = await fetch('http://localhost:3001/video/create-video', {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${localStorage.getItem('MutterCorp')}`
             },
-            body: JSON.stringify({ title: 'New Video' }) // Modify the body as per your needs
+             // Modify the body as per your needs
         });
 
         if (res.ok) {
-            fetchVideos(); // Refresh the list after creation
+            fetchVideos();
         } else {
-            console.error('Failed to create video');
+            if (res.status === 403 || res.status === 401) {
+                localStorage.removeItem('MutterCorp');
+            }
+            console.error('Failed to fetch videos');
         }
     }
 
@@ -55,7 +62,7 @@
         });
 
         if (res.ok) {
-            fetchVideos(); // Refresh the list after deletion
+            fetchVideos();
         } else {
             console.error('Failed to delete video');
         }
@@ -64,7 +71,7 @@
     onMount(() => {
         const { isAuthenticated } = load();
         if (!isAuthenticated) {
-            window.location.href = '/login'; // Redirect to login if not authenticated
+            window.location.href = '/login';
         } else {
             fetchVideos();
         }
@@ -75,6 +82,8 @@
     table {
         width: 100%;
         border-collapse: collapse;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow-x: auto
     }
 
     th, td {
@@ -84,12 +93,43 @@
     }
 
     th {
-        background-color: #f4f4f4;
+        background-color: #002244; /* Azul marinho */
+        color: white;
+    }
+
+    tr:nth-child(even) {
+        background-color: #f9f9f9;
+    }
+
+    tr:hover {
+        background-color: #ffe6e6; /* Vermelho claro */
     }
 
     .actions {
         display: flex;
         gap: 8px;
+    }
+
+    button {
+        background-color: #c40000; /* Vermelho */
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    button:hover {
+        background-color: #ff0000; /* Vermelho mais claro */
+    }
+
+    h1 {
+        color: #002244; /* Azul marinho */
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    p {
+        color: #555;
     }
 </style>
 
@@ -104,6 +144,9 @@
             <tr>
                 <th>ID</th>
                 <th>Title</th>
+                <th>Tempo Inicia</th>
+                <th>Tempo Final</th>
+                <th>Categoria</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -111,7 +154,10 @@
             {#each videos as video (video.id)}
                 <tr>
                     <td>{video.id}</td>
-                    <td>{video.title}</td>
+                    <td>{video.nome_arquivo}</td>
+                    <td>{video.tempo_inicia}</td>
+                    <td>{video.tempo_final}</td>
+                    <td>{video.categoria}</td>
                     <td class="actions">
                         <button on:click={() => deleteVideo(video.id)}>Delete</button>
                     </td>

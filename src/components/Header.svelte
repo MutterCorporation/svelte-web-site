@@ -13,6 +13,8 @@
     justify-content: space-between;
     align-items: center;
     background: linear-gradient(to right, #f21d41, #230f2b);
+    position: fixed;
+      width: 100%;
     color: #fff;
     padding: 1rem 2rem;
     border-bottom: 1px solid #fff;
