@@ -21,7 +21,7 @@
     async function fetchRegistros() {
         // Aqui você faria requisições para obter gastos e entradas
         // Exemplo de endpoint fictício
-        const resGastos = await fetch(`http://localhost:3001/gastos`);
+        const resGastos = await fetch(`https://api.muttercorp.com.br/gastos`);
         if (resGastos.ok) {
             const data = await resGastos.json();
             gastos = data;
@@ -29,7 +29,7 @@
             console.error('Failed to fetch gastos');
         }
 
-        const resEntradas = await fetch(`http://localhost:3001/entradas`);
+        const resEntradas = await fetch(`https://api.muttercorp.com.brentradas`);
         if (resEntradas.ok) {
             const data = await resEntradas.json();
             entradas = data;
@@ -39,7 +39,7 @@
     }
 
     async function criarRegistro() {
-        const res = await fetch('http://localhost:3001/criar-registro', {
+        const res = await fetch('https://api.muttercorp.com.br/criar-registro', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -59,7 +59,7 @@
     }
 
     async function deletarRegistro(id, tipo) {
-        const res = await fetch(`http://localhost:3001/${tipo}/${id}`, {
+        const res = await fetch(`https://api.muttercorp.com.br/${tipo}/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',

@@ -23,7 +23,7 @@
       }
   
       try {
-        const res = await fetch('http://localhost:3001/users/get-user', {
+        const res = await fetch('https://api.muttercorp.com.brusers/get-user', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -49,7 +49,7 @@
       }
   
       try {
-        const res = await fetch('http://localhost:3001/tweet-story/all-tweet-user', {
+        const res = await fetch('https://api.muttercorp.com.br/tweet-story/all-tweet-user', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'
@@ -77,7 +77,7 @@
       }
   
       try {
-        const res = await fetch('http://localhost:3001/tweet-story/create', {
+        const res = await fetch('https://api.muttercorp.com.br/tweet-story/create', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -106,7 +106,7 @@
       }
   
       try {
-        const res = await fetch(`http://localhost:3001/tweets/${id}`, {
+        const res = await fetch(`https://api.muttercorp.com.br/tweets/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${token}`,
