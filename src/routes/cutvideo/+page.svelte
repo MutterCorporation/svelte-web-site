@@ -13,7 +13,7 @@
     }
 
     async function fetchVideos(page = 1, size = 100) {
-        const res = await fetch(`https://api.muttercorp.com.br/video/get-videos/${page}/${size}`, {
+        const res = await fetch(`https://dev.muttercorp.com.br/video/get-videos/${page}/${size}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -33,7 +33,7 @@
     }
 
     async function createVideo() {
-        const res = await fetch('https://api.muttercorp.com.br/video/create-video', {
+        const res = await fetch('https://dev.muttercorp.com.br/video/create-video', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -53,7 +53,7 @@
     }
 
     async function deleteVideo(id) {
-        const res = await fetch(`https://api.muttercorp.com.br/videos/${id}`, {
+        const res = await fetch(`https://dev.muttercorp.com.br/videos/${id}`, {
             method: 'DELETE',
             headers: {
                 'Content-Type': 'application/json',
