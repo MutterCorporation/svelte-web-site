@@ -3,7 +3,7 @@
     import Header from '../components/Header.svelte';
     import Body from '../components/Body.svelte';
     import Footer from '../components/Footer.svelte';
-	import Hero from '../components/Hero.svelte';
+	  import Hero from '../components/Hero.svelte';
   </script>
   
   <style>
@@ -18,6 +18,6 @@
   
   <div class="container">
     <Header />
-    <Body />
+    <!-- <Body /> -->
     
   </div>
