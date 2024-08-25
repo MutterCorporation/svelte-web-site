@@ -15,10 +15,12 @@
 
     async function fetchPosts(page = 1, size = 100) {
         try {
-            const res = await fetch(`https://dev.muttercorp.com.br/blog/list/${page}/${size}`, {
+            const token = localStorage.getItem('MutterCorp');
+            const res = await fetch(`https://dev.muttercorp.com.br/blog`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
+                 // Adiciona o token no cabeçalho, se necessário
                 }
             });
 

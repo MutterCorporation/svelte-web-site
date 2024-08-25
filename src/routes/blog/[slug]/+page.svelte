@@ -16,9 +16,7 @@
     async function fetchPostData(slug) {
         console.log(slug)
         try {
-            const response = await fetch(`https://dev-muttercorp.com.br/api/posts/${slug}`, {
-                mode: 'no-cors'
-            });
+            const response = await fetch(`https://dev-muttercorp.com.br/blog/${slug}`);
             if (!response.ok) {
                 throw new Error('Failed to fetch post data');
             }
@@ -27,9 +25,9 @@
                 throw new Error('Post not found');
             }
             post = {
-                image: data.image,
-                title: data.title,
-                body: data.body
+                image: data.img,
+                title: data.titulo,
+                body: data.text
             };
             previewHtml = marked(post.body);
             error = false; // Reset error state if fetch is successful
