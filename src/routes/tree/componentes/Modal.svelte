@@ -13,19 +13,21 @@
         }
 
         const payload = {
-            message,
             name: isAnonymous ? "Anônimo" : name,
             email: isAnonymous ? "" : email,
+            message: message, 
         };
 
         try {
             const response = await fetch('https://dev.muttercorp.com.br/touch', {
-                mode: 'no-cors',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ 
+                    name: isAnonymous ? "Anônimo" : name, 
+                    email: isAnonymous ? "" : email, 
+                    message: message })
             });
 
             if (response.ok) {
