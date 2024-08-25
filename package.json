@@ -37,6 +37,7 @@
   "type": "module",
   "dependencies": {
     "filepond": "^4.31.1",
+    "marked": "^14.0.0",
     "svelte-filepond": "^0.2.2"
   }
 }
