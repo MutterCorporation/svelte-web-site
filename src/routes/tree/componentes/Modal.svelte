@@ -16,11 +16,11 @@
             message,
             name: isAnonymous ? "Anônimo" : name,
             email: isAnonymous ? "" : email,
-            isAnonymous
         };
 
         try {
-            const response = await fetch('https:///enviar-mensagem', {
+            const response = await fetch('https://dev.muttercorp.com.br/touch', {
+                mode: 'no-cors',
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
