@@ -12,6 +12,17 @@
 	let error = false;
 	let errorMessage = '';
 
+	async function convertMarkdownToHtml(markdown) {
+		const response = await fetch('https://api.github.com/markdown', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ text: markdown, mode: 'gfm' })
+		});
+		const html = await response.text();
+		return html;
+	}
 	// Função para buscar dados da API com base no slug
 	async function fetchPostData(slug) {
 		try {
