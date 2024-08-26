@@ -26,7 +26,7 @@
 
             if (res.ok) {
                 const data = await res.json();
-                posts = data.data;
+                posts = data;
                 console.log(posts);
             } else {
                 if (res.status === 403 || res.status === 401) {
