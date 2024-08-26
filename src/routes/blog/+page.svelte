@@ -146,11 +146,11 @@
         {#each posts as post (post.id)}
             <div class="post" on:click={() => goToPost(post.id)}>
                 {#if post.image}
-                    <img src={post.image} alt="Post Image" class="post-image" />
+                    <img src={post.img} alt="Post Image" class="post-image" />
                 {/if}
                 <div class="post-content">
-                    <h2 class="post-title">{post.title}</h2>
-                    <div class="post-body">{post.body}</div>
+                    <h2 class="post-title">{post.titulo}</h2>
+                    <div class="post-body">{post.text}</div>
                 </div>
             </div>
         {/each}
