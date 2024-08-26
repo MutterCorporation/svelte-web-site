@@ -28,6 +28,14 @@
                 const data = await res.json();
                 posts = data;
                 console.log(posts);
+                const maxLength = 200;
+
+                const truncatedText = posts.text.length > maxLength 
+                ? posts.text.slice(0, maxLength) + "..." 
+                : posts.text;
+
+                posts.text = truncatedText;
+
             } else {
                 if (res.status === 403 || res.status === 401) {
                     localStorage.removeItem('MutterCorp');
