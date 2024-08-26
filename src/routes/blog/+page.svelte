@@ -45,7 +45,7 @@
     });
 
     function goToPost(postId) {
-        window.location.href = `/post/${postId}`;
+        window.location.href = `/blog/${postId}`;
     }
 </script>
 
@@ -145,7 +145,7 @@
     {#if posts.length > 0}
         {#each posts as post (post.id)}
             <div class="post" on:click={() => goToPost(post.id)}>
-                {#if post.image}
+                {#if post.img}
                     <img src={post.img} alt="Post Image" class="post-image" />
                 {/if}
                 <div class="post-content">
