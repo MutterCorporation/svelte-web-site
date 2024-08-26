@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { marked } from 'marked';
-	import DOMPurify from 'dompurify';
+	// import DOMPurify from 'dompurify';
 
 	let post = {
 		img: '',
@@ -19,7 +19,7 @@
 	});
 
 	function renderMarkdown(md) {
-		return DOMPurify.sanitize(marked(md));
+		return marked(md);
 	}
 
 	// Função para buscar dados da API com base no slug
