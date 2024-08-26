@@ -74,7 +74,7 @@
 				<img src={post.img} alt="Post Image" class="post-image" />
 			{/if}
 			<h1 class="post-title">{post.titulo}</h1>
-			<div class="post-body" innerHTML={previewHtml}>
+			<div class="post-body">
 				{@html previewHtml}
 			</div>
 		</div>
