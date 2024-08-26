@@ -24,6 +24,7 @@
                 }
             });
 
+            console.log(res)
             console.log(res.json())
 
             if (res.ok) {
