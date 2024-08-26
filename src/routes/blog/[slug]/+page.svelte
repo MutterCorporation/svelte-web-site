@@ -34,8 +34,8 @@
 				text: data.text
 			};
 
-			// Converter Markdown para HTML
-			previewHtml = marked(post.text);
+			// Converter Markdown para HTML usando a função de API do GitHub
+			previewHtml = await convertMarkdownToHtml(post.text);
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
 			console.error(error);
