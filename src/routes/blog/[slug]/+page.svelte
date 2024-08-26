@@ -3,9 +3,9 @@
     import { marked } from 'marked';
 
     let post = {
-        image: '',
-        title: '',
-        body: ''
+        img: '',
+        titulo: '',
+        text: ''
     };
 
     let previewHtml = '';
@@ -16,7 +16,7 @@
     async function fetchPostData(slug) {
         console.log(slug)
         try {
-            const response = await fetch(`https://dev-muttercorp.com.br/blog/${slug}`, {
+            const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,9 +32,9 @@
                 throw new Error('Post not found');
             }
             post = {
-                image: data.im,
-                title: data.titulo,
-                body: data.text
+                img: data.img,
+                titulo: data.titulo,
+                text: data.text
             };
             previewHtml = marked(post.body);
             error = false; // Reset error state if fetch is successful
@@ -60,10 +60,10 @@
 {:else}
     <div class="container">
         <div class="post">
-            {#if post.image}
-                <img src={post.image} alt="Post Image" class="post-image" />
+            {#if post.img}
+                <img src={post.img} alt="Post Image" class="post-image" />
             {/if}
-            <h1 class="post-title">{post.title}</h1>
+            <h1 class="post-title">{post.titulo}</h1>
             <div class="post-body">
                 {@html previewHtml}
             </div>
