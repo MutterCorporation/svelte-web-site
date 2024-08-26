@@ -24,12 +24,8 @@
                 }
             });
 
-            console.log(res)
-            console.log(res.json())
-
             if (res.ok) {
                 const data = await res.json();
-                console.log(data)
                 posts = data.data;
                 console.log(posts);
             } else {
@@ -48,7 +44,9 @@
         fetchPosts();
     });
 
-   
+    function goToPost(postId) {
+        window.location.href = `/post/${postId}`;
+    }
 </script>
 
 <style>
@@ -146,7 +144,7 @@
 
     {#if posts.length > 0}
         {#each posts as post (post.id)}
-            <div class="post" on:click={}>
+            <div class="post" on:click={() => goToPost(post.id)}>
                 {#if post.image}
                     <img src={post.img} alt="Post Image" class="post-image" />
                 {/if}
