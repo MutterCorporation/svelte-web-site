@@ -12,15 +12,21 @@
 	let error = false;
 	let errorMessage = '';
 
+	// Criação de um renderer customizado para `marked`
+	const renderer = new marked.Renderer();
+
+	renderer.code = (code, language) => {
+		const languageClass = language ? `language-${language}` : '';
+		return `<pre class="code-block"><code class="${languageClass}">${code}</code></pre>`;
+	};
+
 	// Função para buscar dados da API com base no slug
 	async function fetchPostData(slug) {
-		console.log(slug);
 		try {
 			const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'
-					// Adiciona o token no cabeçalho, se necessário
 				}
 			});
 			if (!response.ok) {
@@ -36,7 +42,8 @@
 				text: data.text
 			};
 
-			previewHtml = marked(post.text);
+			// Converter Markdown para HTML com o renderer customizado
+			previewHtml = marked(post.text, { renderer });
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
 			console.error(error);
@@ -72,6 +79,21 @@
 {/if}
 
 <style>
+	/* Adicionando estilos para blocos de código */
+	.code-block {
+		background: #f5f5f5;
+		padding: 1rem;
+		border-radius: 5px;
+		overflow-x: auto;
+	}
+
+	.code-block .language-js {
+		color: #d73a49;
+	}
+
+	/* Adicione mais estilos para outras linguagens se necessário */
+
+	/* Outros estilos existentes */
 	body {
 		font-family: 'Arial', sans-serif;
 		margin: 0;
