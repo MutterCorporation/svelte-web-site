@@ -36,7 +36,7 @@
                 titulo: data.titulo,
                 text: data.text
             };
-            previewHtml = marked(post.body);
+            previewHtml = marked(post.text);
             error = false; // Reset error state if fetch is successful
         } catch (error) {
             console.error(error);
