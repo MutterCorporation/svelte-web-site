@@ -1,6 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { marked } from 'marked';
+	import DOMPurify from 'dompurify';
 
 	let post = {
 		img: '',
@@ -12,17 +13,15 @@
 	let error = false;
 	let errorMessage = '';
 
-	async function convertMarkdownToHtml(markdown) {
-		const response = await fetch('https://api.github.com/markdown', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ text: markdown, mode: 'gfm' })
-		});
-		const html = await response.text();
-		return html;
+	marked.setOptions({
+		breaks: true,
+		gfm: true
+	});
+
+	function renderMarkdown(md) {
+		return DOMPurify.sanitize(marked(md));
 	}
+
 	// Função para buscar dados da API com base no slug
 	async function fetchPostData(slug) {
 		try {
@@ -46,7 +45,7 @@
 			};
 
 			// Converter Markdown para HTML usando a função de API do GitHub
-			previewHtml = await convertMarkdownToHtml(post.text);
+			previewHtml = await renderMarkdown(data.text);
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
 			console.error(error);
