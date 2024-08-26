@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { marked } from 'marked';
-	// import DOMPurify from 'dompurify';
+	import DOMPurify from 'dompurify';
 
 	let post = {
 		img: '',
@@ -18,38 +18,9 @@
 		gfm: true
 	});
 
-	function preProcessMarkdown(md) {
-  // Substitui blocos de código inline por placeholders
-  	const codeBlocks = [];
-  	md = md.replace(/```[\s\S]*?```/g, (match) => {
-    const placeholder = `__CODE_BLOCK_${codeBlocks.length}__`;
-    codeBlocks.push(match);
-    return placeholder;
-  	});
-
-  // Garante que haja duas quebras de linha antes de cada cabeçalho
-  	md = md.replace(/\n(#{1,6} )/g, '\n\n$1');
-
-  // Restaura os blocos de código
- 	 codeBlocks.forEach((block, index) => {
-    md = md.replace(`__CODE_BLOCK_${index}__`, block);
-  });
-
-  	return md;
-	}
-
 	function renderMarkdown(md) {
-  const renderer = new marked.Renderer();
-  renderer.code = (code, language) => {
-    return `<pre class="code-block"><code class="language-${language}">${code}</code></pre>`;
-  };
-
-  return marked(md, { 
-    breaks: true,
-    gfm: true,
-    renderer: renderer
-  });
-}
+		return DOMPurify.sanitize(marked(md));
+	}
 
 	// Função para buscar dados da API com base no slug
 	async function fetchPostData(slug) {
@@ -74,7 +45,7 @@
 			};
 
 			// Converter Markdown para HTML usando a função de API do GitHub
-			previewHtml = renderMarkdown(preProcessMarkdown(data.text));
+			previewHtml = await renderMarkdown(data.text);
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
 			console.error(error);
@@ -110,31 +81,104 @@
 {/if}
 
 <style>
-	.post-body {
-	  white-space: pre-wrap;
-	  word-wrap: break-word;
-	}
-  
-	.post-body pre {
-	  white-space: pre-wrap;
-	  word-wrap: break-word;
-	  background-color: #f4f4f4;
-	  padding: 1em;
-	  border-radius: 5px;
-	}
-  
-	.post-body code {
-	  background-color: #f4f4f4;
-	  padding: 0.2em 0.4em;
-	  border-radius: 3px;
-	}
-  
+	/* Adicionando estilos para blocos de código */
 	.code-block {
-	  white-space: pre-wrap;
-	  word-wrap: break-word;
-	  background-color: #f4f4f4;
-	  padding: 1em;
-	  border-radius: 5px;
-	  margin: 1em 0;
+		background: #f5f5f5;
+		padding: 1rem;
+		border-radius: 5px;
+		overflow-x: auto;
 	}
-  </style>
+
+	.code-block .language-js {
+		color: #d73a49;
+	}
+
+	/* Outros estilos existentes */
+	body {
+		font-family: 'Arial', sans-serif;
+		margin: 0;
+		padding: 0;
+		background: linear-gradient(to right, #f8f9fa, #e9ecef);
+	}
+
+	.container {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 20px;
+		background: #fff;
+		border-radius: 8px;
+		box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+		margin-top: 40px;
+	}
+
+	.post {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+	}
+
+	.post-image {
+		max-width: 100%;
+		height: auto;
+		border-radius: 8px;
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+	}
+
+	.post-title {
+		font-size: 2.5em;
+		color: #343a40;
+		margin: 0;
+		line-height: 1.2;
+	}
+
+	.post-body {
+		font-size: 1.1em;
+		color: #495057;
+		white-space: pre-wrap;
+		word-wrap: break-word;
+		line-height: 1.8;
+	}
+
+	.post-body h1,
+	.post-body h2,
+	.post-body h3 {
+		margin-top: 1em;
+		margin-bottom: 0.5em;
+		color: #343a40;
+	}
+
+	.post-body code {
+		background: #f8f9fa;
+		border-radius: 4px;
+		padding: 2px 4px;
+		font-size: 0.9em;
+	}
+
+	.post-body pre {
+		background: #f1f3f5;
+		border-radius: 4px;
+		padding: 10px;
+		overflow-x: auto;
+	}
+
+	.error-container {
+		max-width: 600px;
+		margin: 0 auto;
+		padding: 20px;
+		background: #f8d7da;
+		color: #721c24;
+		border: 1px solid #f5c6cb;
+		border-radius: 8px;
+		box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+		text-align: center;
+	}
+
+	.error-container h1 {
+		font-size: 2em;
+		margin-bottom: 10px;
+	}
+
+	.error-container p {
+		font-size: 1.2em;
+	}
+</style>
