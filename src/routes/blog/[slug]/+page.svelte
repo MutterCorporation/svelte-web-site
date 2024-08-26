@@ -12,14 +12,6 @@
 	let error = false;
 	let errorMessage = '';
 
-	// Criação de um renderer customizado para `marked`
-	const renderer = new marked.Renderer();
-
-	renderer.code = (code, language) => {
-		const languageClass = language ? `language-${language}` : '';
-		return `<pre class="code-block"><code class="${languageClass}">${code}</code></pre>`;
-	};
-
 	// Função para buscar dados da API com base no slug
 	async function fetchPostData(slug) {
 		try {
@@ -42,8 +34,8 @@
 				text: data.text
 			};
 
-			// Converter Markdown para HTML com o renderer customizado
-			previewHtml = marked(post.text, { renderer });
+			// Converter Markdown para HTML
+			previewHtml = marked(post.text);
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
 			console.error(error);
@@ -71,7 +63,7 @@
 				<img src={post.img} alt="Post Image" class="post-image" />
 			{/if}
 			<h1 class="post-title">{post.titulo}</h1>
-			<div class="post-body">
+			<div class="post-body" innerHTML={previewHtml}>
 				{@html previewHtml}
 			</div>
 		</div>
@@ -90,8 +82,6 @@
 	.code-block .language-js {
 		color: #d73a49;
 	}
-
-	/* Adicione mais estilos para outras linguagens se necessário */
 
 	/* Outros estilos existentes */
 	body {
