@@ -16,7 +16,14 @@
     async function fetchPostData(slug) {
         console.log(slug)
         try {
-            const response = await fetch(`https://dev-muttercorp.com.br/blog/${slug}`);
+            const response = await fetch(`https://dev-muttercorp.com.br/blog/${slug}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                 // Adiciona o token no cabeçalho, se necessário
+                }
+            }
+            );
             if (!response.ok) {
                 throw new Error('Failed to fetch post data');
             }
@@ -25,7 +32,7 @@
                 throw new Error('Post not found');
             }
             post = {
-                image: data.img,
+                image: data.im,
                 title: data.titulo,
                 body: data.text
             };
