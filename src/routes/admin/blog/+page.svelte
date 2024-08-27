@@ -82,62 +82,39 @@
 	});
 </script>
 
-{#if isLoading}
-	<!-- Skeleton para estado de carregamento -->
-	<div class="container skeleton">
-		<header>
-			<h1 class="skeleton-text">█████████████</h1>
-		</header>
-		<p class="message skeleton-text">███████████████████████████</p>
-		<div class="form-group skeleton">
-			<div class="skeleton-text">████████</div>
-			<div class="skeleton-box"></div>
-		</div>
-		<div class="form-group skeleton">
-			<div class="skeleton-text">████████</div>
-			<div class="skeleton-box"></div>
-		</div>
-		<div class="form-group skeleton">
-			<div class="skeleton-text">████████</div>
-			<div class="skeleton-box"></div>
-		</div>
-		<div class="skeleton-button">██████</div>
-	</div>
-{#else}
-	<div class="container">
-		<header>
-			<h1>Minha Página Protegida</h1>
-		</header>
-		<p class="message">Este conteúdo só é acessível se o usuário estiver autenticado.</p>
+<div class="container">
+	<header>
+		<h1>Minha Página Protegida</h1>
+	</header>
+	<p class="message">Este conteúdo só é acessível se o usuário estiver autenticado.</p>
 
-		<form on:submit={handleSubmit}>
-			<div class="form-group">
-				<label for="image">Imagem:</label>
-				<input
-					type="file"
-					id="image"
-					accept="image/*"
-					on:change={(event) => (image = event.target.files[0])}
-				/>
-			</div>
-			<div class="form-group">
-				<label for="title">Título:</label>
-				<input type="text" id="title" bind:value={title} />
-			</div>
-			<div class="form-group">
-				<label for="body">Corpo:</label>
-				<textarea id="body" bind:value={body}></textarea>
-			</div>
-			<button type="button" on:click={handleConvertMarkdown}>Converter Markdown</button>
-			<button type="submit">Enviar</button>
-		</form>
-
-		<div class="preview">
-			<h2>Pré-visualização:</h2>
-			{@html previewHtml}
+	<form on:submit={handleSubmit}>
+		<div class="form-group">
+			<label for="image">Imagem:</label>
+			<input
+				type="file"
+				id="image"
+				accept="image/*"
+				on:change={(event) => (image = event.target.files[0])}
+			/>
 		</div>
+		<div class="form-group">
+			<label for="title">Título:</label>
+			<input type="text" id="title" bind:value={title} />
+		</div>
+		<div class="form-group">
+			<label for="body">Corpo:</label>
+			<textarea id="body" bind:value={body}></textarea>
+		</div>
+		<button type="button" on:click={handleConvertMarkdown}>Converter Markdown</button>
+		<button type="submit">Enviar</button>
+	</form>
+
+	<div class="preview">
+		<h2>Pré-visualização:</h2>
+		{@html previewHtml}
 	</div>
-{/if}
+</div>
 
 <style>
 	/* Seu CSS permanece inalterado, incluindo os estilos do esqueleto */
