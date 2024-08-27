@@ -4,6 +4,8 @@
 	let title = '';
 	let body = '';
 	let previewHtml = '';
+	let isLoading = true; // Variável para controlar o estado de carregamento
+	let isAuthenticated = false;
 
 	// Função para converter Markdown para HTML
 	async function convertMarkdownToHtml(markdown) {
@@ -33,10 +35,9 @@
 		});
 
 		if (response.ok) {
-			const result = await response.json();
-			return true; // Exemplo de como você pode usar a resposta do servidor
+			return true; // Autenticado
 		} else {
-			return false;
+			return false; // Não autenticado
 		}
 	}
 
@@ -51,7 +52,8 @@
 	}
 
 	onMount(async () => {
-		const isAuthenticated = await load();
+		isAuthenticated = await load();
+		isLoading = false; // A autenticação terminou
 		if (!isAuthenticated) {
 			window.location.href = '/login'; // Redireciona para login se não autenticado
 		}
@@ -82,38 +84,60 @@
 	}
 </script>
 
-<div class="container">
-	<header>
-		<h1>Minha Página Protegida</h1>
-	</header>
-	<p class="message">Este conteúdo só é acessível se o usuário estiver autenticado.</p>
-
-	<form on:submit={handleSubmit}>
-		<div class="form-group">
-			<label for="image">Imagem:</label>
-			<input
-				type="file"
-				id="image"
-				accept="image/*"
-				on:change={(event) => (image = event.target.files[0])}
-			/>
+{#if isLoading}
+	<div class="container skeleton">
+		<header>
+			<h1 class="skeleton-text">█████████████</h1>
+		</header>
+		<p class="message skeleton-text">███████████████████████████</p>
+		<div class="form-group skeleton">
+			<div class="skeleton-text">████████</div>
+			<div class="skeleton-box"></div>
 		</div>
-		<div class="form-group">
-			<label for="title">Título:</label>
-			<input type="text" id="title" bind:value={title} />
+		<div class="form-group skeleton">
+			<div class="skeleton-text">████████</div>
+			<div class="skeleton-box"></div>
 		</div>
-		<div class="form-group">
-			<label for="body">Corpo:</label>
-			<textarea id="body" bind:value={body}></textarea>
+		<div class="form-group skeleton">
+			<div class="skeleton-text">████████</div>
+			<div class="skeleton-box"></div>
 		</div>
-		<button type="submit">Enviar</button>
-	</form>
-
-	<div class="preview">
-		<h2>Pré-visualização:</h2>
-		{@html previewHtml}
+		<div class="skeleton-button">██████</div>
 	</div>
-</div>
+{#else}
+	<div class="container">
+		<header>
+			<h1>Minha Página Protegida</h1>
+		</header>
+		<p class="message">Este conteúdo só é acessível se o usuário estiver autenticado.</p>
+
+		<form on:submit={handleSubmit}>
+			<div class="form-group">
+				<label for="image">Imagem:</label>
+				<input
+					type="file"
+					id="image"
+					accept="image/*"
+					on:change={(event) => (image = event.target.files[0])}
+				/>
+			</div>
+			<div class="form-group">
+				<label for="title">Título:</label>
+				<input type="text" id="title" bind:value={title} />
+			</div>
+			<div class="form-group">
+				<label for="body">Corpo:</label>
+				<textarea id="body" bind:value={body}></textarea>
+			</div>
+			<button type="submit">Enviar</button>
+		</form>
+
+		<div class="preview">
+			<h2>Pré-visualização:</h2>
+			{@html previewHtml}
+		</div>
+	</div>
+{/if}
 
 <style>
 	body {
@@ -200,5 +224,47 @@
 		border-radius: 4px;
 		background-color: #f9f9f9;
 		margin-top: 20px;
+	}
+
+	/* Skeleton styles */
+	.skeleton {
+		opacity: 0.6;
+		animation: pulse 1.5s infinite;
+	}
+
+	.skeleton-text {
+		background-color: #e0e0e0;
+		border-radius: 4px;
+		height: 20px;
+		width: 100%;
+		margin-bottom: 10px;
+	}
+
+	.skeleton-box {
+		background-color: #e0e0e0;
+		border-radius: 4px;
+		height: 40px;
+		width: 100%;
+		margin-bottom: 15px;
+	}
+
+	.skeleton-button {
+		background-color: #e0e0e0;
+		border-radius: 4px;
+		height: 50px;
+		width: 100px;
+		margin-top: 15px;
+	}
+
+	@keyframes pulse {
+		0% {
+			opacity: 0.6;
+		}
+		50% {
+			opacity: 1;
+		}
+		100% {
+			opacity: 0.6;
+		}
 	}
 </style>
