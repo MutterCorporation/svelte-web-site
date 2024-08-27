@@ -1,76 +1,76 @@
 <script>
-    import { onMount } from 'svelte';
+	import { onMount } from 'svelte';
 
-    let previewHtml = '';
-    let error = false;
-    let errorMessage = '';
+	let previewHtml = '';
+	let error = false;
+	let errorMessage = '';
 
-    async function convertMarkdownToHtml(markdown) {
-        const response = await fetch('https://api.github.com/markdown', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ text: markdown, mode: 'gfm' })
-        });
+	async function convertMarkdownToHtml(markdown) {
+		const response = await fetch('https://api.github.com/markdown', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ text: markdown, mode: 'gfm' })
+		});
 
-        if (!response.ok) {
-            throw new Error('Failed to convert Markdown');
-        }
+		if (!response.ok) {
+			throw new Error('Failed to convert Markdown');
+		}
 
-        const html = await response.text();
-        return html;
-    }
+		const html = await response.text();
+		return html;
+	}
 
-    async function fetchPostData(slug) {
-        try {
-            const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
+	async function fetchPostData(slug) {
+		try {
+			const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`, {
+				mode: 'no-cors',
+				method: 'GET',
+				headers: {
+					'Content-Type': 'application/json'
+				}
+			});
 
-            if (!response.ok) {
-                throw new Error('Failed to fetch post data');
-            }
+			if (!response.ok) {
+				throw new Error('Failed to fetch post data');
+			}
 
-            const data = await response.json();
-            if (!data) {
-                throw new Error('Post not found');
-            }
+			const data = await response.json();
+			if (!data) {
+				throw new Error('Post not found');
+			}
 
-            const html = await convertMarkdownToHtml(data.text);
-            previewHtml = html;
-            error = false; // Reset error state if fetch is successful
-        } catch (error) {
-            console.error(error);
-            error = true;
-            errorMessage = error.message || 'An unexpected error occurred';
-        }
-    }
+			const html = await convertMarkdownToHtml(data.text);
+			previewHtml = html;
+			error = false; // Reset error state if fetch is successful
+		} catch (error) {
+			console.error(error);
+			error = true;
+			errorMessage = error.message || 'An unexpected error occurred';
+		}
+	}
 
-    onMount(() => {
-        const slug = window.location.pathname.split('/').pop(); // Supondo que o slug está no final da URL
-        fetchPostData(slug);
-    });
+	onMount(() => {
+		const slug = window.location.pathname.split('/').pop(); // Supondo que o slug está no final da URL
+		fetchPostData(slug);
+	});
 </script>
 
 {#if error}
-    <div class="error-container">
-        <h1>Erro</h1>
-        <p>{errorMessage}</p>
-    </div>
+	<div class="error-container">
+		<h1>Erro</h1>
+		<p>{errorMessage}</p>
+	</div>
 {:else}
-    <div class="container">
-        <div class="post">
-            <div class="post-body" innerHTML={previewHtml}>
-                {@html previewHtml}
-            </div>
-        </div>
-    </div>
+	<div class="container">
+		<div class="post">
+			<div class="post-body" innerHTML={previewHtml}>
+				{@html previewHtml}
+			</div>
+		</div>
+	</div>
 {/if}
-
 
 <style>
 	/* Adicionando estilos para blocos de código */
