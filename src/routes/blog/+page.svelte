@@ -28,11 +28,7 @@
 				const data = await res.json();
 				const maxLength = 100; // Define o comprimento máximo do texto
 
-				posts = data.map((post) => {
-					const truncatedText =
-						post.text.length > maxLength ? post.text.slice(0, maxLength) + '...' : post.text;
-					return { ...post, text: truncatedText };
-				});
+				posts = data;
 
 				console.log(posts);
 			} else {
@@ -75,7 +71,7 @@
 				{/if}
 				<div class="post-content">
 					<h2 class="post-title">{post.titulo}</h2>
-					<div class="post-body">{post.text}</div>
+					<div class="post-body">{post.preview}</div>
 				</div>
 			</div>
 		{/each}
