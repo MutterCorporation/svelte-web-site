@@ -52,7 +52,7 @@
 		// Cria um objeto FormData para enviar os dados
 		const formData = new FormData();
 		formData.append('image', image);
-		formData.append('title', title);
+		formData.append('titulo', title);
 		formData.append('text', previewHtml);
 
 		fetch('https://dev.muttercorp.com.br/blog', {
