@@ -51,7 +51,7 @@
 
 		// Cria um objeto FormData para enviar os dados
 		const formData = new FormData();
-		formData.append('image', image);
+		formData.append('file', image);
 		formData.append('titulo', title);
 		formData.append('text', previewHtml);
 
