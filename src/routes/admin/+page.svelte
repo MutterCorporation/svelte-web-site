@@ -41,23 +41,10 @@
 		}
 	}
 
-	// Atualiza a visualização prévia sempre que o corpo do post muda
-	$: body,
-		(async () => {
-			previewHtml = await convertMarkdownToHtml(body);
-		})();
-
-	export function load() {
-		return validateToken();
+	// Função para processar a conversão do Markdown
+	async function handleConvertMarkdown() {
+		previewHtml = await convertMarkdownToHtml(body);
 	}
-
-	onMount(async () => {
-		isAuthenticated = await load();
-		isLoading = false; // A autenticação terminou
-		if (!isAuthenticated) {
-			window.location.href = '/login'; // Redireciona para login se não autenticado
-		}
-	});
 
 	function handleSubmit(event) {
 		event.preventDefault();
@@ -68,8 +55,11 @@
 		formData.append('title', title);
 		formData.append('body', new Blob([body], { type: 'text/markdown' }), 'post.md');
 
-		fetch('/api/posts', {
+		fetch('https://dev.muttercorp.com.br/blog', {
 			method: 'POST',
+			headers: {
+				Authorization: `Bearer ${localStorage.getItem('MutterCorp')}`
+			},
 			body: formData
 		})
 			.then((response) => response.json())
@@ -82,9 +72,18 @@
 				// Handle error
 			});
 	}
+
+	onMount(async () => {
+		isAuthenticated = await validateToken();
+		isLoading = false; // A autenticação terminou
+		if (!isAuthenticated) {
+			window.location.href = '/login'; // Redireciona para login se não autenticado
+		}
+	});
 </script>
 
 {#if isLoading}
+	<!-- Skeleton para estado de carregamento -->
 	<div class="container skeleton">
 		<header>
 			<h1 class="skeleton-text">█████████████</h1>
@@ -129,6 +128,7 @@
 				<label for="body">Corpo:</label>
 				<textarea id="body" bind:value={body}></textarea>
 			</div>
+			<button type="button" on:click={handleConvertMarkdown}>Converter Markdown</button>
 			<button type="submit">Enviar</button>
 		</form>
 
@@ -140,6 +140,7 @@
 {/if}
 
 <style>
+	/* Seu CSS permanece inalterado, incluindo os estilos do esqueleto */
 	body {
 		font-family: Arial, sans-serif;
 		background-color: #f4f4f4;
@@ -206,6 +207,7 @@
 		border-radius: 4px;
 		cursor: pointer;
 		font-size: 16px;
+		margin-bottom: 10px;
 	}
 
 	button:hover {
