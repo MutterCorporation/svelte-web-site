@@ -25,7 +25,6 @@
 	async function fetchPostData(slug) {
 		try {
 			const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`, {
-				mode: 'no-cors',
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'

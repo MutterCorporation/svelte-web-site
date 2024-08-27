@@ -20,7 +20,6 @@
 
 		try {
 			const response = await fetch('https://dev.muttercorp.com.br/touch', {
-				mode: 'no-cors',
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'
