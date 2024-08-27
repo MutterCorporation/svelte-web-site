@@ -53,7 +53,7 @@
 		const formData = new FormData();
 		formData.append('image', image);
 		formData.append('title', title);
-		formData.append('body', new Blob([body], { type: 'text/markdown' }), 'post.md');
+		formData.append('text', text);
 
 		fetch('https://dev.muttercorp.com.br/blog', {
 			method: 'POST',
