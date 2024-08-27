@@ -1,5 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
+
+	let preview = '';
 	let image = null;
 	let title = '';
 	let body = '';
@@ -54,6 +56,7 @@
 		formData.append('file', image);
 		formData.append('titulo', title);
 		formData.append('text', previewHtml);
+		formData.append('preview', preview);
 
 		fetch('https://dev.muttercorp.com.br/blog', {
 			method: 'POST',
@@ -106,6 +109,12 @@
 			<label for="body">Corpo:</label>
 			<textarea id="body" bind:value={body}></textarea>
 		</div>
+
+		<div class="form-group">
+			<label for="body">Preview:</label>
+			<textarea id="body" bind:value={preview}></textarea>
+		</div>
+
 		<button type="button" on:click={handleConvertMarkdown}>Converter Markdown</button>
 		<button type="submit">Enviar</button>
 	</form>
