@@ -34,23 +34,12 @@
 	});
 </script>
 
-{#if isLoading}
-	<!-- Skeleton para estado de carregamento -->
-	<div class="container skeleton">
-		<header>
-			<h1 class="skeleton-text">█████████████</h1>
-		</header>
-		<p class="message skeleton-text">███████████████████████████</p>
-		<div class="skeleton-button">██████</div>
-	</div>
-{#else}
-	<div class="container">
-		<header>
-			<h1>Página Admin</h1>
-		</header>
-		<p class="message">Este conteúdo só é acessível para administradores autenticados.</p>
-	</div>
-{/if}
+<div class="container">
+	<header>
+		<h1>Página Admin</h1>
+	</header>
+	<p class="message">Este conteúdo só é acessível para administradores autenticados.</p>
+</div>
 
 <style>
 	/* Seu CSS permanece inalterado, incluindo os estilos do esqueleto */
