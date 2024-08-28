@@ -1,5 +1,7 @@
 <script>
-// @ts-nocheck
+	import { marked } from 'marked';
+
+	// @ts-nocheck
 
 	import { onMount } from 'svelte';
 
@@ -8,22 +10,22 @@
 	let errorMessage = '';
 	let data;
 
-	async function convertMarkdownToHtml(markdown) {
-		const response = await fetch('https://api.github.com/markdown', {
-			method: 'POST',
-			headers: {
-				'Content-Type': 'application/json'
-			},
-			body: JSON.stringify({ text: markdown, mode: 'gfm' })
-		});
+	// async function convertMarkdownToHtml(markdown) {
+	// 	const response = await fetch('https://api.github.com/markdown', {
+	// 		method: 'POST',
+	// 		headers: {
+	// 			'Content-Type': 'application/json'
+	// 		},
+	// 		body: JSON.stringify({ text: markdown, mode: 'gfm' })
+	// 	});
 
-		if (!response.ok) {
-			throw new Error('Failed to convert Markdown');
-		}
+	// 	if (!response.ok) {
+	// 		throw new Error('Failed to convert Markdown');
+	// 	}
 
-		const html = await response.text();
-		return html;
-	}
+	// 	const html = await response.text();
+	// 	return html;
+	// }
 
 	async function fetchPostData(slug) {
 		try {
@@ -39,11 +41,8 @@
 			}
 
 			data = await response.json();
-			if (!data) {
-				throw new Error('Post not found');
-			}
 
-			const html = await convertMarkdownToHtml(data.text);
+			const html = await marked(data.text);
 			previewHtml = html;
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
@@ -59,12 +58,6 @@
 	});
 </script>
 
-{#if error}
-	<div class="error-container">
-		<h1>Erro</h1>
-		<p>{errorMessage}</p>
-	</div>
-{:else}
 	<div class="container">
 		<div class="post">
 			<img src={data.img} alt="Post Image" class="post-image" />
