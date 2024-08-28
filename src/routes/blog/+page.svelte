@@ -66,9 +66,8 @@
 	{#if posts.length > 0}
 		{#each posts as post (post.id)}
 			<div class="post" on:click={() => goToPost(post.id)}>
-				{#if post.img}
-					<img src={post.img} alt="Post Image" class="post-image" />
-				{/if}
+				<img src={post.img} alt="Post Image" class="post-image" />
+
 				<div class="post-content">
 					<h2 class="post-title">{post.titulo}</h2>
 					<div class="post-body">{post.preview}</div>
