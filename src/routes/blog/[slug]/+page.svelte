@@ -64,6 +64,7 @@
 {:else}
 	<div class="container">
 		<div class="post">
+			<img src={data.img} alt="Post Image" class="post-image" />
 			<div class="post-body" innerHTML={previewHtml}>
 				{@html previewHtml}
 			</div>
