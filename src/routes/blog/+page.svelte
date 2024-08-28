@@ -3,6 +3,7 @@
 
 	let posts = [];
 	let blogName = 'Maikon Weber Blog'; // Defina o nome do blog aqui
+	let hasError = false; // Variável para controlar o estado de erro
 
 	export function load() {
 		const token = localStorage.getItem('MutterCorp');
@@ -35,11 +36,14 @@
 				if (res.status === 403 || res.status === 401) {
 					localStorage.removeItem('MutterCorp');
 					window.location.href = '/login';
+				} else if (res.status === 500) {
+					hasError = true; // Define o estado de erro
 				}
 				console.error('Failed to fetch posts');
 			}
 		} catch (error) {
 			console.error('Error:', error);
+			hasError = true; // Define o estado de erro em caso de exceção
 		}
 	}
 
@@ -63,7 +67,9 @@
 		</p>
 	</div>
 
-	{#if posts.length > 0}
+	{#if hasError}
+		<p>Desculpe, este blog não existe ou está temporariamente indisponível.</p>
+	{:else if posts.length > 0}
 		{#each posts as post (post.id)}
 			<div class="post" on:click={() => goToPost(post.id)}>
 				<img src={post.img} alt="Post Image" class="post-image" />
