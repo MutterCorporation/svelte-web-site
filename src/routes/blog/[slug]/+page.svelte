@@ -4,6 +4,7 @@
 	let previewHtml = '';
 	let error = false;
 	let errorMessage = '';
+	let img = '';
 
 	async function convertMarkdownToHtml(markdown) {
 		const response = await fetch('https://api.github.com/markdown', {
@@ -40,6 +41,7 @@
 				throw new Error('Post not found');
 			}
 
+			img = data.img;
 			const html = await convertMarkdownToHtml(data.text);
 			previewHtml = html;
 			error = false; // Reset error state if fetch is successful
@@ -64,7 +66,7 @@
 {:else}
 	<div class="container">
 		<div class="post">
-			<img src={data.img} alt="Post Image" class="post-image" />
+			<img src={img} alt="Post Image" class="post-image" />
 			<div class="post-body" innerHTML={previewHtml}>
 				{@html previewHtml}
 			</div>
