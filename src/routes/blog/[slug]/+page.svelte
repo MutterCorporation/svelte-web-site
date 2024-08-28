@@ -1,9 +1,12 @@
 <script>
+// @ts-nocheck
+
 	import { onMount } from 'svelte';
 
 	let previewHtml = '';
 	let error = false;
 	let errorMessage = '';
+	let data;
 
 	async function convertMarkdownToHtml(markdown) {
 		const response = await fetch('https://api.github.com/markdown', {
@@ -35,7 +38,7 @@
 				throw new Error('Failed to fetch post data');
 			}
 
-			const data = await response.json();
+			data = await response.json();
 			if (!data) {
 				throw new Error('Post not found');
 			}
@@ -64,6 +67,7 @@
 {:else}
 	<div class="container">
 		<div class="post">
+			<img src={data.img} alt="Post Image" class="post-image" />
 			<div class="post-body" innerHTML={previewHtml}>
 				{@html previewHtml}
 			</div>
