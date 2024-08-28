@@ -5,22 +5,22 @@
 	let error = false;
 	let errorMessage = '';
 
-	// async function convertMarkdownToHtml(markdown) {
-	// 	const response = await fetch('https://api.github.com/markdown', {
-	// 		method: 'POST',
-	// 		headers: {
-	// 			'Content-Type': 'application/json'
-	// 		},
-	// 		body: JSON.stringify({ text: markdown, mode: 'gfm' })
-	// 	});
+	async function convertMarkdownToHtml(markdown) {
+		const response = await fetch('https://api.github.com/markdown', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify({ text: markdown, mode: 'gfm' })
+		});
 
-	// 	if (!response.ok) {
-	// 		throw new Error('Failed to convert Markdown');
-	// 	}
+		if (!response.ok) {
+			throw new Error('Failed to convert Markdown');
+		}
 
-	// 	const html = await response.text();
-	// 	return html;
-	// }
+		const html = await response.text();
+		return html;
+	}
 
 	async function fetchPostData(slug) {
 		try {
