@@ -42,7 +42,7 @@
 			}
 
 			img = data.img;
-			const html = await convertMarkdownToHtml(data.text);
+			const html = data.text;
 			previewHtml = html;
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
