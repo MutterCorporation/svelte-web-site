@@ -58,10 +58,12 @@
 		fetch('https://dev.muttercorp.com.br/bluesky', {
 			method: 'POST',
 			headers: {
+                'Content-Type': 'application/json', // Adiciona o cabeçalho Content-Type
+			    accept: '*/*',
 				Authorization: `Bearer ${localStorage.getItem('MutterCorp')}`
 			},
 			body: JSON.stringify({
-                body
+                text:body
             })
 		})
 			.then((response) => response.json())
