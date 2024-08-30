@@ -67,7 +67,7 @@
 	<div class="container">
 		<div class="post">
 			<img src={img} alt="Post Image" class="post-image" />
-			<div class="post-body" innerHTML={previewHtml}>
+			<div class="post-body">
 				{@html previewHtml}
 			</div>
 		</div>
