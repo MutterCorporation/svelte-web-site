@@ -1,3 +1,16 @@
+<svelte:head>
+	<title>{previewHtml ? `${previewHtml.slice(0, 60)}... - Maikon Weber Blog` : 'Maikon Weber Blog'}</title>
+	<meta name="description" content={previewHtml ? `${previewHtml.slice(0, 160)}...` : 'Bem-vindo ao Maikon Weber Blog, onde compartilho minhas experiências e conhecimentos sobre tecnologia, ciência e música.'}>
+	<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Maikon Weber, Desenvolvimento, Svelte, JavaScript">
+	<meta name="author" content="Maikon Weber">
+	<meta property="og:title" content={previewHtml ? `${previewHtml.slice(0, 60)}... - Maikon Weber Blog` : 'Maikon Weber Blog'}>
+	<meta property="og:description" content={previewHtml ? `${previewHtml.slice(0, 160)}...` : 'Descubra artigos sobre tecnologia, ciência e música no Maikon Weber Blog.'}>
+	<meta property="og:image" content={img || 'default-image-url'}>
+	<meta property="og:url" content={`https://dev.muttercorp.com.br/blog/${window.location.pathname.split('/').pop()}`}>
+	<meta name="twitter:card" content="summary_large_image">
+	<meta property="og:type" content="article">
+</svelte:head>
+
 <script>
 	import { onMount } from 'svelte';
 
