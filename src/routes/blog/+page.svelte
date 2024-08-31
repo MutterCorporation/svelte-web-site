@@ -1,5 +1,18 @@
+<svelte:head>
+	<title>{blogName} - Tecnologia, Ciências e Música</title>
+	<meta name="description" content="Bem-vindo ao {blogName}, onde compartilho minhas experiências e conhecimentos sobre tecnologia, ciência e música.">
+	<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, {blogName}, Desenvolvimento, Svelte, JavaScript">
+	<meta name="author" content="Maikon Weber">
+	<meta property="og:title" content="{blogName} - Tecnologia, Ciência e Música">
+	<meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no {blogName}.">
+	<meta property="og:url" content="https://dev.muttercorp.com.br/blog">
+	<meta name="twitter:card" content="summary_large_image">
+	<meta property="og:type" content="website">
+</svelte:head>
 <script>
 	import { onMount } from 'svelte';
+
+
 
 	let posts = [];
 	let blogName = 'Maikon Weber Blog'; // Defina o nome do blog aqui
