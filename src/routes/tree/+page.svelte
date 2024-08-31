@@ -12,7 +12,9 @@
             { name: "GitHub", url: "https://github.com/maikonweber" },
             { name: "x", url: "https://x.com/MaikonWeber1" },
             { name: "Blog", url: "https://muttercorp.com.br/blog/"},
-            { name: "Drive", url: "https://drive.google.com/drive/folders/13IJWGRoithYsfv8mIMup2Ieno_rsFI3A?usp=sharing tbcv "}        
+            { name: "Drive", url: "https://drive.google.com/drive/folders/13IJWGRoithYsfv8mIMup2Ieno_rsFI3A?usp=sharing tbcv "},        
+            { name: "SoundCloud", url: "https://soundcloud.com/search?q=maikon%20weber%20carvalho"},
+            { name: "BlueSky", url: "https://bsky.app/profile/maikonweber.bsky.social"}
         ]
     };
 
@@ -141,5 +143,15 @@
     .link-drive {
         background-color: green; /* Cor aleatória */
         color: white;
+    }
+
+    .link-bluesky {
+        background-color: rgb(79, 205, 228); /* Cor aleatória */
+        color: rgb(238, 243, 245);
+    }
+
+    .link-soundcloud {
+        background-color: rgb(194, 61, 9); /* Cor aleatória */
+        color: rgb(243, 237, 235);
     }
 </style>
