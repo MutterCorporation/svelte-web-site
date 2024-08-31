@@ -1,11 +1,11 @@
 <svelte:head>
 	{#if previewHtml}
-		<title>{`${getPreviewText(previewHtml, 60)}... - Maikon Weber Blog`}</title>
-		<meta name="description" content={`${getPreviewText(previewHtml, 160)}...`}>
+		<title>{`${getPreviewText(title, 60)}... - Maikon Weber Blog`}</title>
+		<meta name="description" content={`${getPreviewText(preview, 160)}...`}>
 		<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Maikon Weber, Desenvolvimento, Svelte, JavaScript">
 		<meta name="author" content="Maikon Weber">
-		<meta property="og:title" content={`${getPreviewText(previewHtml, 60)}... - Maikon Weber Blog`}>
-		<meta property="og:description" content={`${getPreviewText(previewHtml, 160)}...`}>
+		<meta property="og:title" content={`${getPreviewText(title, 60)}... - Maikon Weber Blog`}>
+		<meta property="og:description" content={`${getPreviewText(preview, 160)}...`}>
 		<meta property="og:image" content={img || 'default-image-url'}>
 		<meta property="og:url" content={`https://dev.muttercorp.com.br/blog/${window.location.pathname.split('/').pop()}`}>
 		<meta name="twitter:card" content="summary_large_image">
@@ -29,6 +29,8 @@
 	let blogName = "Maikon Weber Blog"
 	let previewHtml = '';
 	let error = false;
+	let preview = ''
+	let title = ''
 	let errorMessage = '';
 	let img = '';
 
@@ -57,6 +59,8 @@
 
 			img = data.img;
 			const html = data.text;
+			title = data.titulo
+			preview = data.preview
 			previewHtml = html;
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
