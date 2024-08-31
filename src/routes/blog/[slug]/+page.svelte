@@ -1,16 +1,28 @@
 <svelte:head>
-	<title>{blogName} - Tecnologia, Ciências e Música</title>
-	<meta name="description" content="Bem-vindo ao {blogName}, onde compartilho minhas experiências e conhecimentos sobre tecnologia, ciência e música.">
-	<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, {blogName}, Desenvolvimento, Svelte, JavaScript">
-	<meta name="author" content="Maikon Weber">
-	<meta property="og:title" content="{blogName} - Tecnologia, Ciência e Música">
-	<meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no {blogName}.">
-	<meta property="og:url" content="https://dev.muttercorp.com.br/blog">
-	<meta name="twitter:card" content="summary_large_image">
-	<meta property="og:type" content="website">
+	{#if previewHtml}
+		<title>{`${getPreviewText(previewHtml, 60)}... - Maikon Weber Blog`}</title>
+		<meta name="description" content={`${getPreviewText(previewHtml, 160)}...`}>
+		<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Maikon Weber, Desenvolvimento, Svelte, JavaScript">
+		<meta name="author" content="Maikon Weber">
+		<meta property="og:title" content={`${getPreviewText(previewHtml, 60)}... - Maikon Weber Blog`}>
+		<meta property="og:description" content={`${getPreviewText(previewHtml, 160)}...`}>
+		<meta property="og:image" content={img || 'default-image-url'}>
+		<meta property="og:url" content={`https://dev.muttercorp.com.br/blog/${window.location.pathname.split('/').pop()}`}>
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="og:type" content="article">
+	{:else}
+		<title>Maikon Weber Blog</title>
+		<meta name="description" content="Bem-vindo ao Maikon Weber Blog, onde compartilho minhas experiências e conhecimentos sobre tecnologia, ciência e música.">
+		<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Maikon Weber, Desenvolvimento, Svelte, JavaScript">
+		<meta name="author" content="Maikon Weber">
+		<meta property="og:title" content="Maikon Weber Blog">
+		<meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no Maikon Weber Blog.">
+		<meta property="og:image" content="default-image-url">
+		<meta property="og:url" content="https://dev.muttercorp.com.br/blog">
+		<meta name="twitter:card" content="summary_large_image">
+		<meta property="og:type" content="website">
+	{/if}
 </svelte:head>
-
-
 <script>
 	import { onMount } from 'svelte';
 
@@ -19,6 +31,10 @@
 	let error = false;
 	let errorMessage = '';
 	let img = '';
+
+	function getPreviewText(text, maxLength) {
+		return text.length > maxLength ? text.slice(0, maxLength) : text;
+	}
 
 
 	async function fetchPostData(slug) {
