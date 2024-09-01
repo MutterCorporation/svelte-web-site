@@ -14,7 +14,8 @@
             { name: "Blog", url: "https://muttercorp.com.br/blog/"},
             { name: "Drive", url: "https://drive.google.com/drive/folders/13IJWGRoithYsfv8mIMup2Ieno_rsFI3A?usp=sharing tbcv "},        
             { name: "SoundCloud", url: "https://soundcloud.com/search?q=maikon%20weber%20carvalho"},
-            { name: "BlueSky", url: "https://bsky.app/profile/maikonweber.bsky.social"}
+            { name: "BlueSky", url: "https://bsky.app/profile/muttercorp.com.br"},
+            { name: "Twitch", url: "https://www.twitch.tv/maikonweber"}
         ]
     };
 
@@ -153,5 +154,10 @@
     .link-soundcloud {
         background-color: rgb(194, 61, 9); /* Cor aleatória */
         color: rgb(243, 237, 235);
+    }
+
+    .link-twitch {
+        background-color: rgb(163, 9, 194); /* Cor aleatória */
+        color: rgb(243, 237, 235);        
     }
 </style>
