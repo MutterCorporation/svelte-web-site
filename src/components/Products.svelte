@@ -1,8 +1,10 @@
 <script>
     const products = [
+      { name: "BlueSkyPhase", description: 'Agende seu post na rede social blue sky', href: "/login",  details: "Blue Sky Phase' Details" },
+      { name: 'MailMass', description: 'Envie e-mails em massa de forma eficaz e eficiente.', href: "/login",  details: "MailMass Details" },
       { name: 'CryptoStomp', description: 'Uma solução inovadora para criptomoedas.', href : "/login", details: "CryptoStomp Details" },
       { name: 'BetInsigth', description: 'Aposte com confiança e insights avançados.', href: "/login",  details: "BetInsigth Details"  },
-      { name: 'MailMass', description: 'Envie e-mails em massa de forma eficaz e eficiente.', href: "/login",  details: "MailMass Details"  }
+
     ];
   </script>
   
