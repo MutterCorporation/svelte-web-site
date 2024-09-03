@@ -88,12 +88,12 @@
             });
     }
 
-	function handleSubmitCredentials() {
+	function handleSubmitCredentials(method) {
         const token = localStorage.getItem('MutterCorp');
         isLoading = true; // Mostra o loading enquanto a request é enviada
 
         fetch('https://dev.muttercorp.com.br/bluesky/credentials', {
-            method: 'POST',
+            method: method,
             headers: {
                 'Content-Type': 'application/json',
                 accept: '*/*',
@@ -214,8 +214,8 @@
 			<input id="credential2" type="text" bind:value={credential2} />
 		</div>
 		<div class="modal-buttons">
-			<button on:click={handleUpdateCredentials}>Atualizar Credenciais</button>
-			<button on:click={handleSubmitCredentials}>Enviar Novas Credenciais</button>
+			<button on:click={() => handleSubmitCredentials('PATCH')}>Atualizar Credenciais</button>
+			<button on:click={() => handleSubmitCredentials('POST')}>Enviar Novas Credenciais</button>
 		</div>
 		<button class="modal-close" on:click={toggleModal}>Fechar</button>
 	</div>

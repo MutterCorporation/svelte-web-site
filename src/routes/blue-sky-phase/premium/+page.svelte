@@ -69,7 +69,7 @@
             <li>Limite diário: 300 postagens</li>
             <li>Postagens mensais: Ilimitadas</li>
         </ul>
-        <p class="price">R$ 27,99 por mês</p>
+        <p class="price">R$ 17,99 por mês</p>
         <button class="btn" on:click={() => handleAction('pay')}>Adquira o Premium</button>
     </div>
 </div>
