@@ -33,6 +33,7 @@
           console.log(data);
           localStorage.setItem('MutterCorp', data.token);
           showToastMessage('Logged in successfully', 'success');
+          window.location.href = '/blue-sky-phase/premium'
         } else {
           const errorData = await res.json();
           showToastMessage(errorData.message || 'Login failed', 'error');
@@ -62,7 +63,7 @@
       padding: 2rem;
       box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
       border-radius: 8px;
-      background: linear-gradient(to right, #f21d41, #230f2b);
+      background: linear-gradient(135deg, #0056a0, #e0e0e0); /* Gradiente azul e cinza */
       text-align: center;
     }
   
