@@ -2,7 +2,7 @@
 	<title>{productName} - {tagline}</title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<meta name="description" content="Transforme a maneira como você gerencia suas postagens na Blue Sky com o Blue Sky Places. Agende suas postagens com facilidade e maximize sua presença nas redes sociais.">
+	<meta name="description" content="Transforme a maneira como você gerencia suas postagens na Blue Sky com o Blue Sky Phaces. Agende suas postagens com facilidade e maximize sua presença nas redes sociais.">
 	<meta name="keywords" content="Blue Sky Places, agendamento de postagens, gerenciamento de redes sociais, ferramenta de agendamento, produto Blue Sky">
 	<meta name="author" content="Maikon Weber">
 	
