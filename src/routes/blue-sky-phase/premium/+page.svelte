@@ -6,7 +6,8 @@
     function handleAction(action) {
         if (action === 'pay') {
             // Redirecionar para o link de pagamento
-            window.location.href = 'URL_DO_LINK_DE_PAGAMENTO'; // Substitua pelo URL real
+            alert("Versão não disponível")
+            window.location.href = 'agendor'; // Substitua pelo URL real
         } else if (action === 'continue') {
             // Continuar com a versão gratuita
             window.location.href = 'agendor'; // Substitua pelo URL real
