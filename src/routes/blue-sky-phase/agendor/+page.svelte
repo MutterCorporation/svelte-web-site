@@ -183,7 +183,7 @@
 										<p><strong>Texto:</strong> {message.text || 'Não disponível'}</p>
 										<p><strong>Data do Evento:</strong> {new Date(message.shot_date).toLocaleString()}</p>
 										<p><strong>Criado em:</strong> {new Date(message.created_at).toLocaleString()}</p>
-										<p><strong>Publicado em:</strong> {new Date(message.post_at).toLocaleString()}</p>
+										<p><strong>Publicado em:</strong> {message.post_at ? new Date(message.post_at).toLocaleString(): "Ainda não publicada"}</p>
 										{#if message.cause}
 											<p><strong>Causa:</strong> {message.cause}</p>
 										{/if}
