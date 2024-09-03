@@ -138,7 +138,7 @@
       <button type="submit">Login</button>
     </form>
     <div style="margin-top: 1rem;">
-      <a href="/register">Register</a>
+      <a href="/blue-sky-phase/register">Register</a>
     </div>
   </div>
   
