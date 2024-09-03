@@ -77,12 +77,10 @@
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('Success:', data);
             })
             .catch((error) => {
-                console.error('Error:', error);
-				alert(`Erro ao criar mensagem, verifique suas credentiais`)
-			})
+
+            })
             .finally(() => {
                 isLoading = false; // Esconde o loading após a request ser concluída
             });
