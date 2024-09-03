@@ -45,7 +45,7 @@
                 email = '';
                 password = '';
                 // Redirecionar para a página de login
-                window.location.href = '/login';
+                window.location.href = '/blue-sky-phase/login';
             } else {
                 
                 alert("Ocorreu um erro no seu registro tente trocar o usuario ou email, ou tente fazer login")

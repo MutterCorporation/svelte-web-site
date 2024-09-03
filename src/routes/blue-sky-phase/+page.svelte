@@ -121,8 +121,7 @@ Comece a transformar sua presença na Blue Sky hoje mesmo com o ${productName} e
         <h3>Free</h3>
         <p>Explore as funcionalidades básicas e comece a agendar suas postagens com a nossa versão gratuita.</p>
         <ul class="plan-details">
-            <li>Limite diário: 3 postagens</li>
-            <li>Postagens mensais: 13</li>
+            <li>Postagens mensais: 17</li>
         </ul>
         <button class="btn" on:click={handleRegister}>Experimente Grátis</button>
     </div>
@@ -131,9 +130,9 @@ Comece a transformar sua presença na Blue Sky hoje mesmo com o ${productName} e
         <p>Obtenha acesso completo a todas as funcionalidades avançadas e maximize sua presença nas redes sociais.</p>
         <ul class="plan-details">
             <li>Limite diário: 300 postagens</li>
-            <li>Postagens mensais: Ilimitadas</li>
+            <li>Postagens mensais: 1000</li>
         </ul>
-        <p class="price">R$ 27,99 por mês</p>
+        <p class="price">R$ 17,99 por mês</p>
         <button class="btn" on:click={handleRegister}>Adquira o Premium</button>
     </div>
 </div>
