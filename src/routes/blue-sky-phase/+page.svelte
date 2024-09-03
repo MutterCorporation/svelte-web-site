@@ -35,13 +35,13 @@
 	import CornerText from './CornerText.svelte'; // Componente de texto no canto
 	
 	// Define o texto do produto
-	const productName = "Blue Sky Places";
+	const productName = "Blue Sky Phase";
 	const tagline = "Agende Suas Postagens com Facilidade";
 
-	const intro = "Transforme a maneira como você gerencia suas postagens na Blue Sky com o Blue Sky Places!";
+	const intro = "Transforme a maneira como você gerencia suas postagens na Blue Sky com o Blue Sky Phase!";
 
 	const description = `
-No mundo dinâmico das redes sociais, a organização e o timing são essenciais. O Blue Sky Places é a solução perfeita para quem deseja otimizar seu fluxo de trabalho e garantir que suas postagens sejam publicadas no momento mais estratégico. Com nossa ferramenta, você pode:
+No mundo dinâmico das redes sociais, a organização e o timing são essenciais. O Blue Sky Phase é a solução perfeita para quem deseja otimizar seu fluxo de trabalho e garantir que suas postagens sejam publicadas no momento mais estratégico. Com nossa ferramenta, você pode:
 `;
 
 	const features = [
