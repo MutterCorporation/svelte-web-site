@@ -104,7 +104,7 @@
         })
             .then((response) => response.json())
             .then((data) => {
-                console.log('Credenciais Cadastradas com Sucesso:', data);
+               
                 // Limpar os campos após o sucesso
                 credential1 = '';
                 credential2 = '';
@@ -203,12 +203,13 @@
 <div class="modal-overlay">
 	<div class="modal-content">
 		<h2>Cadastrar Credenciais</h2>
+        <h1> Suas credenciais são criptografadas e suas informações sensíveis são descriptografadas somente a nível de código e durante o envio </h1>
 		<div class="form-group">
-			<label for="credential1"> username </label>
+			<label for="credential1"> Email do Blue-sky </label>
 			<input id="credential1" type="text" bind:value={credential1} />
 		</div>
 		<div class="form-group">
-			<label for="credential2"> password </label>
+			<label for="credential2"> Senha do Blue-sky </label>
 			<input id="credential2" type="text" bind:value={credential2} />
 		</div>
 		<div class="modal-buttons">
