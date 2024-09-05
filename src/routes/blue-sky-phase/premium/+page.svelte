@@ -71,7 +71,7 @@
 			<li>Thread-Creator: Envie um texto sem limites de characteres em Markdown e montamos a thread</li>
 			<li>Imagens na Aplicação </li>
         </ul>
-        <p class="price">R$ 17,99 por mês</p>
+        <p class="price"> Não disponível no momento</p>
         <button class="btn" on:click={() => handleAction('pay')}>Adquira o Premium</button>
     </div>
 </div>
