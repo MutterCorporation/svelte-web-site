@@ -121,7 +121,7 @@ Comece a transformar sua presença na Blue Sky hoje mesmo com o ${productName} e
         <h3>Free</h3>
         <p>Explore as funcionalidades básicas e comece a agendar suas postagens com a nossa versão gratuita.</p>
         <ul class="plan-details">
-            <li>Postagens mensais: 17</li>
+            <li>Postagens mensais: 30</li>
         </ul>
         <button class="btn" on:click={handleRegister}>Experimente Grátis</button>
     </div>
@@ -131,8 +131,10 @@ Comece a transformar sua presença na Blue Sky hoje mesmo com o ${productName} e
         <ul class="plan-details">
             <li>Limite diário: 300 postagens</li>
             <li>Postagens mensais: 1000</li>
-        </ul>
-        <p class="price">R$ 17,99 por mês</p>
+			<li>Thread-Creator: Envie um texto sem limites de characteres em Markdown e montamos a thread</li>
+			<li>Imagens na Aplicação </li>
+		</ul>
+        <p class="price"> Ainda Não Disponível </p>
         <button class="btn" on:click={handleRegister}>Adquira o Premium</button>
     </div>
 </div>
