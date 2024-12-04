@@ -1,5 +1,5 @@
 <svelte:head>
-	{#if previewHtml}
+	{#if modifiedText}
 		<title>{`${getPreviewText(title, 60)}... - Maikon Weber Blog`}</title>
 		<meta name="description" content={`${getPreviewText(preview, 160)}...`}>
 		<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Maikon Weber, Desenvolvimento, Svelte, JavaScript">
@@ -7,7 +7,7 @@
 		<meta property="og:title" content={`${getPreviewText(title, 60)}... - Maikon Weber Blog`}>
 		<meta property="og:description" content={`${getPreviewText(preview, 160)}...`}>
 		<meta property="og:image" content={img || 'default-image-url'}>
-		<meta property="og:url" content={`https://dev.muttercorp.com.br/blog/${window.location.pathname.split('/').pop()}`}>
+		<meta property="og:url" content={`https://muttercorp.com.br/blog/${window.location.pathname.split('/').pop()}`}>
 		<meta name="twitter:card" content="summary_large_image">
 		<meta property="og:type" content="article">
 	{:else}
@@ -15,10 +15,10 @@
 		<meta name="description" content="Bem-vindo ao Maikon Weber Blog, onde compartilho minhas experiências e conhecimentos sobre tecnologia, ciência e música.">
 		<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Maikon Weber, Desenvolvimento, Svelte, JavaScript">
 		<meta name="author" content="Maikon Weber">
-		<meta property="og:title" content="Maikon Weber Blog">
+		<meta property="og:title" content="CryptoStomp">
 		<meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no Maikon Weber Blog.">
 		<meta property="og:image" content="default-image-url">
-		<meta property="og:url" content="https://dev.muttercorp.com.br/blog">
+		<meta property="og:url" content="https://muttercorp.com.br/cryptostomp">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta property="og:type" content="website">
 	{/if}
@@ -26,10 +26,10 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let blogName = "Maikon Weber Blog"
-	let previewHtml = '';
+	let blogName = "CryptoStomp"
 	let error = false;
 	let preview = ''
+	let modifiedText = ''
 	let title = ''
 	let errorMessage = '';
 	let img = '';
@@ -41,7 +41,7 @@
 
 	async function fetchPostData(slug) {
 		try {
-			const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`, {
+			const response = await fetch(`https://dev.muttercorp.com.br/investing-new/${slug}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'
@@ -53,18 +53,18 @@
 			}
 
 			const data = await response.json();
+
 			if (!data) {
 				throw new Error('Post not found');
 			}
 
-			img = data.img;
-			const html = data.text;
-			title = data.titulo
-			preview = data.preview
-			previewHtml = html;
+			// img = data.img;
+			// const html = data.text;
+			title = data.title
+			modifiedText = data.modifiedText
 			error = false; // Reset error state if fetch is successful
 		} catch (error) {
-			console.error(error);
+			// console.error(error);
 			error = true;
 			errorMessage = error.message || 'An unexpected error occurred';
 		}
@@ -77,19 +77,19 @@
 </script>
 
 {#if error}
-	<div class="error-container">
-		<h1>Erro</h1>
-		<p>{errorMessage}</p>
-	</div>
+  <div class="error-container">
+    <h1>Erro</h1>
+    <p>{errorMessage}</p>
+  </div>
 {:else}
-	<div class="container">
-		<div class="post">
-			<img src={img} alt="Post Image" class="post-image" />
-			<div class="post-body">
-				{@html previewHtml}
-			</div>
-		</div>
-	</div>
+  <div class="container">
+    <div class="post">
+		<h1 class="post-title">{title}</h1> <!-- Substituindo a imagem pelo título -->
+      <div class="post-body">
+        {modifiedText}
+      </div>
+    </div>
+  </div>
 {/if}
 
 <style>

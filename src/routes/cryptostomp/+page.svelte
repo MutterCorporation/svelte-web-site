@@ -68,7 +68,7 @@
 	});
 
 	function goToPost(postId) {
-		window.location.href = `/blog/${postId}`;
+		window.location.href = `/cryptostomp/${postId}`;
 	}
 </script>
 
@@ -92,7 +92,12 @@
 
 				<div class="post-content">
 					<h2 class="post-title">{post.title}</h2>
-					<div class="post-body">{post.modifiedText}</div>
+					<div class="post-body">
+						{post.modifiedText && post.modifiedText.length > 100 
+						  ? post.modifiedText.substring(0, 100) + "..." 
+						  : post.modifiedText}
+					  </div>
+					<div class="post-body">{post.createdAt}</div>
 				</div>
 			</div>
 		{/each}
