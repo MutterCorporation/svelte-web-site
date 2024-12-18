@@ -3,12 +3,13 @@
   import Header from '../../components/Header.svelte';
   import Footer from "../../components/Footer.svelte";
   import Toast from "../../components/Toster.svelte";
+  import { Card, Button, Label, Input, Checkbox } from 'flowbite-svelte';
 
-  let username = '';
-  let password = '';
-  let showToast = false;
-  let toastMessage = '';
-  let toastType = '';
+  let username = $state('');
+  let password = $state('');
+  let showToast = $state(false);
+  let toastMessage = $state('');
+  let toastType = $state('');
 
   function showToastMessage(message, type) {
     toastMessage = message;
@@ -43,102 +44,29 @@
   }
 </script>
 
-<style>
-  img {
-    width: 120px;
-    height: 120px;
-  }
 
-  :global(body) {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-    font-family: Arial, sans-serif;
-  }
-
-  .login-container {
-    max-width: 400px;
-    margin: 10% auto;
-    padding: 2rem;
-    box-shadow: 0 10px 8px rgba(0, 0, 0, 0.1);
-    border-radius: 8px;
-    background: linear-gradient(to right, #f21d41, #230f2b);
-    text-align: center;
-  }
-
-  h1 {
-    color: #fff;
-    margin-bottom: 1.5rem;
-  }
-
-  .input-group {
-    margin-bottom: 1rem;
-    text-align: left;
-  }
-
-  .input-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #fff;
-  }
-
-  .input-group input {
-    width: 100%;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-  }
-
-  button {
-    width: 100%;
-    padding: 0.75rem;
-    border: none;
-    border-radius: 4px;
-    background-color: #043151;
-    color: #fff;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.3s;
-  }
-
-  button:hover {
-    background-color: #0056b3;
-  }
-
-  .error {
-    color: red;
-    text-align: center;
-    margin-top: 1rem;
-  }
-
-  .login-form {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-
-  .login-form .input-group, .login-form button {
-    width: 100%;
-  }
-</style>
-
-<div class="login-container">
-  <img src={"/logo.png"} alt="MutterCorp Logo" class="logo" />
-  <h1>Login</h1>
-  <form class="login-form" on:submit={login}>
-    <div class="input-group">
-      <label for="username">Username</label>
-      <input type="text" id="username" bind:value={username} placeholder="Enter your username" />
+<div class='flex justify-center items-center h-screen'> 
+<Card>
+  <form class="flex flex-col space-y-6" action="/">
+    <h3 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
+    <Label class="space-y-2">
+      <span>Email</span>
+      <Input bind:value={username} type="email" name="email" placeholder="name@company.com" required />
+    </Label>
+    <Label class="space-y-2">
+      <span>Your password</span>
+      <Input bind:value={password} type="password" name="password" placeholder="•••••" required />
+    </Label>
+    <div class="flex items-start">
+      <Checkbox>Remember me</Checkbox>
+      <a href="/" class="ms-auto text-sm text-primary-700 hover:underline dark:text-primary-500"> Lost password? </a>
     </div>
-    <div class="input-group">
-      <label for="password">Password</label>
-      <input type="password" id="password" bind:value={password} placeholder="Enter your password" />
+    <Button type="submit" class="w-full">Login to your account</Button>
+    <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+      Not registered? <a href="/" class="text-primary-700 hover:underline dark:text-primary-500"> Create account </a>
     </div>
-    <button type="submit">Login</button>
   </form>
-  <div style="margin-top: 1rem;">
-    <a href="/register">Register</a>
-  </div>
+</Card>
 </div>
 
 {#if showToast}

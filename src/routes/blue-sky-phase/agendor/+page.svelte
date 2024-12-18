@@ -5,19 +5,19 @@
     let preview = '';
     let image = null;
     let title = '';
-    let body = '';
+    let body = $state('');
     let previewHtml = '';
-    let isLoading = true;
+    let isLoading = $state(true);
     let isAuthenticated = false;
-    let postDate = ''; // Variável para armazenar a data e hora do post
+    let postDate = $state(''); // Variável para armazenar a data e hora do post
     let charLimit = 300; // Limite de caracteres para o campo de texto
 
     // Variáveis para o modal
-    let isModalOpen = false;
-    let credential1 = '';
-    let credential2 = '';
+    let isModalOpen = $state(false);
+    let credential1 = $state('');
+    let credential2 = $state('');
 
-	let msg = []
+	let msg = $state([])
 
 	async function fetchMessages() {
         const token = localStorage.getItem('MutterCorp');
@@ -149,7 +149,7 @@
     {#if isLoading} 
         <Loding message="Por favor, aguarde..." />
     {:else}
-        <form on:submit={handleSubmit}>
+        <form onsubmit={handleSubmit}>
             <div class="form-group">
                 <label for="body">Corpo (máx. {charLimit} caracteres):</label>
                 <textarea id="body" bind:value={body} maxlength={charLimit}></textarea>
@@ -162,7 +162,7 @@
             </div>
 
             <button type="submit">Enviar</button>
-			<button type="button" on:click={toggleModal}>Cadastrar Credentials</button>
+			<button type="button" onclick={toggleModal}>Cadastrar Credentials</button>
         </form>
 		<div class="messages">
 			<h2>Mensagens Criadas</h2>
@@ -213,10 +213,10 @@
 			<input id="credential2" type="text" bind:value={credential2} />
 		</div>
 		<div class="modal-buttons">
-			<button on:click={() => handleSubmitCredentials('PATCH')}>Atualizar Credenciais</button>
-			<button on:click={() => handleSubmitCredentials('POST')}>Enviar Novas Credenciais</button>
+			<button onclick={() => handleSubmitCredentials('PATCH')}>Atualizar Credenciais</button>
+			<button onclick={() => handleSubmitCredentials('POST')}>Enviar Novas Credenciais</button>
 		</div>
-		<button class="modal-close" on:click={toggleModal}>Fechar</button>
+		<button class="modal-close" onclick={toggleModal}>Fechar</button>
 	</div>
 </div>
 {/if}

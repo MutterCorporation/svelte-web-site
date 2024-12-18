@@ -1,9 +1,9 @@
 <script>
-    let name = '';
-    let surname = '';
-    let username = '';
-    let email = '';
-    let password = '';
+    let name = $state('');
+    let surname = $state('');
+    let username = $state('');
+    let email = $state('');
+    let password = $state('');
     let errorMessage = '';
     let successMessage = '';
 
@@ -70,7 +70,7 @@
     <div class="card">
         <div class="form-container">
             <h2>Registro</h2>
-            <form on:submit={handleSubmit}>
+            <form onsubmit={handleSubmit}>
                 <div class="form-group">
                     <label for="name">Nome:</label>
                     <input type="text" id="name" bind:value={name} required aria-required="true" />

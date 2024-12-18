@@ -1,14 +1,15 @@
-<script>
-	import { inject } from '@vercel/analytics';
-	import { injectSpeedInsights } from '@vercel/speed-insights/sveltekit';
+<script>import "../app.css";
+/** @type {{children?: import('svelte').Snippet}} */
+let { children } = $props();
 
-	injectSpeedInsights();
-	inject({ mode: 'production' });
 </script>
 
 <main>
-	<slot />
+	{@render children?.()}
 </main>
+
+
+
 
 <style>
 	:global(body) {

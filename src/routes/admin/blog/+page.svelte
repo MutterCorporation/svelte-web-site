@@ -1,11 +1,11 @@
 <script>
 	import { onMount } from 'svelte';
 
-	let preview = '';
-	let image = null;
-	let title = '';
-	let body = '';
-	let previewHtml = '';
+	let preview = $state('');
+	let image = $state(null);
+	let title = $state('');
+	let body = $state('');
+	let previewHtml = $state('');
 	let isLoading = true; // Variável para controlar o estado de carregamento
 	let isAuthenticated = false;
 
@@ -91,14 +91,14 @@
 	</header>
 	<p class="message">Este conteúdo só é acessível se o usuário estiver autenticado.</p>
 
-	<form on:submit={handleSubmit}>
+	<form onsubmit={handleSubmit}>
 		<div class="form-group">
 			<label for="image">Imagem:</label>
 			<input
 				type="file"
 				id="image"
 				accept="image/*"
-				on:change={(event) => (image = event.target.files[0])}
+				onchange={(event) => (image = event.target.files[0])}
 			/>
 		</div>
 		<div class="form-group">
@@ -115,7 +115,7 @@
 			<textarea id="body" bind:value={preview}></textarea>
 		</div>
 
-		<button type="button" on:click={handleConvertMarkdown}>Converter Markdown</button>
+		<button type="button" onclick={handleConvertMarkdown}>Converter Markdown</button>
 		<button type="submit">Enviar</button>
 	</form>
 

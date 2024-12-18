@@ -27,11 +27,11 @@
 	import { onMount } from 'svelte';
 
 	let blogName = "CryptoStomp"
-	let error = false;
+	let error = $state(false);
 	let preview = ''
-	let modifiedText = ''
-	let title = ''
-	let errorMessage = '';
+	let modifiedText = $state('')
+	let title = $state('')
+	let errorMessage = $state('');
 	let img = '';
 
 	function getPreviewText(text, maxLength) {

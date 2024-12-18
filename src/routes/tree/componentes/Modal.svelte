@@ -1,10 +1,11 @@
 <script>
-	export let closeModal;
+	/** @type {{closeModal: any}} */
+	let { closeModal } = $props();
 
-	let message = '';
-	let name = '';
-	let email = '';
-	let isAnonymous = false;
+	let message = $state('');
+	let name = $state('');
+	let email = $state('');
+	let isAnonymous = $state(false);
 
 	async function handleSubmit() {
 		if (message.length > 500) {
@@ -50,9 +51,9 @@
 	}
 </script>
 
-<div class="modal-overlay" on:click={handleOverlayClick}>
+<div class="modal-overlay" onclick={handleOverlayClick}>
 	<div class="modal-content">
-		<button class="close-button" on:click={closeModal}>✖</button>
+		<button class="close-button" onclick={closeModal}>✖</button>
 		<h2>Deixe sua mensagem</h2>
 		<textarea
 			placeholder="Escreva sua mensagem (máx. 500 caracteres)"
@@ -65,7 +66,7 @@
 			<input type="checkbox" bind:checked={isAnonymous} />
 			Enviar como anônimo
 		</label>
-		<button on:click={handleSubmit}>Enviar</button>
+		<button onclick={handleSubmit}>Enviar</button>
 	</div>
 </div>
 

@@ -1,6 +1,7 @@
 <!-- Loading.svelte -->
 <script>
-	export let message = 'Carregando...'; // Mensagem de carregamento que pode ser personalizada
+	/** @type {{message?: string}} */
+	let { message = 'Carregando...' } = $props();
 </script>
 
 <div class="loading">

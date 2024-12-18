@@ -30,7 +30,7 @@
     ganhos ou proporcionem diversão em atividades, além de atuar como 
     uma transformadora ao ajudar e divulgar ações relevantes.`;
 
-  let text = ''; // Texto que será mostrado na máquina de escrever
+  let text = $state(''); // Texto que será mostrado na máquina de escrever
   let displayText = ''; // Texto que será exibido com o efeito de digitação
   let currentIndex = 0; // Índice para acompanhar a posição atual do texto
 

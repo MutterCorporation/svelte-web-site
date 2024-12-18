@@ -1,7 +1,7 @@
 <script>
 	import { onMount } from 'svelte';
     import Loding from '../../../components/Loding.svelte'
-    let isLoading = true;
+    let isLoading = $state(true);
 
     function handleAction(action) {
         if (action === 'pay') {
@@ -60,7 +60,7 @@
         <ul class="plan-details">
             <li>Postagens mensais: 30</li>
         </ul>
-        <button class="btn" on:click={() => handleAction('continue')}>Experimente Grátis</button>
+        <button class="btn" onclick={() => handleAction('continue')}>Experimente Grátis</button>
     </div>
     <div class="card">
         <h3>Premium</h3>
@@ -72,7 +72,7 @@
 			<li>Imagens na Aplicação </li>
         </ul>
         <p class="price"> Não disponível no momento</p>
-        <button class="btn" on:click={() => handleAction('pay')}>Adquira o Premium</button>
+        <button class="btn" onclick={() => handleAction('pay')}>Adquira o Premium</button>
     </div>
 </div>
 {/if}

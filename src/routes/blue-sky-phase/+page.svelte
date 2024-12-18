@@ -114,7 +114,7 @@ Comece a transformar sua presença na Blue Sky hoje mesmo com o ${productName} e
 				<p>{callToAction}</p>
 			</div>
 		</div>
-		<button class="btn-enter" on:click={handleLogin}>Entrar na Plataforma</button>
+		<button class="btn-enter" onclick={handleLogin}>Entrar na Plataforma</button>
 	</section>
 	<div class="cards-container">
     <div class="card">
@@ -123,7 +123,7 @@ Comece a transformar sua presença na Blue Sky hoje mesmo com o ${productName} e
         <ul class="plan-details">
             <li>Postagens mensais: 30</li>
         </ul>
-        <button class="btn" on:click={handleRegister}>Experimente Grátis</button>
+        <button class="btn" onclick={handleRegister}>Experimente Grátis</button>
     </div>
     <div class="card">
         <h3>Premium</h3>
@@ -135,7 +135,7 @@ Comece a transformar sua presença na Blue Sky hoje mesmo com o ${productName} e
 			<li>Imagens na Aplicação </li>
 		</ul>
         <p class="price"> Ainda Não Disponível </p>
-        <button class="btn" on:click={handleRegister}>Adquira o Premium</button>
+        <button class="btn" onclick={handleRegister}>Adquira o Premium</button>
     </div>
 </div>
 

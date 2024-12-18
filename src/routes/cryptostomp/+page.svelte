@@ -14,9 +14,9 @@
 
 
 
-	let posts = [];
+	let posts = $state([]);
 	let blogName = 'Investing Notices'; // Defina o nome do blog aqui
-	let hasError = false; // Variável para controlar o estado de erro
+	let hasError = $state(false); // Variável para controlar o estado de erro
 
 	export function load() {
 		const token = localStorage.getItem('MutterCorp');
@@ -87,7 +87,7 @@
 		<p>Desculpe, este blog não existe ou está temporariamente indisponível.</p>
 	{:else if posts.length > 0}
 		{#each posts as post (post.id)}
-			<div class="post" on:click={() => goToPost(post.id)}>
+			<div class="post" onclick={() => goToPost(post.id)}>
 				<!-- <img src={post.img} alt="Post Image" class="post-image" /> -->
 
 				<div class="post-content">

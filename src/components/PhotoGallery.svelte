@@ -1,7 +1,8 @@
 <!-- PhotoGallery.svelte -->
 
 <script>
-    export let photos = [];
+    /** @type {{photos?: any}} */
+    let { photos = [] } = $props();
 
     function handleDeletePhoto(id) {
         // Lógica para deletar a foto (caso necessário)
@@ -47,7 +48,7 @@
         <div class="photo">
             <img src={photo.url} alt="Photo" width="100%" height="auto" />
             <!-- Botão de exclusão -->
-            <button class="delete-btn" on:click={() => handleDeletePhoto(photo.id)}>Delete</button>
+            <button class="delete-btn" onclick={() => handleDeletePhoto(photo.id)}>Delete</button>
         </div>
     {/each}
 </div>

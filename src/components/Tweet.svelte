@@ -1,6 +1,6 @@
 <script>
-    export let tweet;
-    export let onDelete;
+    /** @type {{tweet: any, onDelete: any}} */
+    let { tweet, onDelete } = $props();
 
     console.log(tweet)
 
@@ -44,6 +44,6 @@
 <div class="tweet">
     <div class="content">{tweet.content}</div>
     <div class="actions">
-        <button on:click={handleDelete}>Delete</button>
+        <button onclick={handleDelete}>Delete</button>
     </div>
 </div>

@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
   
-    let canvas;
+    let canvas = $state();
     let context;
   
     // Função para desenhar no canvas

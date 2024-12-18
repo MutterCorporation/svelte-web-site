@@ -1,5 +1,6 @@
 <script>
-	export let text = "Informações Importantes";
+	/** @type {{text?: string}} */
+	let { text = "Informações Importantes" } = $props();
 </script>
 
 <div class="corner-text">

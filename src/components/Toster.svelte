@@ -1,8 +1,8 @@
 <!-- Toast.svelte -->
 <script>
-  export let message = '';
-  export let type = 'info'; // pode ser 'info', 'success', 'error'
-  let visible = true;
+  /** @type {{message?: string, type?: string}} */
+  let { message = '', type = 'info' } = $props();
+  let visible = $state(true);
 
   function closeToast() {
     visible = false;
@@ -49,6 +49,6 @@
 {#if visible}
   <div class="toast {type} {visible ? '' : 'hidden'}">
     <span>{message}</span>
-    <button class="close-btn" on:click={closeToast}>&times;</button>
+    <button class="close-btn" onclick={closeToast}>&times;</button>
   </div>
 {/if}

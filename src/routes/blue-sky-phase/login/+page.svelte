@@ -4,11 +4,11 @@
     import Footer from "../../../components/Footer.svelte";
     import Toast from "../../../components/Toster.svelte";
   
-    let username = '';
-    let password = '';
-    let showToast = false;
-    let toastMessage = '';
-    let toastType = '';
+    let username = $state('');
+    let password = $state('');
+    let showToast = $state(false);
+    let toastMessage = $state('');
+    let toastType = $state('');
   
     function showToastMessage(message, type) {
       toastMessage = message;
@@ -126,7 +126,7 @@
   <div class="login-container">
     <img src={"/logo.png"} alt="MutterCorp Logo" class="logo" />
     <h1>Login</h1>
-    <form class="login-form" on:submit={login}>
+    <form class="login-form" onsubmit={login}>
       <div class="input-group">
         <label for="username">Username</label>
         <input type="text" id="username" bind:value={username} placeholder="Enter your username" />

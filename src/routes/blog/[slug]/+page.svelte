@@ -27,12 +27,12 @@
 	import { onMount } from 'svelte';
 
 	let blogName = "Maikon Weber Blog"
-	let previewHtml = '';
-	let error = false;
-	let preview = ''
-	let title = ''
-	let errorMessage = '';
-	let img = '';
+	let previewHtml = $state('');
+	let error = $state(false);
+	let preview = $state('')
+	let title = $state('')
+	let errorMessage = $state('');
+	let img = $state('');
 
 	function getPreviewText(text, maxLength) {
 		return text.length > maxLength ? text.slice(0, maxLength) : text;

@@ -1,12 +1,13 @@
 <script>
-    export let openModal;
+    /** @type {{openModal: any}} */
+    let { openModal } = $props();
 
     function handleClick() {
         openModal(true);
     }
 </script>
 
-<button class="touch-button" on:click={handleClick}>
+<button class="touch-button" onclick={handleClick}>
     Touch me
 </button>
 

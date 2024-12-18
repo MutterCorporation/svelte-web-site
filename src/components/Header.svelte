@@ -1,5 +1,6 @@
 <script>
-  export let logoSrc = '/logo.png';
+  /** @type {{logoSrc?: string}} */
+  let { logoSrc = '/logo.png' } = $props();
 
   function handleClick() {
     // @ts-ignore
@@ -94,9 +95,9 @@ img.zoom {
 
 <header>
   <div class="logo-container">
-    <!-- svelte-ignore a11y-click-events-have-key-events -->
-    <!-- svelte-ignore a11y-no-noninteractive-element-interactions -->
-    <img class="zoom" src={logoSrc} on:click={handleClick} alt="MutterCorp Logo"  />
+    <!-- svelte-ignore a11y_click_events_have_key_events -->
+    <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
+    <img class="zoom" src={logoSrc} onclick={handleClick} alt="MutterCorp Logo"  />
     <h1>MutterCorp</h1>
   </div>
 

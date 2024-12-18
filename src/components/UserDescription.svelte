@@ -1,7 +1,8 @@
 <!-- UserDescription.svelte -->
 
 <script>
-	export let currentUser;
+	/** @type {{currentUser: any}} */
+	let { currentUser } = $props();
 	// console.log(currentUser);
 </script>
 

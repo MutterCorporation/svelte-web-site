@@ -1,7 +1,7 @@
 <script>
     import { createEventDispatcher } from 'svelte';
 
-    let content = '';
+    let content = $state('');
     const dispatch = createEventDispatcher();
 
     function handleSubmit(event) {
@@ -40,7 +40,7 @@
     }
 </style>
 
-<form class="tweet-form" on:submit={handleSubmit}>
+<form class="tweet-form" onsubmit={handleSubmit}>
     <textarea rows="3" bind:value={content} placeholder="What's happening?"></textarea>
     <button type="submit">Tweet</button>
 </form>

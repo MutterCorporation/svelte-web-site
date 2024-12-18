@@ -24,7 +24,7 @@
     import TouchButton from './componentes/TouchButton.svelte'; 
     import Modal from './componentes/Modal.svelte'; 
 
-    let showModal = false;
+    let showModal = $state(false);
 
     function openModal(value) {
         showModal = value;
