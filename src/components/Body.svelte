@@ -21,11 +21,18 @@
     import Hero from './Hero.svelte';
     import Products from './Products.svelte';
     import About from './About.svelte';
-    
-    </script>
+	import { Footer, FooterBrand, FooterCopyright, FooterLink, FooterLinkGroup } from 'flowbite-svelte';
+	import Carousell from './Carousell.svelte';
+	import Header from './Header.svelte';
+</script>
   
-  <div class="body">
-    <Hero/>
-    <Products />
-    <About />
+  <div class="">
+    
+    <!-- <Header>
+
+    </Header> -->
+    <!-- <Carousell>
+
+    </Carousell> -->
+    <!-- <Products /> -->
   </div>

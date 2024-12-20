@@ -66,7 +66,7 @@
 
 </script>
   
-  <div class="max-w-full">
+  <div class="max-w-full mx-auto h-72 p-4">
     <Carousel {images} transition={scaleAnimation } let:Controls let:Indicators>
       <Controls />
       <Indicators />

@@ -14,11 +14,9 @@
     justify-content: space-between;
     align-items: center;
     background: linear-gradient(to right, #f21d41, #230f2b);
-    position: fixed;
-      width: 100%;
+    width: 100%;
     color: #fff;
     padding: 1rem 2rem;
-    border-bottom: 1px solid #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
   
@@ -98,7 +96,6 @@ img.zoom {
     <!-- svelte-ignore a11y_click_events_have_key_events -->
     <!-- svelte-ignore a11y_no_noninteractive_element_interactions -->
     <img class="zoom" src={logoSrc} onclick={handleClick} alt="MutterCorp Logo"  />
-    <h1>MutterCorp</h1>
   </div>
 
 </header>
