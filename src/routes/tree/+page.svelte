@@ -38,7 +38,11 @@
         <div class="user-photo">
             <img src={user_information.user_photo} alt="Maikon Weber">
         </div>
-        <TouchButton {openModal} />
+        <div class="button-group">
+            <TouchButton {openModal} />
+            <!-- Novo botão para download -->
+            <a href="/path/to/your/file.zip" download="file-name.zip" class="download-button"> Curriculum </a>
+        </div>
         <div class="user-description">
             {user_information.user_description}
         </div>
@@ -65,7 +69,7 @@
         width: 100vw;
         height: 100vh;
         background: linear-gradient(135deg, #333, #000);
-        z-index: -1; /* Coloca o fundo atrás dos outros elementos */
+        z-index: -1;
     }
 
     .link-tree {
@@ -81,7 +85,7 @@
         margin: 0 auto;
         box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         position: relative;
-        z-index: 1; /* Garante que o conteúdo esteja sobre o fundo */
+        z-index: 1;
     }
 
     .user-information {
@@ -111,7 +115,12 @@
         font-style: italic;
         color: #fafdff;
     }
-    
+
+    .button-group {
+        display: flex;
+        gap: 1rem;
+    }
+
     .link {
         display: block;
         width: 100%;
@@ -137,27 +146,43 @@
     }
 
     .link-blog {
-        background-color: #f39c12; /* Cor aleatória */
+        background-color: #f39c12;
         color: white;
     }
 
     .link-drive {
-        background-color: green; /* Cor aleatória */
+        background-color: green;
         color: white;
     }
 
     .link-bluesky {
-        background-color: rgb(79, 205, 228); /* Cor aleatória */
+        background-color: rgb(79, 205, 228);
         color: rgb(238, 243, 245);
     }
 
     .link-soundcloud {
-        background-color: rgb(194, 61, 9); /* Cor aleatória */
+        background-color: rgb(194, 61, 9);
         color: rgb(243, 237, 235);
     }
 
     .link-twitch {
-        background-color: rgb(163, 9, 194); /* Cor aleatória */
-        color: rgb(243, 237, 235);        
+        background-color: rgb(163, 9, 194);
+        color: rgb(243, 237, 235);
+    }
+
+    /* Estilos do botão de download */
+    .download-button {
+        display: inline-block;
+        padding: 1rem;
+        text-decoration: none;
+        background-color: #4CAF50;
+        color: white;
+        border-radius: 5px;
+        transition: background-color 0.3s, transform 0.3s;
+    }
+
+    .download-button:hover {
+        background-color: #45a049;
+        transform: scale(1.05);
     }
 </style>

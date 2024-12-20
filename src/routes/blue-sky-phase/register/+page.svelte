@@ -1,9 +1,9 @@
 <script>
-    let name = $state('');
-    let surname = $state('');
-    let username = $state('');
-    let email = $state('');
-    let password = $state('');
+    let name = '';
+    let surname = '';
+    let username = '';
+    let email = '';
+    let password = '';
     let errorMessage = '';
     let successMessage = '';
 
@@ -46,168 +46,68 @@
                 password = '';
                 // Redirecionar para a página de login
                 window.location.href = '/blue-sky-phase/login';
+            } else if (response.status === 409) {
+                errorMessage = 'Este usuário ou email já está registrado.';
             } else {
-                
-                alert("Ocorreu um erro no seu registro tente trocar o usuario ou email, ou tente fazer login")
-                // throw new Error('Erro na requisição: ' + response.statusText);
+                alert("Ocorreu um erro no seu registro. Tente novamente.");
             }
 
-            if(response.status === 409) {
-
-            }
-
-            // Sucesso
         } catch (error) {
             // Exibir mensagem de erro
             errorMessage = 'Ocorreu um erro: ' + error.message;
             successMessage = ''; // Limpa a mensagem de sucesso
         }
     }
-
 </script>
 
-<div class="card-container">
-    <div class="card">
-        <div class="form-container">
-            <h2>Registro</h2>
+<div class="flex justify-center items-center py-5">
+    <div class="bg-gradient-to-br from-blue-600 to-gray-300 p-6 rounded-3xl shadow-lg max-w-lg w-full">
+        <div class="text-center">
+            <h2 class="text-3xl font-bold text-gray-800 mb-6">Crie sua conta</h2>
             <form onsubmit={handleSubmit}>
-                <div class="form-group">
-                    <label for="name">Nome:</label>
-                    <input type="text" id="name" bind:value={name} required aria-required="true" />
+                <div class="space-y-6">
+                    <!-- Nome -->
+                    <div>
+                        <label for="name" class="block text-gray-800 font-semibold mb-2">Nome:</label>
+                        <input type="text" id="name" bind:value={name} class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    </div>
+
+                    <!-- Sobrenome -->
+                    <div>
+                        <label for="surname" class="block text-gray-800 font-semibold mb-2">Sobrenome:</label>
+                        <input type="text" id="surname" bind:value={surname} class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    </div>
+
+                    <!-- Username -->
+                    <div>
+                        <label for="username" class="block text-gray-800 font-semibold mb-2">Username:</label>
+                        <input type="text" id="username" bind:value={username} class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-gray-800 font-semibold mb-2">Email:</label>
+                        <input type="email" id="email" bind:value={email} class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    </div>
+
+                    <!-- Senha -->
+                    <div>
+                        <label for="password" class="block text-gray-800 font-semibold mb-2">Senha:</label>
+                        <input type="password" id="password" bind:value={password} class="w-full p-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500" required />
+                    </div>
+
+                    <!-- Botão de Registro -->
+                    <button type="submit" class="w-full py-3 mt-5 bg-blue-600 text-white font-semibold rounded-xl hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200">Registrar</button>
                 </div>
-                <div class="form-group">
-                    <label for="surname">Sobrenome:</label>
-                    <input type="text" id="surname" bind:value={surname} required aria-required="true" />
-                </div>
-                <div class="form-group">
-                    <label for="username">Username:</label>
-                    <input type="text" id="username" bind:value={username} required aria-required="true" />
-                </div>
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" bind:value={email} required aria-required="true" />
-                </div>
-                <div class="form-group">
-                    <label for="password">Senha:</label>
-                    <input type="password" id="password" bind:value={password} required aria-required="true" />
-                </div>
-                <button type="submit" class="btn-submit">Registrar</button>
             </form>
+
+            <!-- Mensagens de erro e sucesso -->
+            {#if errorMessage}
+                <div class="mt-4 text-red-600 font-medium">{errorMessage}</div>
+            {/if}
+            {#if successMessage}
+                <div class="mt-4 text-green-600 font-medium">{successMessage}</div>
+            {/if}
         </div>
     </div>
 </div>
-
-<style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-    .card-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    }
-
-    .card {
-        background: linear-gradient(135deg, #0056a0, #e0e0e0);
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 600px;
-        width: 100%;
-        margin: 0 auto;
-    }
-
-    .form-container {
-        max-width: 100%;
-        padding: 20px;
-        background: linear-gradient(175deg, #0056a0, #e0e0e0);
-
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        color: #333;
-        font-family: 'Roboto', sans-serif;
-    }
-
-    .form-container h2 {
-        font-size: 2rem;
-        color: #333;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-
-    .form-group {
-        margin-bottom: 1rem;
-    }
-
-    .form-group label {
-        display: block;
-        font-size: 1rem;
-        margin-bottom: 0.5rem;
-        color: #333;
-    }
-
-    .form-group input {
-        width: 100%;
-        padding: 0.75rem;
-        border-radius: 4px;
-        border: 1px solid #ddd;
-        font-size: 1rem;
-        color: #333;
-    }
-
-    .form-group input:focus {
-        border-color: #007bff;
-        outline: none;
-    }
-
-    .btn-submit {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        display: block;
-        margin: 20px auto;
-    }
-
-    .btn-submit:hover {
-        background-color: #0056b3;
-    }
-
-    /* Responsividade */
-    @media (max-width: 768px) {
-        .card-container {
-            padding: 10px;
-        }
-
-        .card {
-            padding: 15px;
-        }
-
-        .form-container {
-            padding: 15px;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .card {
-            padding: 10px;
-        }
-
-        .form-container {
-            padding: 10px;
-        }
-    }
-
-    body {
-    margin: 0;
-    padding: 0;
-}
-
-* {
-    box-sizing: border-box;
-}
-
-</style>

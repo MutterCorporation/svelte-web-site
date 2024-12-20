@@ -47,212 +47,35 @@
 		}
 		 // Loading concluído
     });
-
 </script>
 
 {#if isLoading}
 <Loding message="Por favor, aguarde..." />
 {:else}
-<div class="cards-container">
-    <div class="card">
-        <h3>Free</h3>
-        <p>Explore as funcionalidades básicas e comece a agendar suas postagens com a nossa versão gratuita.</p>
-        <ul class="plan-details">
+<div class="flex flex-wrap justify-center gap-6 p-6">
+    <div class="bg-white shadow-lg rounded-lg p-6 w-full sm:w-1/2 lg:w-1/3">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Free</h3>
+        <p class="text-gray-600 mb-4">Explore as funcionalidades básicas e comece a agendar suas postagens com a nossa versão gratuita.</p>
+        <ul class="list-disc list-inside text-gray-800 mb-4">
             <li>Postagens mensais: 30</li>
         </ul>
-        <button class="btn" onclick={() => handleAction('continue')}>Experimente Grátis</button>
+        <button class="bg-blue-600 text-white w-full py-2 rounded-md hover:bg-blue-700" onclick={() => handleAction('continue')}>Experimente Grátis</button>
     </div>
-    <div class="card">
-        <h3>Premium</h3>
-        <p>Obtenha acesso completo a todas as funcionalidades avançadas e maximize sua presença nas redes sociais.</p>
-        <ul class="plan-details">
+    <div class="bg-white shadow-lg rounded-lg p-6 w-full sm:w-1/2 lg:w-1/3">
+        <h3 class="text-xl font-semibold text-gray-900 mb-4">Premium</h3>
+        <p class="text-gray-600 mb-4">Obtenha acesso completo a todas as funcionalidades avançadas e maximize sua presença nas redes sociais.</p>
+        <ul class="list-disc list-inside text-gray-800 mb-4">
             <li>Limite diário: 300 postagens</li>
             <li>Postagens mensais: 1000</li>
-			<li>Thread-Creator: Envie um texto sem limites de characteres em Markdown e montamos a thread</li>
+			<li>Thread-Creator: Envie um texto sem limites de caracteres em Markdown e montamos a thread</li>
 			<li>Imagens na Aplicação </li>
         </ul>
-        <p class="price"> Não disponível no momento</p>
-        <button class="btn" onclick={() => handleAction('pay')}>Adquira o Premium</button>
+        <p class="text-lg font-bold text-blue-600 mb-4">Não disponível no momento</p>
+        <button class="bg-gray-400 text-white w-full py-2 rounded-md cursor-not-allowed">Adquira o Premium</button>
     </div>
 </div>
 {/if}
 
 <style>
-    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
-
-    html, body {
-        height: 100%;
-        margin: 0;
-    }
-
-    * {
-        box-sizing: border-box;
-    }
-
-    .card-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        padding: 20px;
-    }
-
-    .card {
-        background: linear-gradient(135deg, #0056a0, #e0e0e0);
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        max-width: 600px;
-        width: 100%;
-        margin: 0 auto;
-    }
-
-    .info-container {
-        max-width: 100%;
-        padding: 20px;
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        color: #333;
-        font-family: 'Roboto', sans-serif;
-    }
-
-    .info-container h2 {
-        font-size: 2rem;
-        color: #333;
-        margin-bottom: 1rem;
-        text-align: center;
-    }
-
-    .plan-info {
-        margin-bottom: 1rem;
-    }
-
-    .plan-info h3 {
-        font-size: 1.5rem;
-        color: #333;
-        margin-bottom: 0.5rem;
-    }
-
-    .plan-info ul {
-        list-style-type: disc;
-        margin-left: 1.5rem;
-    }
-
-    .plan-info p {
-        font-size: 1rem;
-        color: #333;
-    }
-
-    .action-buttons {
-        text-align: center;
-    }
-
-    .btn-action {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        margin: 10px;
-        display: inline-block;
-        text-align: center;
-    }
-
-    .btn-action:hover {
-        background-color: #0056b3;
-    }
-
-    .cards-container {
-        display: flex;
-        justify-content: space-around;
-        flex-wrap: wrap;
-        padding: 20px;
-    }
-
-    .cards-container .card {
-        background: #fff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        max-width: 300px;
-        width: 100%;
-        margin: 10px;
-    }
-
-    .cards-container h3 {
-        font-size: 1.5rem;
-        margin-bottom: 0.5rem;
-        color: #333;
-    }
-
-    .plan-details {
-        list-style-type: none;
-        padding: 0;
-    }
-
-    .plan-details li {
-        margin-bottom: 0.5rem;
-    }
-
-    .price {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: #007bff;
-        margin-top: 1rem;
-    }
-
-    .btn {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        padding: 10px 20px;
-        border-radius: 4px;
-        font-size: 16px;
-        cursor: pointer;
-        margin-top: 10px;
-        display: block;
-        width: 100%;
-        text-align: center;
-    }
-
-    .btn:hover {
-        background-color: #0056b3;
-    }
-
-    /* Responsividade */
-    @media (max-width: 768px) {
-        .card-container {
-            padding: 10px;
-        }
-
-        .card {
-            padding: 15px;
-        }
-
-        .info-container {
-            padding: 15px;
-        }
-
-        .cards-container {
-            flex-direction: column;
-            align-items: center;
-        }
-    }
-
-    @media (max-width: 480px) {
-        .card {
-            padding: 10px;
-        }
-
-        .info-container {
-            padding: 10px;
-        }
-
-        .btn, .btn-action {
-            font-size: 14px;
-            padding: 8px 16px;
-        }
-    }
+	/* Remova estilos desnecessários substituídos pelo Tailwind CSS */
 </style>

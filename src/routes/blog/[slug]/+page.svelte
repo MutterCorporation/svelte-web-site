@@ -77,20 +77,21 @@
 </script>
 
 {#if error}
-	<div class="error-container">
-		<h1>Erro</h1>
-		<p>{errorMessage}</p>
+	<div class="max-w-md mx-auto p-6 bg-red-100 text-red-800 border border-red-200 rounded-lg shadow text-center">
+		<h1 class="text-2xl font-bold mb-4">Erro</h1>
+		<p class="text-lg">{errorMessage}</p>
 	</div>
 {:else}
-	<div class="container">
-		<div class="post">
-			<img src={img} alt="Post Image" class="post-image" />
+	<div class="max-w-3xl mx-auto p-6 bg-white rounded-lg shadow-lg mt-10">
+		<div class="flex flex-col gap-6">
+			<img src={img} alt="Post Image" class="w-full h-auto rounded-lg shadow" />
 			<div class="post-body">
 				{@html previewHtml}
 			</div>
 		</div>
 	</div>
 {/if}
+
 
 <style>
 	/* Adicionando estilos para blocos de código */
