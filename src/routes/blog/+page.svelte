@@ -90,11 +90,12 @@
 			  onclick={() => goToPost(post.id)}
 			>
 			  <div class="p-4">
-				<h2 class="text-xl font-semibold text-gray-800 mb-2">{post.title}</h2>
+				<img src={post.img} />
+				<h2 class="text-xl font-semibold text-gray-800 mb-2">{post.titulo}</h2>
 				<p class="text-gray-600 mb-4">
-				  {post.modifiedText && post.modifiedText.length > 100
-					? post.modifiedText.substring(0, 100) + "..."
-					: post.modifiedText}
+				  {post.text && post.text.length > 100
+					? post.text.substring(0, 100) + "..."
+					: post.text}
 				</p>
 				<p class="text-sm text-gray-500">Publicado em: {post.createdAt}</p>
 			  </div>
