@@ -32,7 +32,7 @@
 
         if (response.ok) {
             const data = await response.json();
-            msg = data;
+            msg = [...data];
         } else {
             console.error('Erro ao buscar mensagens');
         }
@@ -56,7 +56,6 @@
     }
 
     function handleSubmit(event) {
-        event.preventDefault();
 
         const token = localStorage.getItem('MutterCorp');
         isLoading = true;
