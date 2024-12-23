@@ -1,3 +1,16 @@
+
+<svelte:head>
+  <title> MutterCorp - Serviços em Tecnologia </title>
+  <meta name="description" content="Descubra os melhores produtos e serviços para sua vida no MutterCorp.">
+  <meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Desenvolvimento, Svelte, JavaScript">
+  <meta name="author" content="Maikon Weber">
+  <meta property="og:title" content=" Tecnologia, Ciência e Música">
+  <meta property="og:description" content="Descubra os melhores produtos e serviços para sua vida no MutterCorp.">
+  <meta property="og:url" content="https://muttercorp.com.br/">
+  <meta property="og:type" content="website">
+</svelte:head>
+
+
 <!-- src/routes/+page.svelte -->
 <script>
 	import Header from '../components/Header.svelte';
@@ -25,13 +38,14 @@
   },
 ]
 
+
 </script>
 
 
 <div class="w-full bg-gradient-to-r from-blue-200 to-red-300">
 	<!-- Header -->
 	<Header />
-  
+	
 	<!-- Main Content -->
 	<!-- <Carousell /> -->
 	<div class="container mx-auto">

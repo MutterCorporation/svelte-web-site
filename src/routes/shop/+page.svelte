@@ -2,7 +2,9 @@
   import CardProduct from '../../components/CardProduct.svelte';
   import Carousell from '../../components/Carousell.svelte';
   import { Footer, FooterCopyright, FooterLinkGroup, FooterBrand, FooterLink } from 'flowbite-svelte'
- let images = [
+	import Header from '../../components/Header.svelte';
+
+  let images = [
   {
     alt: "Binance Refer",
     src: "https://conteudointimo.s3.amazonaws.com/56e93a94570d8e976ded439a2c17ff6ee370bd0b9adb9b7776e105b3f31ce880.jpeg",
@@ -32,17 +34,16 @@
 ];
 
 
-  let vCard = false;
+
 </script>
 
-<div class="space-y-4 px-4 md:px-8 lg:px-16">
+<Header  />
+<div class="bg-pink-200 space-y-4 px-4 md:px-8 lg:px-16">
   <!-- Carousel -->
-  <div class="w-full mx-auto max-w-screen-xl">
-    <Carousell />
-  </div>
+    <Carousell  />
 
   <!-- Renderizando os CardProducts com o array de imagens -->
-  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 place-items-center">
+  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7 p-8">
     {#each images as image}
       <CardProduct
         title={image.title}
@@ -51,22 +52,43 @@
         class="w-full"
       />
     {/each}
-  </div>
-  <script>
-    import { Footer, FooterCopyright, FooterLinkGroup, FooterBrand, FooterLink } from 'flowbite-svelte';
-  </script>
-  
-  <Footer footerType="logo">
-    <div class="sm:flex sm:items-center sm:justify-between">
-      <FooterBrand href="https://flowbite.com" src="/images/flowbite-svelte-icon-logo.svg" alt="Flowbite Logo" name="Flowbite" />
-      <FooterLinkGroup ulClass="flex flex-wrap items-center mb-6 text-sm text-gray-500 sm:mb-0 dark:text-gray-400">
-        <FooterLink href="/">About</FooterLink>
-        <FooterLink href="/">Privacy Policy</FooterLink>
-        <FooterLink href="/">Licensing</FooterLink>
-        <FooterLink href="/">Contact</FooterLink>
-      </FooterLinkGroup>
-    </div>
-    <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
-    <FooterCopyright href="/" by="Flowbite™" />
-  </Footer>
 </div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7 p-8">
+  {#each images as image}
+    <CardProduct
+      title={image.title}
+      description={image.alt}
+      picture={image.src}
+      class="w-full"
+    />
+  {/each}
+</div>
+
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-7 p-8">
+  {#each images as image}
+    <CardProduct
+      title={image.title}
+      description={image.alt}
+      picture={image.src}
+      class=''
+      />
+  {/each}
+</div>
+ 
+</div>
+
+
+<Footer footerType="logo">
+  <div class="sm:flex sm:items-center sm:justify-between">
+    <FooterBrand href="https://flowbite.com" src="/images/flowbite-svelte-icon-logo.svg" alt="Flowbite Logo" name="Flowbite" />
+    <FooterLinkGroup ulClass="flex flex-wrap items-center mb-6 text-sm text-gray-500 sm:mb-0 dark:text-gray-400">
+      <FooterLink href="/about">About</FooterLink>
+      <FooterLink href="/privacy">Privacy Policy</FooterLink>
+      <FooterLink href="/licensing">Licensing</FooterLink>
+      <FooterLink href="/contact">Contact</FooterLink>
+    </FooterLinkGroup>
+  </div>
+  <hr class="my-6 border-gray-200 sm:mx-auto dark:border-gray-700 lg:my-8" />
+  <FooterCopyright href="/" by="Flowbite™" />
+</Footer>
