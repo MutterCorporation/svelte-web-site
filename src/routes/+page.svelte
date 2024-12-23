@@ -19,6 +19,7 @@
 	import { Footer, FooterBrand, FooterCopyright, FooterLink, FooterLinkGroup } from 'flowbite-svelte';
 	import Carousell from '../components/Carousell.svelte';
 	import CardProduct from '../components/CardProduct.svelte';
+	import About from '../components/About.svelte';
 
 	let images =  [{
 		
@@ -42,7 +43,7 @@
 </script>
 
 
-<div class="w-full bg-gradient-to-r from-blue-200 to-red-300">
+<div class="w-full bg-gradient-to-r from-gray-200 to-black-900">
 	<!-- Header -->
 	<Header />
 	
@@ -53,10 +54,10 @@
   
 	  <!-- Hero Section -->
 	  <!-- <div class='p-4 md:p-8 lg:p-12 xl:p-16 2xl:p-24 bg-gradient-to-r from-blue-900 to-red-700'> -->
-		<Hero title="Bem-vindo à MutterCorp" 
+	<Hero title="Bem-vindo à MutterCorp" 
 			  subtitle="Aqui você encontra os melhores produtos e serviços para sua vida" />
 	  <!-- </div> -->
-  
+	  <!-- <About /> -->
 	  <!-- Products Grid Section -->
 	  <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 p-4">
 		{#each images as image}
@@ -70,7 +71,7 @@
 	</div>
   
 	<!-- Footer -->
-	<Footer class="bg-gradient-to-r from-red-700 to-blue-800" footerType="logo">
+	<Footer class="bg-gradient-to-r from-gray-800 to-gray-100" footerType="logo">
 	  <div class="sm:flex sm:items-center sm:justify-between p-4">
 		<FooterBrand class='text-gray-100' href="https://muttercorp.com.br" src="logo.png" alt="MutterCorp Logo" name="" />
 		<FooterLinkGroup ulClass="flex flex-wrap items-center text-sm text-gray-100 dark:text-black-100">
@@ -81,7 +82,7 @@
 		</FooterLinkGroup>
 	  </div>
 	  <hr class="my-6 border-gray-100 dark:border-gray-100" />
-	  <FooterCopyright class='text-gray-100' href="/" by="MutterCorp" />
+	  <FooterCopyright class='text-red-900' href="/" by="MutterCorp" />
 	</Footer>
   </div>
   

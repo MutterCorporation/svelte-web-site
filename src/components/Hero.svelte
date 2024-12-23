@@ -76,7 +76,7 @@
 
 <div
   class="relative flex flex-col items-center justify-center 
-  bg-gradient-to-r from-red-700 to-purple-900 h-auto 
+  bg-gradient-to-r from-gray-400 to-gray-900 h-auto 
   rounded-xl shadow-2xl text-white text-center 
   p-8 m-6 sm:m-10 md:m-14 lg:m-18 xl:m-24 2xl:m-28 space-y-8 font-roboto"
 >
