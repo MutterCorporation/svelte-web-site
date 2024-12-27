@@ -13,6 +13,8 @@
 
 <!-- src/routes/+page.svelte -->
 <script>
+// @ts-nocheck
+
 	import Header from '../components/Header.svelte';
 	import Body from '../components/Body.svelte';
 	import Hero from '../components/Hero.svelte';
@@ -21,22 +23,26 @@
 	import CardProduct from '../components/CardProduct.svelte';
 	import About from '../components/About.svelte';
 
+
 	let images =  [{
 		
     alt: "Agende postagens na rede social Bluesky utilizando uma interface simples e intuitiva",
     title: "Blueske Phase", 
-	all: "https://muttercorp.com.br/blue-sky-phase/"
-  },
+	all: "https://muttercorp.com.br/blue-sky-phase/",
+	slug: 'liberdade-do-tabaco'
+},
   {
     alt: "Tenha informações sobre o mercado de criptomoedas em tempo real e sinais de compra e venda, tudo em um só lugar",
     title: "Cryptostomp",
-	all: "https://muttercorp.com.br/cryptostomp/"
+	all: "https://muttercorp.com.br/cryptostomp/",
+	slug: 'liberdade-do-tabaco'
 },
   {
     alt: "Realizamos a contagem de sinais de roleta para você, de forma rápida e precisa",
     title: "Sinais da Roleta",
-	all: "https://muttercorp.com.br/sinais-da-roleta/"
-  },
+	all: "https://muttercorp.com.br/sinais-da-roleta/",
+	slug: 'binance-refer'
+	},
 ]
 
 
@@ -65,11 +71,14 @@
 			title={image.title}
 			description={image.alt}
 			all={image.all}
-		  />
+		  	slug={slug}
+			on:openModal={handleOpenModal}
+			></CardProduct>
+			/>
 		{/each}
 	  </div>
 	</div>
-  
+
 	<!-- Footer -->
 	<Footer class="bg-gradient-to-r from-gray-800 to-gray-100" footerType="logo">
 	  <div class="sm:flex sm:items-center sm:justify-between p-4">

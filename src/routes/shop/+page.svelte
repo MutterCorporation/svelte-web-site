@@ -6,6 +6,8 @@
   import Cart from '../../components/CartComponent.svelte';
   import { Footer, FooterCopyright, FooterLinkGroup, FooterBrand, FooterLink } from 'flowbite-svelte';
   import Header from '../../components/Header.svelte';
+	import ProductModal from '../../components/ProductModal.svelte';
+
 
   let showWelcome = true;
   let categories = ['Todos', 'Investimentos', 'Saúde', 'Educação', 'Entretenimento'];
@@ -20,8 +22,9 @@
       title: "Binance Refer",
       category: "Investimentos",
       price: 97.00,
-      description: "Aprenda a lucrar com indicações na maior exchange do mundo"
-    },
+      description: "Aprenda a lucrar com indicações na maior exchange do mundo",
+      slug: 'binance-refer'
+   },
     {
       id: 2,
       alt: "Liberdade do Tabaco",
@@ -29,7 +32,8 @@
       title: "Liberdade do Tabaco",
       category: "Saúde",
       price: 67.00,
-      description: "Método comprovado para abandonar o cigarro definitivamente"
+      description: "Método comprovado para abandonar o cigarro definitivamente",
+      slug: 'liberdade-do-tabaco'
     },
     // ... outros produtos
   ];
@@ -62,6 +66,7 @@
   </div>
 {/if}
 
+  
 <Header />
 <Cart />
 
@@ -117,7 +122,8 @@
             <CardProduct
               {...image}
               class="h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
-            />
+              slug={image.slug}
+              />
           </div>
         {/each}
       </div>
