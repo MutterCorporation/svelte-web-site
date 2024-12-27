@@ -1,5 +1,7 @@
 <!-- src/routes/produto/[slug]/+page.svelte -->
 <script>
+	import { CardPlaceholder } from 'flowbite-svelte';
+    import Cart from '../../../components/CartComponent.svelte';
     import { cart } from '../../../lib/cartStore';
     import { toasts } from '../../../lib/TostStore';
     import { fly, fade } from 'svelte/transition';
@@ -24,6 +26,12 @@
         toasts.success('Produto adicionado ao carrinho!');
     }
 </script>
+
+<Cart />
+
+<!-- 
+<CardComponent />
+ -->
 
 <div class="min-h-screen bg-gradient-to-b from-pink-50 to-white py-8">
     <div class="container mx-auto px-4">

@@ -1,4 +1,6 @@
 <script>
+// @ts-nocheck
+
   import { fade, fly } from 'svelte/transition';
   import { onMount } from 'svelte';
   import CardProduct from '../../components/CardProduct.svelte';
@@ -122,7 +124,6 @@
             <CardProduct
               {...image}
               class="h-full transform transition-all duration-300 hover:-translate-y-2 hover:shadow-xl"
-              slug={image.slug}
               />
           </div>
         {/each}
