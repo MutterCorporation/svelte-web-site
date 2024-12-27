@@ -157,7 +157,7 @@
       <div>
         <FooterBrand
           href="/"
-          src="/images/logo.svg"
+          src="./logo.png"
           alt="Logo"
           name="Digital Store"
           class="mb-4"

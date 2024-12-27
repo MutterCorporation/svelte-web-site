@@ -20,7 +20,7 @@
 	import Hero from '../components/Hero.svelte';
 	import { Footer, FooterBrand, FooterCopyright, FooterLink, FooterLinkGroup } from 'flowbite-svelte';
 	import Carousell from '../components/Carousell.svelte';
-	import CardProduct from '../components/CardProduct.svelte';
+	import CardProduct from '../components/Card.svelte';
 	import About from '../components/About.svelte';
 
 
@@ -28,19 +28,19 @@
 		
     alt: "Agende postagens na rede social Bluesky utilizando uma interface simples e intuitiva",
     title: "Blueske Phase", 
-	all: "https://muttercorp.com.br/blue-sky-phase/",
+	all: "blue-sky-phase",
 	slug: 'liberdade-do-tabaco'
 },
   {
     alt: "Tenha informações sobre o mercado de criptomoedas em tempo real e sinais de compra e venda, tudo em um só lugar",
     title: "Cryptostomp",
-	all: "https://muttercorp.com.br/cryptostomp/",
+	all: "cryptostomp",
 	slug: 'liberdade-do-tabaco'
 },
   {
     alt: "Realizamos a contagem de sinais de roleta para você, de forma rápida e precisa",
     title: "Sinais da Roleta",
-	all: "https://muttercorp.com.br/sinais-da-roleta/",
+	all: "sinais-da-roleta",
 	slug: 'binance-refer'
 	},
 ]
@@ -71,10 +71,8 @@
 			title={image.title}
 			description={image.alt}
 			all={image.all}
-		  	slug={slug}
-			on:openModal={handleOpenModal}
-			></CardProduct>
 			/>
+				
 		{/each}
 	  </div>
 	</div>
