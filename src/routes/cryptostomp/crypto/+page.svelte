@@ -29,6 +29,37 @@ import { onMount } from 'svelte';
   }
 
 
+  
+  async function fetchStatist(page = 1, size = 100) {
+    try {
+      const token = localStorage.getItem('MutterCorp');
+      const res = await fetch(`https://dev.muttercorp.com.br/investing-new/static/prevision`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        prediction = data;
+      } else {
+        if (res.status === 403 || res.status === 401) {
+          localStorage.removeItem('MutterCorp');
+          window.location.href = '/login';
+        } else if (res.status === 500) {
+          hasError = true;
+        }
+        console.error('Failed to fetch posts');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      hasError = true;
+    }
+  }
+
+
   async function fetchPosts(page = 1, size = 100) {
     try {
       const token = localStorage.getItem('MutterCorp');
@@ -58,7 +89,7 @@ import { onMount } from 'svelte';
 
   onMount(() => {
     fetchPosts();
-    // fetchStatist()
+    fetchStatist()
   });
 
   function goToPost(postId) {
@@ -74,31 +105,39 @@ import { onMount } from 'svelte';
     </header>
     
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      
-    </div>
-
-    {#if hasError}
-      <p class="text-center text-red-500">Desculpe, este blog não existe ou está temporariamente indisponível.</p>
-    {:else if posts.length > 0}
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {#each posts as post (post.id)}
-          <div class="bg-white rounded-lg shadow-md overflow-hidden cursor-pointer hover:shadow-lg transition-shadow" onclick={() => goToPost(post.id)}>
-            <div class="p-4">
-              <h2 class="text-xl font-semibold text-gray-800 mb-2">{post.title}</h2>
-              <p class="text-gray-600 mb-4">
-                {post.modifiedText && post.modifiedText.length > 100
-                  ? post.modifiedText.substring(0, 100) + "..."
-                  : post.modifiedText}
-              </p>
-              <p class="text-sm text-gray-500">Publicado em: {post.createdAt}</p>
-            </div>
+      {#each prediction as value}
+        <div 
+          class="bg-white rounded-lg shadow-md p-6 mb-6 relative group hover:z-10"
+        >
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">{value.signal}</h2>
+          <div class='flex'>
+            <p class="text-gray-600 mb-4">{value.lastPrice}</p>
+            <span class="text-gray-600 ml-4">{value.change}</span>
           </div>
-        {/each}
-      </div>
-    {:else}
-      <p class="text-center text-gray-200">Nenhum post disponível.</p>
-    {/if}
-  </div>
+          
+          <!-- Informações de statistics exibidas ao hover -->
+          <div 
+            class="grid grid-cols-1 md:grid-cols-2 gap-4 absolute top-full left-0 w-full bg-white rounded-lg shadow-md p-4 opacity-0 transition-opacity duration-200 ease-in-out group-hover:opacity-100 max-h-60 overflow-y-auto"
+          >
+            {#each Object.entries(value.statistics) as [key, val]}
+              <div class="bg-gray-50 p-4 rounded-md shadow">
+                <h2 class="font-bold text-gray-700 mb-2">{key}</h2>
+                <p class="text-gray-600">{val}</p>
+              </div>
+            {/each}
+          </div>
+        </div>
+      {/each}
+    </div>
+    
+    <style>
+      /* Garante que a seção de detalhes de statistics esteja oculta fora do hover */
+      .group-hover\:opacity-100:hover .opacity-0 {
+        opacity: 1;
+      }
+    </style>
+    
+    </div>
 </div>
 
 <style>
