@@ -11,10 +11,10 @@
 </svelte:head>
 
 <script>
-  import { onMount } from 'svelte';
+  import { P } from 'flowbite-svelte';
+import { onMount } from 'svelte';
 
-  let prediction = {"decision":"neutro","prediction":"NaN","statistics":{"rsi":43,"stochasticK":20,"momentum":null,"macd":{"value":905,"vies":"Viés de Baixa"},"adx":31,"ao":null,"williams":null,"mme10":98.102,"mme50":92.474,"mme20":98.25,"sma100":79.216}}
-
+  let prediction = $state([]);
   let posts = $state([]);
   let blogName = 'Investing Notices';
   let hasError = $state(false);
@@ -81,10 +81,8 @@
         } else if (res.status === 500) {
           hasError = true;
         }
-        console.error('Failed to fetch posts');
       }
     } catch (error) {
-      console.error('Error:', error);
       hasError = true;
     }
   }
@@ -105,32 +103,41 @@
       <h1 class="text-4xl font-bold mb-3 text-white drop-shadow-lg">{blogName}</h1>
       <p class="text-lg text-gray-200"> Noticias sobre finanças e investimentos e sinais de trades .</p>
     </header>
-
-    <div>
-      <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-        <h2 class="text-2xl font-bold mb-4 text-gray-800">Prediction - BTCUSD </h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div>
-            <p class="text-gray-600"><strong>Decision:</strong> {prediction.decision}</p>
-            <p class="text-gray-600"><strong>Prediction:</strong> {prediction.prediction}</p>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {#each prediction as value}
+        <div 
+          class="bg-white rounded-lg shadow-md p-6 mb-6 relative group hover:z-10"
+        >
+          <h2 class="text-2xl font-bold mb-4 text-gray-800">{value.signal}</h2>
+          <div class='flex'>
+            <p class="text-gray-600 mb-4">{value.lastPrice}</p>
+            <span class="text-gray-600 ml-4">{value.change}</span>
           </div>
-          <div>
-            <p class="text-gray-600"><strong>RSI:</strong> {prediction.statistics.rsi}</p>
-            <p class="text-gray-600"><strong>Stochastic K:</strong> {prediction.statistics.stochasticK}</p>
-            <p class="text-gray-600"><strong>Momentum:</strong> {prediction.statistics.momentum}</p>
-            <p class="text-gray-600"><strong>MACD:</strong> {prediction.statistics.macd.value} ({prediction.statistics.macd.vies})</p>
-            <p class="text-gray-600"><strong>ADX:</strong> {prediction.statistics.adx}</p>
-            <p class="text-gray-600"><strong>AO:</strong> {prediction.statistics.ao}</p>
-            <p class="text-gray-600"><strong>Williams:</strong> {prediction.statistics.williams}</p>
-            <p class="text-gray-600"><strong>MME10:</strong> {prediction.statistics.mme10}</p>
-            <p class="text-gray-600"><strong>MME50:</strong> {prediction.statistics.mme50}</p>
-            <p class="text-gray-600"><strong>MME20:</strong> {prediction.statistics.mme20}</p>
-            <p class="text-gray-600"><strong>SMA100:</strong> {prediction.statistics.sma100}</p>
+          
+          <!-- Informações de statistics exibidas ao hover -->
+          <div 
+            class="grid grid-cols-1 md:grid-cols-2 gap-4 absolute top-full left-0 w-full bg-white rounded-lg shadow-md p-4 opacity-0 transition-opacity duration-200 ease-in-out group-hover:opacity-100 max-h-60 overflow-y-auto"
+          >
+            {#each Object.entries(value.statistics) as [key, val]}
+              <div class="bg-gray-50 p-4 rounded-md shadow">
+                <h2 class="font-bold text-gray-700 mb-2">{key}</h2>
+                <p class="text-gray-600">{val}</p>
+              </div>
+            {/each}
           </div>
         </div>
-      </div>
-
+      {/each}
     </div>
+    
+    <style>
+      /* Garante que a seção de detalhes de statistics esteja oculta fora do hover */
+      .group-hover\:opacity-100:hover .opacity-0 {
+        opacity: 1;
+      }
+    </style>
+
+
     {#if hasError}
       <p class="text-center text-red-500">Desculpe, este blog não existe ou está temporariamente indisponível.</p>
     {:else if posts.length > 0}
