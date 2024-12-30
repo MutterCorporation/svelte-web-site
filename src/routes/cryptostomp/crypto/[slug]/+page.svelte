@@ -13,7 +13,6 @@
     let hasError = false;
     let refreshInterval;
 
-    // Time interval options
     const timeIntervals = [
         { value: '1m', label: '1 Minuto' },
         { value: '5m', label: '5 Minutos' },
@@ -21,7 +20,6 @@
         { value: '1d', label: '1 Dia' }
     ];
 
-    // Size options
     const sizeOptions = [
         { value: 50, label: '50 candles' },
         { value: 100, label: '100 candles' },
@@ -33,11 +31,8 @@
         const path = window.location.pathname;
         slug = path.split('/').pop();
         loadData();
-        
-        // Start auto-refresh
         startAutoRefresh();
 
-        // Cleanup on component destroy
         return () => {
             if (refreshInterval) {
                 clearInterval(refreshInterval);
@@ -46,17 +41,15 @@
     });
 
     function startAutoRefresh() {
-        // Clear existing interval if any
         if (refreshInterval) {
             clearInterval(refreshInterval);
         }
 
-        // Set new interval based on selected time
         const refreshTimes = {
-            '1m': 10000,    // 10 seconds for 1m
-            '5m': 30000,    // 30 seconds for 5m
-            '1h': 60000,    // 1 minute for 1h
-            '1d': 300000    // 5 minutes for 1d
+            '1m': 10000,
+            '5m': 30000,
+            '1h': 60000,
+            '1d': 300000
         };
 
         refreshInterval = setInterval(() => {
@@ -66,10 +59,10 @@
 
     async function loadData() {
         if (isLoading) return;
-        
+
         isLoading = true;
         hasError = false;
-        
+
         try {
             await fetchGraph(slug, limit, size);
         } catch (error) {
@@ -123,55 +116,87 @@
     }
 </script>
 
-<div class="controls">
-    <select bind:value={limit} on:change={handleIntervalChange}>
-        {#each timeIntervals as interval}
-            <option value={interval.value}>{interval.label}</option>
-        {/each}
-    </select>
+<div class="container">
+    <div class="controls">
+        <div class="control-group">
+            <label for="time-interval">Intervalo de Tempo</label>
+            <select id="time-interval" bind:value={limit} on:change={handleIntervalChange}>
+                {#each timeIntervals as interval}
+                    <option value={interval.value}>{interval.label}</option>
+                {/each}
+            </select>
+        </div>
 
-    <select bind:value={size} on:change={handleSizeChange}>
-        {#each sizeOptions as option}
-            <option value={option.value}>{option.label}</option>
-        {/each}
-    </select>
+        <div class="control-group">
+            <label for="size">Tamanho</label>
+            <select id="size" bind:value={size} on:change={handleSizeChange}>
+                {#each sizeOptions as option}
+                    <option value={option.value}>{option.label}</option>
+                {/each}
+            </select>
+        </div>
 
-    <button on:click={handleManualRefresh} disabled={isLoading}>
-        {#if isLoading}
-            Carregando...
-        {:else}
-            Atualizar
-        {/if}
-    </button>
+        <button on:click={handleManualRefresh} disabled={isLoading} class="refresh-btn">
+            {#if isLoading}
+                <span class="loader"></span> Carregando...
+            {:else}
+                Atualizar
+            {/if}
+        </button>
+    </div>
+
+    {#if hasError}
+        <div class="error">
+            Erro ao carregar os dados. Tente novamente.
+        </div>
+    {/if}
+
+    <p class="slug">Slug atual: <strong>{slug}</strong></p>
+    <Canvas data={dataGraph}/>
 </div>
 
-{#if hasError}
-    <div class="error">
-        Erro ao carregar os dados. Tente novamente.
-    </div>
-{/if}
-
-<p>Current slug: {slug}</p>
-<Canvas data={dataGraph}/>
-
 <style>
+    .container {
+        font-family: Arial, sans-serif;
+        max-width: 900px;
+        margin: 0 auto;
+        padding: 2rem;
+        background-color: #f9f9f9;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    }
+
     .controls {
         display: flex;
-        gap: 1rem;
-        margin-bottom: 1rem;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+        align-items: flex-end;
+        flex-wrap: wrap;
+    }
+
+    .control-group {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-size: 0.9rem;
+        color: #333;
+        margin-bottom: 0.5rem;
     }
 
     select, button {
-        padding: 0.5rem;
-        border-radius: 4px;
-        border: 1px solid #ccc;
+        padding: 0.75rem 1rem;
+        border-radius: 6px;
+        border: 1px solid #ddd;
+        font-size: 1rem;
     }
 
     button {
-        background-color: #4CAF50;
+        background-color: #007BFF;
         color: white;
-        border: none;
         cursor: pointer;
+        transition: background-color 0.3s;
     }
 
     button:disabled {
@@ -180,11 +205,41 @@
     }
 
     button:hover:not(:disabled) {
-        background-color: #45a049;
+        background-color: #0056b3;
     }
 
     .error {
-        color: red;
+        color: #d9534f;
+        background-color: #f2dede;
+        padding: 0.75rem;
+        border: 1px solid #ebcccc;
+        border-radius: 6px;
         margin-bottom: 1rem;
+    }
+
+    .slug {
+        font-size: 1.1rem;
+        color: #555;
+    }
+
+    .refresh-btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .loader {
+        border: 2px solid #f3f3f3;
+        border-top: 2px solid #007BFF;
+        border-radius: 50%;
+        width: 1rem;
+        height: 1rem;
+        animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
     }
 </style>
