@@ -1,13 +1,62 @@
 <svelte:head>
-  <title>{blogName} - Tecnologia, Ciências e Música</title>
-  <meta name="description" content="Bem-vindo ao {blogName}, onde compartilho minhas experiências e conhecimentos sobre tecnologia, ciência e música.">
-  <meta name="keywords" content="Tecnologia, Ciência, Música, Blog, {blogName}, Desenvolvimento, Svelte, JavaScript">
+  <!-- Título e descrição -->
+  <title>Ebook Ereção Duradoura - Seu Guia Completo para Controle e Potência</title>
+  <meta name="description" content="Descubra o guia definitivo para melhorar o controle, potência e saúde sexual com o Ebook Ereção Duradoura. Transforme sua vida com técnicas comprovadas.">
+
+  <!-- Palavras-chave -->
+  <meta name="keywords" content="Ereção Duradoura, Saúde Sexual, Ebook, Potência Masculina, Controle Muscular, Assoalho Pélvico, Técnicas de Respiração, Vida Saudável">
+
+  <!-- Informações do autor -->
   <meta name="author" content="Maikon Weber">
-  <meta property="og:title" content="{blogName} - Tecnologia, Ciência e Música">
-  <meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no {blogName}.">
-  <meta property="og:url" content="https://dev.muttercorp.com.br/blog">
-  <meta name="twitter:card" content="summary_large_image">
+
+  <!-- Viewport para design responsivo -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <!-- Open Graph (Facebook e redes sociais) -->
+  <meta property="og:title" content="Ebook Ereção Duradoura - Seu Guia Completo para Controle e Potência">
+  <meta property="og:description" content="Transforme sua vida sexual com o Ebook Ereção Duradoura. Aprenda técnicas comprovadas de controle e potência.">
+  <meta property="og:url" content="https://dev.muttercorp.com.br/erecao-duradoura">
+  <meta property="og:image" content="https://dev.muttercorp.com.br/erecao-duradoura/ebook-cover.jpg">
   <meta property="og:type" content="website">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Ebook Ereção Duradoura - Controle e Potência Masculina">
+  <meta name="twitter:description" content="Aprenda as melhores técnicas para melhorar seu desempenho com o Ebook Ereção Duradoura.">
+  <meta name="twitter:image" content="https://dev.muttercorp.com.br/erecao-duradoura/ebook-cover.jpg">
+
+  <!-- Favicon -->
+  <link rel="icon" href="/favicon.ico" type="image/x-icon">
+
+  <!-- CSS básico -->
+  <link rel="stylesheet" href="/styles.css">
+
+  <!-- Estrutura de dados JSON-LD (Rich Snippets) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Book",
+    "name": "Ebook Ereção Duradoura",
+    "url": "https://dev.muttercorp.com.br/erecao-duradoura",
+    "description": "Descubra como melhorar sua saúde sexual e controle com o Ebook Ereção Duradoura.",
+    "author": {
+      "@type": "Person",
+      "name": "Maikon Weber"
+    },
+    "publisher": {
+      "@type": "Organization",
+      "name": "Mutter Corp",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://dev.muttercorp.com.br/logo.png"
+      }
+    },
+    "image": "https://dev.muttercorp.com.br/erecao-duradoura/ebook-cover.jpg"
+  }
+  </script>
+
+  <!-- Manifesto para PWA -->
+  <link rel="manifest" href="/manifest.json">
 </svelte:head>
 
 <script>
