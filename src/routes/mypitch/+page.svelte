@@ -21,6 +21,8 @@
 	const API_URL = 'https://dev.muttercorp.com.br/maritalk';
 
 	async function handleSubmit() {
+		const token = localStorage.getItem('MutterCorp');
+
 		if (!productCategory || !productName || !productDescription) {
 			showToast('Please fill in all required fields');
 			return;
@@ -47,7 +49,7 @@
 			max_tokens: 200, // Increased for more comprehensive responses
 			temperature: 0.7, // Slightly increased for more creative outputs
 			top_p: 0.95,
-			model: 'sabia-3'
+			model: 'sabia-2-small'
 		};
 
 		try {
@@ -55,7 +57,7 @@
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',
-					Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1haWtvbndlYmVyIiwibmFtZSI6Ik1haWtvbiIsImlkIjozLCJlbWFpbCI6Im1haWtvbndlYmVyQGdtYWlsLmNvbSIsInBlcm1pc3Npb24iOnsiYWRtaW4iOnRydWUsImJsdWVza3lwaGFzZSI6dHJ1ZX0sImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MzU3NzU2NTMsImV4cCI6MTczNjIwNzY1M30.n6CYkUBlFrztQ3Le3LCnFREk5JU2gqIU-0ecHKAprHY`
+					Authorization: `Bearer ${token}`
 				},
 				body: JSON.stringify(requestBody)
 			});
@@ -68,7 +70,7 @@
 			console.log(data);
 			generatedPitch = data.answer;
 			let formattedPitch = formatPitch(generatedPitch);
-
+		
 			if (generatedPitch) {
 				showToast('Pitch generated successfully!', 'success');
 			} else {
@@ -87,7 +89,11 @@
 		formattedText = formattedText.replace(/\n/g, '<br>');
 		return formattedText;
 	}
+
+	
+
 </script>
+
 
 <div class="banner">
 	<div class="banner-content">

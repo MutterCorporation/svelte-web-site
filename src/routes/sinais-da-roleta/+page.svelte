@@ -7,14 +7,19 @@
 	 * @type {any[]}
 	 */
 
+	 let isAuthenticated = false;
+	 let isLoading = true;
+
 	export let roletas = [];
 
 	const fetchRoletasName = () => {
+		const token = localStorage.getItem('MutterCorp');
+
 		fetch('https://dev.muttercorp.com.br/roleta', {
 			method: 'GET',
 			headers: {
 				accept: '*/*',
-				Authorization: authToken
+				Authorization: `Bearer ${token}`,
 			}
 		})
 			.then((response) => response.json())
@@ -27,6 +32,7 @@
 	onMount(() => {
 		fetchRoletasName();
 	});
+	
 </script>
 
 <Header title="Sinais da Roleta" />
