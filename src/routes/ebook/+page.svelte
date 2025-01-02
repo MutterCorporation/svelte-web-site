@@ -75,7 +75,7 @@ onMount(() => {
 <div class="overlay" />
 
 <section class="hero">
-  <img src="/api/placeholder/150/150" alt="Logo" class="logo animate-slide-down" />
+  <img src="./jeff-tumale-lov_Iroo2N8-unsplash.jpg" alt="Logo" class="logo animate-slide-down" />
   <h1 class="animate-slide-down">O Poder do Controle Muscular</h1>
   <p class="subtitle animate-slide-up">Uma jornada para transformar sua vida íntima</p>
  
@@ -109,7 +109,7 @@ onMount(() => {
   <div class="purchase-card animate-fade-in">
     <div class="card-content">
       <h2>Disponível Agora!</h2>
-      <img src="/api/placeholder/200/200" alt="Ebook Cover" class="ebook-cover" />
+      <img src="./jeff-tumale-lov_Iroo2N8-unsplash.jpg" alt="Ebook Cover" class="ebook-cover" />
       <div class="price-tag">
         <span class="original-price">R$ 99,00</span>
         <span class="current-price">R$ 35,00</span>
@@ -165,12 +165,12 @@ onMount(() => {
   <h2>Depoimentos</h2>
   <div class="testimonials-grid">
 	<div class="testimonial-card">
-	  <img src="/api/placeholder/80/80" alt="User" class="testimonial-avatar" />
+	  <img src="./young-bearded-man-with-striped-shirt.jpg" alt="User" class="testimonial-avatar" />
 	  <p>"Transformou completamente minha vida íntima. Recomendo!"</p>
 	  <span class="testimonial-author">- João S.</span>
 	</div>
 	<div class="testimonial-card">
-	  <img src="/api/placeholder/80/80" alt="User" class="testimonial-avatar" />
+	  <img src="./portrait-smiling-young-man-rubbing-his-hands.jpg" alt="User" class="testimonial-avatar" />
 	  <p>"Resultados impressionantes em poucas semanas."</p>
 	  <span class="testimonial-author">- Carlos M.</span>
 	</div>
