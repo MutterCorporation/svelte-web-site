@@ -3,7 +3,7 @@ import { onMount } from 'svelte';
   
 let days = 0, hours = 0, minutes = 0, seconds = 0, email = '';
 let countdownFinished = false;
-const targetDate = new Date('2025-01-02').getTime();
+const targetDate = new Date('2025-01-05').getTime();
 
 
 
@@ -76,7 +76,7 @@ onMount(() => {
 
 <section class="hero">
   <img src="./jeff-tumale-lov_Iroo2N8-unsplash.jpg" alt="Logo" class="logo animate-slide-down" />
-  <h1 class="animate-slide-down">O Poder do Controle Muscular</h1>
+  <h1 class="animate-slide-down"> A Ereção que Não Acaba Nunca !</h1>
   <p class="subtitle animate-slide-up">Uma jornada para transformar sua vida íntima</p>
  
   
