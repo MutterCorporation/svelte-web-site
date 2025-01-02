@@ -144,7 +144,7 @@ onMount(() => {
 	  <p>Este guia completo foi desenvolvido por especialistas para ajudar homens a alcançarem seu máximo potencial. Com técnicas cientificamente comprovadas e exercícios práticos, você aprenderá a desenvolver um controle muscular excepcional.</p>
 	  <p>Ideal para quem busca melhorar sua performance e autoconfiança, este e-book oferece um caminho claro e efetivo para resultados duradouros.</p>
 	</div>
-	<img src="/api/placeholder/400/300" alt="Ebook Preview" class="about-image" />
+	<img src="./logo_new-preview" alt="Ebook Preview" class="about-image" />
   </div>
 </section>
 
