@@ -75,7 +75,7 @@ onMount(() => {
 <div class="overlay" />
 
 <section class="hero">
-  <img src="./jeff-tumale-lov_Iroo2N8-unsplash.jpg" alt="Logo" class="logo animate-slide-down" />
+  <img src="./logo_new-preview.png" alt="Logo" class="logo animate-slide-down" />
   <h1 class="animate-slide-down"> A Ereção que Não Acaba Nunca !</h1>
   <p class="subtitle animate-slide-up">Uma jornada para transformar sua vida íntima</p>
  
