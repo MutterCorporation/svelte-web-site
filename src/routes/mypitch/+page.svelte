@@ -18,7 +18,7 @@
 	}
 
 	// Add to the top of your script section
-	const API_URL = 'dev.muttercorp.com.br/maritalk';
+	const API_URL = 'https://dev.muttercorp.com.br/maritalk';
 
 	async function handleSubmit() {
 		if (!productCategory || !productName || !productDescription) {
@@ -29,12 +29,12 @@
 		isLoading = true;
 
 		// Construct a clear, structured prompt for the AI
-		const prompt = `Create a marketing pitch with the following details:
-      Product: ${productName}
-      Category: ${productCategory}
-      Description: ${productDescription}
-      Brand Colors: Primary ${primaryColor}, Secondary ${secondaryColor}
-      Please create a compelling, professional marketing pitch that highlights the key benefits and features of this product. Focus on its unique value proposition and target audience.`;
+		const prompt = `Crie uma descrição de marketing com os seguintes detalhes:
+      Produto: ${productName}
+      Categoria: ${productCategory}
+      Descrição: ${productDescription}
+      Cores da Marca: Primária ${primaryColor}, Secundária ${secondaryColor}
+      Por favor, crie uma descrição de marketing atraente e profissional que destaque os principais benefícios e características deste produto. Foque na proposta de valor única e no público-alvo.`;
 
 		const requestBody = {
 			messages: [
@@ -51,10 +51,11 @@
 		};
 
 		try {
-			const response = await fetch(API_URL, {
+			const response = await fetch('https://dev.muttercorp.com.br/maritalk', {
 				method: 'POST',
 				headers: {
-					'Content-Type': 'application/json'
+					'Content-Type': 'application/json',
+					Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Im1haWtvbndlYmVyIiwibmFtZSI6Ik1haWtvbiIsImlkIjozLCJlbWFpbCI6Im1haWtvbndlYmVyQGdtYWlsLmNvbSIsInBlcm1pc3Npb24iOnsiYWRtaW4iOnRydWUsImJsdWVza3lwaGFzZSI6dHJ1ZX0sImlzQWRtaW4iOmZhbHNlLCJpYXQiOjE3MzU3NzU2NTMsImV4cCI6MTczNjIwNzY1M30.n6CYkUBlFrztQ3Le3LCnFREk5JU2gqIU-0ecHKAprHY`
 				},
 				body: JSON.stringify(requestBody)
 			});
@@ -64,14 +65,27 @@
 			}
 
 			const data = await response.json();
-			generatedPitch = data.messages[data.messages.length - 1].content;
-			showToast('Pitch generated successfully!', 'success');
+			console.log(data);
+			generatedPitch = data.answer;
+			let formattedPitch = formatPitch(generatedPitch);
+
+			if (generatedPitch) {
+				showToast('Pitch generated successfully!', 'success');
+			} else {
+				showToast('Failed to generate pitch. No content returned.', 'error');
+			}
 		} catch (error) {
 			console.error('Error:', error);
 			showToast('Failed to generate pitch. Please try again.');
 		} finally {
 			isLoading = false;
 		}
+	}
+
+	function formatPitch(pitchText) {
+		let formattedText = pitchText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+		formattedText = formattedText.replace(/\n/g, '<br>');
+		return formattedText;
 	}
 </script>
 
@@ -181,7 +195,7 @@
 			{#if generatedPitch}
 				<div class="result">
 					<h2>Your Marketing Pitch</h2>
-					<p>{generatedPitch}</p>
+					<p>{@html generatedPitch}</p>
 				</div>
 			{/if}
 		</div>
@@ -196,6 +210,20 @@
 
 <style>
 	/* Add these new styles to your existing style section */
+
+	.result p {
+		font-size: 1.1rem;
+		line-height: 1.6;
+		margin-bottom: 1rem;
+		color: #404040;
+	}
+
+	.result h2 {
+		font-size: 1.5rem;
+		font-weight: 600;
+		margin-bottom: 1rem;
+	}
+
 	.textarea {
 		resize: vertical;
 		min-height: 80px;
