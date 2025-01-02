@@ -24,21 +24,33 @@ const features = [
 	icon: "🔒"
   }
 ];
-
 const chapters = [
   {
-	title: "Fundamentos da Anatomia",
-	content: "Compreenda completamente seu corpo e como ele funciona"
+    title: "Fundamentos da Anatomia",
+    content: "Explore os aspectos essenciais da anatomia humana, entendendo como o corpo funciona de maneira integrada, com foco nos sistemas musculoesquelético, cardiovascular e nervoso."
   },
   {
-	title: "Exercícios Progressivos",
-	content: "Do básico ao avançado, evolua no seu próprio ritmo"
+    title: "O Mecanismo da Ereção e o Poder do Controle Muscular",
+    content: "Descubra como o sistema vascular e os músculos do assoalho pélvico influenciam diretamente o mecanismo da ereção, e aprenda a fortalecer essas áreas para melhorar o desempenho."
   },
   {
-	title: "Técnicas Mentais",
-	content: "Desenvolva o controle mental necessário para o sucesso"
+    title: "A Mente no Controle – Superando o Estresse e Ansiedade",
+    content: "Aprenda técnicas práticas para reduzir o estresse e a ansiedade, com foco no controle emocional e mental para alcançar maior estabilidade e foco em situações desafiadoras."
+  },
+  {
+    title: "Fortalecendo os Músculos do Assoalho Pélvico – A Base do Controle Sexual",
+    content: "Saiba como exercícios específicos podem ajudar a fortalecer os músculos do assoalho pélvico, promovendo maior controle durante as relações sexuais e benefícios gerais para a saúde."
+  },
+  {
+    title: "A Respiração como Ferramenta de Controle e Potência",
+    content: "Descubra o impacto da respiração controlada no desempenho físico e mental, com técnicas para aumentar a potência e reduzir a tensão em momentos críticos."
+  },
+  {
+    title: "A Importância do Descanso e Recuperação",
+    content: "Entenda como o descanso adequado e os métodos de recuperação ajudam a melhorar a saúde, o desempenho e a resistência a longo prazo."
   }
 ];
+
 
 function updateCountdown() {
   const now = new Date().getTime();
