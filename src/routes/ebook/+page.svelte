@@ -3,7 +3,7 @@ import { onMount } from 'svelte';
   
 let days = 0, hours = 0, minutes = 0, seconds = 0, email = '';
 let countdownFinished = false;
-const targetDate = new Date('2025-02-01').getTime();
+const targetDate = new Date('2025-01-02').getTime();
 
 
 
@@ -111,15 +111,14 @@ onMount(() => {
       <h2>Disponível Agora!</h2>
       <img src="/api/placeholder/200/200" alt="Ebook Cover" class="ebook-cover" />
       <div class="price-tag">
-        <span class="original-price">R$ 197,00</span>
-        <span class="current-price">R$ 97,00</span>
+        <span class="original-price">R$ 99,00</span>
+        <span class="current-price">R$ 35,00</span>
       </div>
       <ul class="benefits">
         <li>✓ Acesso imediato ao conteúdo</li>
-        <li>✓ Bônus exclusivos</li>
         <li>✓ Garantia de 30 dias</li>
       </ul>
-      <a href="#comprar" class="purchase-button">
+      <a href="https://pay.kirvano.com/5ac5007d-8c52-408b-9419-a29acdbd1e4c" class="purchase-button">
         Comprar Agora
         <span class="arrow">→</span>
       </a>
