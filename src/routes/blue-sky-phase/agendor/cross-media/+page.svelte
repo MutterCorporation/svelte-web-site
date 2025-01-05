@@ -59,7 +59,7 @@
 
         try {
             const token = localStorage.getItem('MutterCorp');
-            const response = await fetch('https://dev.muttercorp.com.br/cross-post', {
+            const response = await fetch('https://dev.muttercorp.com.br/bluesky/cross-post', {
                 method: 'POST',
                 headers: {
                     Authorization: `Bearer ${token}`
