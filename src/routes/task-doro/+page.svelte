@@ -100,7 +100,7 @@
   </script>
   
   <div class="max-w-2xl mx-auto p-8">
-    <h1 class="text-4xl font-bold text-gray-800 mb-8">Pomodoro Task Manager</h1>
+    <h1 class="text-4xl font-bold text-gray-800 mb-8"> Task-Doro </h1>  
   
     <!-- Timer Display -->
     <div class="bg-white rounded-lg shadow-lg p-6 mb-8">
