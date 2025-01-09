@@ -1,4 +1,5 @@
-<script>import "../app.css";
+<script>
+import "../app.css";
 /** @type {{children?: import('svelte').Snippet}} */
 let { children } = $props();
 
