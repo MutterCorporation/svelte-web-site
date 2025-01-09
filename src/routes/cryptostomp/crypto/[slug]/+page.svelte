@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import Canvas from '../Canvas.svelte';
+	import OrderPanels from '../OrderPanels.svelte';
     
     let slug = '';
     let limit = '1m';
@@ -153,7 +154,9 @@
 
     <p class="slug">Slug atual: <strong>{slug}</strong></p>
     <Canvas data={dataGraph}/>
+    <OrderPanels />
 </div>
+
 
 <style>
     .container {
