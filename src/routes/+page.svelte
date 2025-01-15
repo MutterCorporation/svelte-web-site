@@ -14,7 +14,6 @@
 <!-- src/routes/+page.svelte -->
 <script>
 // @ts-nocheck
-	import { MiniKit } from '@worldcoin/minikit-js'
 	import Header from '../components/Header.svelte';
 	import Body from '../components/Body.svelte';
 	import Hero from '../components/Hero.svelte';
@@ -44,10 +43,6 @@
 	slug: 'binance-refer'
 	},
 ]
-
-onMount(() => {
-	MiniKit.install('app_staging_511ac6bdabbe971c84930948e7979fe6')
-})
 
 
 
