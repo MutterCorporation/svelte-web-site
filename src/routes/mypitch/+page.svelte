@@ -18,7 +18,7 @@
 	}
 
 	// Add to the top of your script section
-	const API_URL = 'https://dev.muttercorp.com.br/maritalk';
+	const API_URL = 'https://dev.conteudointimo.com.br/maritalk';
 
 	async function handleSubmit() {
 		const token = localStorage.getItem('MutterCorp');
@@ -53,7 +53,7 @@
 		};
 
 		try {
-			const response = await fetch('https://dev.muttercorp.com.br/maritalk', {
+			const response = await fetch('https://dev.conteudointimo.com.br/maritalk', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json',

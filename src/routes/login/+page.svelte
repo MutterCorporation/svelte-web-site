@@ -23,7 +23,7 @@
   async function login(event) {
     event.preventDefault();
     try {
-      const res = await fetch('https://dev.muttercorp.com.br/auth/login', {
+      const res = await fetch('https://dev.conteudointimo.com.br/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password })

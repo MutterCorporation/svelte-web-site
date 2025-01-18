@@ -22,7 +22,7 @@
     async function fetchMessages() {
         const token = localStorage.getItem('MutterCorp');
 
-        const response = await fetch('https://dev.muttercorp.com.br/bluesky', {
+        const response = await fetch('https://dev.conteudointimo.com.br/bluesky', {
             method: 'GET',
             headers: {
                 accept: '*/*',
@@ -44,7 +44,7 @@
             return false;
         }
 
-        const response = await fetch('https://dev.muttercorp.com.br/users/check-blue-sky', {
+        const response = await fetch('https://dev.conteudointimo.com.br/users/check-blue-sky', {
             method: 'GET',
             headers: {
                 accept: '*/*',
@@ -62,7 +62,7 @@
 
         const postDateUtc = new Date(postDate).toISOString();
 
-        fetch('https://dev.muttercorp.com.br/bluesky', {
+        fetch('https://dev.conteudointimo.com.br/bluesky', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -90,7 +90,7 @@
         const token = localStorage.getItem('MutterCorp');
         isLoading = true;
 
-        fetch('https://dev.muttercorp.com.br/bluesky/credentials', {
+        fetch('https://dev.conteudointimo.com.br/bluesky/credentials', {
             method: method,
             headers: {
                 'Content-Type': 'application/json',

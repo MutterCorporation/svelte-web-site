@@ -7,7 +7,7 @@
 		<meta property="og:title" content={`${getPreviewText(title, 60)}... - Maikon Weber Blog`}>
 		<meta property="og:description" content={`${getPreviewText(preview, 160)}...`}>
 		<meta property="og:image" content={img || 'default-image-url'}>
-		<meta property="og:url" content={`https://dev.muttercorp.com.br/blog/${window.location.pathname.split('/').pop()}`}>
+		<meta property="og:url" content={`https://muttercorp.com.br/blog/${window.location.pathname.split('/').pop()}`}>
 		<meta name="twitter:card" content="summary_large_image">
 		<meta property="og:type" content="article">
 	{:else}
@@ -18,7 +18,7 @@
 		<meta property="og:title" content="Maikon Weber Blog">
 		<meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no Maikon Weber Blog.">
 		<meta property="og:image" content="default-image-url">
-		<meta property="og:url" content="https://dev.muttercorp.com.br/blog">
+		<meta property="og:url" content="https://muttercorp.com.br/blog">
 		<meta name="twitter:card" content="summary_large_image">
 		<meta property="og:type" content="website">
 	{/if}
@@ -41,7 +41,7 @@
 
 	async function fetchPostData(slug) {
 		try {
-			const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`, {
+			const response = await fetch(`https://dev.conteudointimo.com.br/blog/${slug}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'

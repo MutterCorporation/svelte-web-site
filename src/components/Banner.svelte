@@ -28,7 +28,7 @@
         try {
             isLoading.set(true);
             const token = localStorage.getItem('MutterCorp');
-            const response = await fetch('https://dev.muttercorp.com.br/product-refer', {
+            const response = await fetch('https://dev.conteudointimo.com.br/product-refer', {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Content-Type': 'application/json'

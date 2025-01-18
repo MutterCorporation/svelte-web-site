@@ -26,7 +26,7 @@
         };
 
         try {
-            const response = await fetch('https://dev.muttercorp.com.br/users', {
+            const response = await fetch('https://dev.conteudointimo.com.br/users', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

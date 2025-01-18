@@ -28,7 +28,7 @@
 			return false; // Não autenticado se não houver token
 		}
 
-		const response = await fetch('https://dev.muttercorp.com.br/users/check-admin', {
+		const response = await fetch('https://dev.conteudointimo.com.br/users/check-admin', {
 			method: 'GET',
 			headers: {
 				accept: '*/*',
@@ -58,7 +58,7 @@
 		formData.append('text', previewHtml);
 		formData.append('preview', preview);
 
-		fetch('https://dev.muttercorp.com.br/blog', {
+		fetch('https://dev.conteuointimo.com.br/blog', {
 			method: 'POST',
 			headers: {
 				Authorization: `Bearer ${localStorage.getItem('MutterCorp')}`

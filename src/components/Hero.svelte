@@ -11,7 +11,7 @@
     const email = event.target.email.value; // Obtendo o valor do e-mail do input
     const token = localStorage.getItem('MutterCorp');
 
-    fetch('https://dev.muttercorp.com.br/email/send-email-subcription', {
+    fetch('https://dev.conteudointimo.com.br/email/send-email-subcription', {
       method: 'POST', // Geralmente POST é mais apropriado para submissão de formulários
       headers: {
         'Content-Type': 'application/json',

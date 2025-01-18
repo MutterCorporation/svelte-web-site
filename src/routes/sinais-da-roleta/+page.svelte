@@ -24,7 +24,7 @@
 				return;
 			}
 	
-			fetch('https://dev.muttercorp.com.br/roleta', {
+			fetch('https://dev.conteudointimo.com.br/roleta', {
 				method: 'GET',
 				headers: {
 					accept: '*/*',
@@ -47,7 +47,7 @@
 				return;
 			}
 	
-			fetch(`https://dev.muttercorp.com.br/roleta/resultado/${selectItem}`, {
+			fetch(`https://dev.conteudointimo.com.br/roleta/resultado/${selectItem}`, {
 				method: 'GET',
 				headers: {
 					accept: '*/*',

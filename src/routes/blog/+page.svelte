@@ -5,7 +5,7 @@
 	<meta name="author" content="Maikon Weber">
 	<meta property="og:title" content="{blogName} - Tecnologia, Ciência e Música">
 	<meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no {blogName}.">
-	<meta property="og:url" content="https://dev.muttercorp.com.br/blog">
+	<meta property="og:url" content="https://muttercorp.com.br/blog">
 	<meta name="twitter:card" content="summary_large_image">
 	<meta property="og:type" content="website">
 </svelte:head>
@@ -30,7 +30,7 @@
 	async function fetchPosts(page = 1, size = 100) {
 		try {
 			const token = localStorage.getItem('MutterCorp');
-			const res = await fetch(`https://dev.muttercorp.com.br/blog`, {
+			const res = await fetch(`https://conteudointimo.com.br/blog`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'

@@ -77,7 +77,7 @@
         try {
             const token = localStorage.getItem('MutterCorp');
             const res = await fetch(
-                `https://dev.muttercorp.com.br/binance/market-kline-data?symbol=${slug.toUpperCase()}&interval=${limit}&limit=${size}`,
+                `https://dev.conteudointimo.com.br/binance/market-kline-data?symbol=${slug.toUpperCase()}&interval=${limit}&limit=${size}`,
                 {
                     method: 'GET',
                     headers: {

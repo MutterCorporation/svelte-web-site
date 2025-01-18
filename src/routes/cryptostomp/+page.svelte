@@ -20,7 +20,7 @@
 		try {
 			const token = localStorage.getItem('MutterCorp');
 			const res = await fetch(
-				`https://dev.muttercorp.com.br/investing-new?page=${page}&pageSize=${size}`,
+				`https://dev.conteudointimo.com.br/investing-new?page=${page}&pageSize=${size}`,
 				{
 					method: 'GET',
 					headers: {

@@ -5,7 +5,7 @@
   <meta name="author" content="Maikon Weber">
   <meta property="og:title" content="{blogName} - Tecnologia, Ciência e Música">
   <meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no {blogName}.">
-  <meta property="og:url" content="https://dev.muttercorp.com.br/blog">
+  <meta property="og:url" content="https://muttercorp.com.br/blog">
   <meta name="twitter:card" content="summary_large_image">
   <meta property="og:type" content="website">
 </svelte:head>
@@ -33,7 +33,7 @@ import { onMount } from 'svelte';
   async function fetchStatist(page = 1, size = 100) {
     try {
       const token = localStorage.getItem('MutterCorp');
-      const res = await fetch(`https://dev.muttercorp.com.br/investing-new/static/prevision`, {
+      const res = await fetch(`https://dev.conteudointimo.com.br/investing-new/static/prevision`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ import { onMount } from 'svelte';
   async function fetchPosts(page = 1, size = 100) {
     try {
       const token = localStorage.getItem('MutterCorp');
-      const res = await fetch(`https://dev.muttercorp.com.br/investing-new?page=${page}&pageSize=${size}`, {
+      const res = await fetch(`https://dev.conteudointimo.com.br/investing-new?page=${page}&pageSize=${size}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

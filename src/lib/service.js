@@ -1,6 +1,6 @@
 export async function fetchUser(token) {
     try {
-        const res = await fetch('https://dev.muttercorp.com.br/get-user', {
+        const res = await fetch('https://dev.conteudointimo.com.br/get-user', {
             mode: 'same-origin',
             headers: {
                 Authorization: `Bearer ${token}`,
@@ -20,7 +20,7 @@ export async function fetchUser(token) {
 
 export async function fetchTweets(token) {
     try {
-        const res = await fetch('https://dev.muttercorp.com.br/tweet-story/all-tweet-user', {
+        const res = await fetch('https://dev.conteudointimo.com.br/tweet-story/all-tweet-user', {
             headers: {
                 Authorization: `Bearer ${token}`,
                 'Content-Type': 'application/json'
@@ -39,7 +39,7 @@ export async function fetchTweets(token) {
 
 export async function postTweet(token, content) {
     try {
-        const res = await fetch('https://dev.muttercorp.com.br/tweet-story/create', {
+        const res = await fetch('https://dev.conteudointimo.com.br/tweet-story/create', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -60,7 +60,7 @@ export async function postTweet(token, content) {
 
 export async function deleteTweet(token, id) {
     try {
-        const res = await fetch(`https://dev.muttercorp.com.br/tweets/${id}`, {
+        const res = await fetch(`https://dev.conteudointimo.com.br/tweets/${id}`, {
             method: 'DELETE',
             headers: {
                 Authorization: `Bearer ${token}`,
