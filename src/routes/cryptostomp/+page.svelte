@@ -72,7 +72,7 @@
 		property="og:description"
 		content="Descubra artigos sobre tecnologia, ciência e música no {blogName}."
 	/>
-	<meta property="og:url" content="https://dev.muttercorp.com.br/blog" />
+	<meta property="og:url" content="https://muttercorp.com.br/blog" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta property="og:type" content="website" />
 </svelte:head>
