@@ -12,10 +12,13 @@
             { name: "GitHub", url: "https://github.com/maikonweber" },
             { name: "x", url: "https://x.com/MaikonWeber1" },
             { name: "Blog", url: "https://muttercorp.com.br/blog/"},
-            { name: "Drive", url: "https://drive.google.com/drive/folders/13IJWGRoithYsfv8mIMup2Ieno_rsFI3A?usp=sharing tbcv "},        
+            { name: "Biblioteca_TI", url: "https://drive.google.com/drive/folders/13IJWGRoithYsfv8mIMup2Ieno_rsFI3A?usp=sharing tbcv "},        
             { name: "SoundCloud", url: "https://soundcloud.com/search?q=maikon%20weber%20carvalho"},
             { name: "BlueSky", url: "https://bsky.app/profile/muttercorp.com.br"},
-            { name: "Twitch", url: "https://www.twitch.tv/maikonweber"}
+            { name: "Twitch", url: "https://www.twitch.tv/maikonweber"},
+            { name: "Noticias_Investimento", url: "https://muttercorp.com.br/cryptostomp"},
+            { name: "Livro", url: "https://drive.google.com/drive/folders/1k7WVLtxa_riyXEs15HYLCkkfVChCp-SV?usp=drive_link"}
+
         ]
     };
 
@@ -150,7 +153,7 @@
         color: white;
     }
 
-    .link-drive {
+    .link-biblioteca_ti {
         background-color: green;
         color: white;
     }
@@ -169,6 +172,17 @@
         background-color: rgb(163, 9, 194);
         color: rgb(243, 237, 235);
     }
+
+    .link-livros {
+        background-color: rgb(9, 220, 122);
+        color: rgb(243, 237, 235);
+    }
+
+    .link-noticias_investimento {
+        background-color: rgb(9, 41, 220);
+        color: rgb(243, 237, 235);
+    }
+
 
     /* Estilos do botão de download */
     .download-button {
