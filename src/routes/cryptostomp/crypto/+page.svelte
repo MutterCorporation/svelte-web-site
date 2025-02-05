@@ -33,7 +33,7 @@ import { onMount } from 'svelte';
   async function fetchStatist(page = 1, size = 100) {
     try {
       const token = localStorage.getItem('MutterCorp');
-      const res = await fetch(`https://dev.conteudointimo.com.br/investing-new/static/prevision`, {
+      const res = await fetch(`https://dev.muttercorp.com.br/investing-new/static/prevision`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -63,7 +63,7 @@ import { onMount } from 'svelte';
   async function fetchPosts(page = 1, size = 100) {
     try {
       const token = localStorage.getItem('MutterCorp');
-      const res = await fetch(`https://dev.conteudointimo.com.br/investing-new?page=${page}&pageSize=${size}`, {
+      const res = await fetch(`https://dev.muttercorp.com.br/investing-new?page=${page}&pageSize=${size}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',

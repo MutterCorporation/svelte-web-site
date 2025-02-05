@@ -20,7 +20,7 @@
 		};
 
 		try {
-			const response = await fetch('https://dev.conteudointimo.com.br/touch', {
+			const response = await fetch('https://dev.muttercorp.com.br/touch', {
 				method: 'POST',
 				headers: {
 					'Content-Type': 'application/json'

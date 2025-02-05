@@ -28,7 +28,7 @@
 			return false; // Não autenticado se não houver token
 		}
 
-		const response = await fetch('https://dev.conteudointimo.com.br/users/check-admin', {
+		const response = await fetch('https://dev.muttercorp.com.br/users/check-admin', {
 			method: 'GET',
 			headers: {
 				accept: '*/*',

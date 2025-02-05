@@ -41,7 +41,7 @@
 
 	async function fetchPostData(slug) {
 		try {
-			const response = await fetch(`https://dev.conteudointimo.com.br/blog/${slug}`, {
+			const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`, {
 				method: 'GET',
 				headers: {
 					'Content-Type': 'application/json'

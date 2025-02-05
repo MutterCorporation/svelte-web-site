@@ -20,7 +20,7 @@
             return false;
         }
 
-        const response = await fetch('https://dev.conteudointimo.com.br/users/check-blue-sky', {
+        const response = await fetch('https://dev.muttercorp.com.br/users/check-blue-sky', {
             method: 'GET',
             headers: {
                 accept: '*/*',

@@ -22,7 +22,7 @@
     async function fetchMessages() {
         const token = localStorage.getItem('MutterCorp');
 
-        const response = await fetch('https://dev.conteudointimo.com.br/bluesky', {
+        const response = await fetch('https://dev.muttercorp.com.br/bluesky', {
             method: 'GET',
             headers: {
                 accept: '*/*',
@@ -44,7 +44,7 @@
             return false;
         }
 
-        const response = await fetch('https://dev.conteudointimo.com.br/users/check-blue-sky', {
+        const response = await fetch('https://dev.muttercorp.com.br/users/check-blue-sky', {
             method: 'GET',
             headers: {
                 accept: '*/*',
@@ -62,7 +62,7 @@
 
         const postDateUtc = new Date(postDate).toISOString();
 
-        fetch('https://dev.conteudointimo.com.br/bluesky', {
+        fetch('https://dev.muttercorp.com.br/bluesky', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -90,7 +90,7 @@
         const token = localStorage.getItem('MutterCorp');
         isLoading = true;
 
-        fetch('https://dev.conteudointimo.com.br/bluesky/credentials', {
+        fetch('https://dev.muttercorp.com.br/bluesky/credentials', {
             method: method,
             headers: {
                 'Content-Type': 'application/json',
@@ -214,240 +214,3 @@
 </div>
 {/if}
 
-<!-- 
-<style>
-body {
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-}
-
-/* Container principal */
-.container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    background: linear-gradient(25deg, #0056a0, #e0e0e0); /* Gradiente azul e cinza */
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    color: #000931;
-    overflow: hidden; /* Garantir que o conteúdo não ultrapasse o container */
-}
-
-.messages {
-    padding: 20px;
-    background: linear-gradient(135deg, #e0f7fa, #0282d1d8);
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-	color: #000931;
-}
-
-.messages-container {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 20px;
-}
-
-.message-card {
-	color: #000931;
-    background: linear-gradient(135deg, #e0f7fa, #b9dff6);
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    width: calc(33% - 20px);
-    box-sizing: border-box;
-}
-
-.message-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-}
-
-.message-body p {
-    margin: 5px 0;
-}
-
-.status {
-    padding: 5px 10px;
-    border-radius: 4px;
-    font-size: 0.9em;
-}
-
-.status.failed {
-    background-color: #063c6e;
-    color: #d9534f;
-}
-
-.status.deleted {
-    background-color: #050224;
-    color: #777;
-}
-
-@media (max-width: 768px) {
-    .message-card {
-        width: calc(50% - 20px);
-    }
-}
-
-@media (max-width: 480px) {
-    .message-card {
-        width: 100%;
-    }
-}
-
-
-/* Cabeçalho */
-header {
-    text-align: center;
-    padding: 20px 0;
-    background: linear-gradient(135deg, #0056a0, #e0e0e0); /* Gradiente azul e cinza */
-    color: #fff;
-}
-
-header h1 {
-    font-family: 'Lora', serif;
-    font-size: 2.5em;
-    margin: 0;
-}
-
-header p {
-    font-size: 1.5em;
-    margin: 10px 0;
-}
-
-/* Formulário */
-form {
-    display: flex;
-    flex-direction: column;
-}
-
-.form-group {
-    margin-bottom: 15px;
-}
-
-label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-input[type='text'],
-textarea,
-input[type='datetime-local'] {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    box-sizing: border-box; /* Garante que o padding e a borda sejam incluídos na largura total */
-}
-
-input[type='file'] {
-    margin-top: 5px;
-}
-
-textarea {
-    resize: vertical;
-    min-height: 150px;
-}
-
-button {
-    background-color: #000931;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-bottom: 10px;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-/* Mensagens e visualizações */
-.message {
-    margin-top: 20px;
-    font-size: 1.2em;
-    color: #333;
-}
-
-.preview {
-    border: 1px solid #ddd;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #f9f9f9;
-    margin-top: 20px;
-}
-
-/* Estilos de esqueleto (skeleton) */
-@keyframes pulse {
-    0% {
-        opacity: 0.6;
-    }
-    50% {
-        opacity: 1;
-    }
-    100% {
-        opacity: 0.6;
-    }
-}
-
-.modal-overlay {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    width: 80%;
-    max-width: 500px;
-}
-
-.modal-buttons {
-    margin-top: 20px;
-}
-
-.modal-buttons button {
-    background-color: #007bff;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    margin-right: 10px;
-}
-
-.modal-buttons button:hover {
-    background-color: #0056b3;
-}
-
-.modal-close {
-    background: transparent;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-    font-size: 18px;
-    margin-top: 10px;
-}
-
-.modal-close:hover {
-    color: #0056b3;
-}
-    /* Estilos adicionais */
-</style>
- -->
