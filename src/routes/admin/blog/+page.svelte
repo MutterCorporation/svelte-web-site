@@ -58,7 +58,7 @@
 		formData.append('text', previewHtml);
 		formData.append('preview', preview);
 
-		fetch('https://dev.conteuointimo.com.br/blog', {
+		fetch('https://dev.muttercorp.com.br/blog', {
 			method: 'POST',
 			headers: {
 				Authorization: `Bearer ${localStorage.getItem('MutterCorp')}`

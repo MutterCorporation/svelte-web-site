@@ -16,7 +16,7 @@
 		};
 	}
 
-	async function fetchPosts(page = 1, size = 100) {
+	async function fetchPosts(page = 1, size = 30) {
 		try {
 			const token = localStorage.getItem('MutterCorp');
 			const res = await fetch(
