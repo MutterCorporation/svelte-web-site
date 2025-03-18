@@ -155,35 +155,6 @@
         </div>
 
         <!-- Ações Rápidas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-          <div class="neu-card">
-          <div class="stat-card">
-            <span class="text-sm font-medium text-gray-600">Saldo Total</span>
-            <span class="text-2xl font-bold text-blue-600">
-              R$ {userData.balance.toLocaleString('pt-BR')}
-            </span>
-          </div>
-          <div class="stat-card">
-            <span class="text-sm font-medium text-gray-600">Receitas</span>
-            <span class="text-2xl font-bold text-green-600">
-              R$ {userData.income.toLocaleString('pt-BR')}
-            </span>
-          </div>
-          <div class="stat-card">
-            <span class="text-sm font-medium text-gray-600">Despesas</span>
-            <span class="text-2xl font-bold text-red-600">
-              R$ {userData.expenses.toLocaleString('pt-BR')}
-            </span>
-          </div>
-          <div class="stat-card">
-            <span class="text-sm font-medium text-gray-600">Economia</span>
-            <span class="text-2xl font-bold text-purple-600">
-              R$ {userData.savings.toLocaleString('pt-BR')}
-            </span>
-          </div>
-        </div>
-
-        <!-- Ações Rápidas -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-12">
           <div class="quick-action-card">
             <h3 class="text-lg font-semibold mb-4">Adicionar Transação</h3>

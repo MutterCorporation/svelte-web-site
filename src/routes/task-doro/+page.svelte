@@ -100,30 +100,42 @@
   </script>
   
   <svelte:head>
+    <title>Task-Doro | Gerenciador de Tarefas com Pomodoro</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   </svelte:head>
   
   <div class="container">
-    <header class="header">
+    <header class="header" role="banner">
       <h1 class="title">Task-Doro</h1>
       <p class="subtitle">Gerencie seu tempo com elegância</p>
     </header>
   
     <!-- Timer Display -->
-    <section class="timer-section">
+    <section class="timer-section" role="timer">
       <div class="timer-display">
-        <p class="time">{formatTime($timeLeft)}</p>
+        <p class="time" aria-live="polite">
+          {formatTime($timeLeft)}
+        </p>
         <div class="timer-controls">
           {#if !$isRunning}
-            <button class="btn btn-primary" on:click={startPomodoro}>
+            <button 
+              class="btn btn-primary" 
+              on:click={startPomodoro}
+              aria-label="Iniciar timer">
               Iniciar
             </button>
           {:else}
-            <button class="btn btn-danger" on:click={stopPomodoro}>
+            <button 
+              class="btn btn-danger" 
+              on:click={stopPomodoro}
+              aria-label="Parar timer">
               Parar
             </button>
           {/if}
-          <button class="btn btn-secondary" on:click={resetPomodoro}>
+          <button 
+            class="btn btn-secondary" 
+            on:click={resetPomodoro}
+            aria-label="Reiniciar timer">
             Reiniciar
           </button>
         </div>
@@ -131,7 +143,7 @@
     </section>
   
     <!-- Task Input -->
-    <section class="task-input-section">
+    <section class="task-input-section" role="form">
       <div class="input-group">
         <input
           type="text"
@@ -139,23 +151,30 @@
           placeholder="Adicione uma nova tarefa..."
           class="task-input"
           on:keydown={e => e.key === 'Enter' && addTask()}
+          aria-label="Nova tarefa"
         />
-        <button class="btn btn-add" on:click={addTask}>
+        <button 
+          class="btn btn-add" 
+          on:click={addTask}
+          aria-label="Adicionar tarefa">
           Adicionar
         </button>
       </div>
     </section>
   
     <!-- Task List -->
-    <section class="task-list">
+    <section class="task-list" role="list" aria-label="Lista de tarefas">
       {#each $tasks as task (task.id)}
-        <div class="task-card {task.id === $currentTask ? 'task-selected' : ''}">
+        <div 
+          class="task-card {task.id === $currentTask ? 'task-selected' : ''}"
+          role="listitem">
           <div class="task-content">
             <label class="task-checkbox">
               <input
                 type="checkbox"
                 checked={task.completed}
                 on:change={() => toggleTask(task.id)}
+                aria-label="Marcar tarefa como concluída"
               />
               <span class="checkmark"></span>
             </label>
@@ -169,10 +188,16 @@
             </div>
           </div>
           <div class="task-actions">
-            <button class="btn btn-select" on:click={() => selectTask(task.id)}>
+            <button 
+              class="btn btn-select" 
+              on:click={() => selectTask(task.id)}
+              aria-label="Selecionar tarefa">
               Selecionar
             </button>
-            <button class="btn btn-delete" on:click={() => deleteTask(task.id)}>
+            <button 
+              class="btn btn-delete" 
+              on:click={() => deleteTask(task.id)}
+              aria-label="Deletar tarefa">
               Deletar
             </button>
           </div>
@@ -182,13 +207,14 @@
   </div>
   
   <style>
-    /* Layout Base */
+    /* Removendo definições duplicadas e organizando melhor o CSS */
     .container {
-      max-width: 48rem;
-      margin: 0 auto;
-      padding: 2rem;
-      background: #fafafa;
-      min-height: 100vh;
+        max-width: 48rem;
+        margin: 0 auto;
+        padding: 2rem;
+        background: linear-gradient(to bottom, #fafafa, #f5f5f5);
+        min-height: 100vh;
+        color: #1a1a1a;
     }
   
     /* Tipografia */
@@ -222,8 +248,11 @@
       background: white;
       padding: 3rem;
       border-radius: 1rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.05),
+        0 10px 15px rgba(37, 99, 235, 0.1);
       text-align: center;
+      border: 1px solid rgba(37, 99, 235, 0.1);
     }
   
     .time {
@@ -316,16 +345,26 @@
       background: white;
       padding: 1.5rem;
       border-radius: 0.75rem;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+      box-shadow: 
+        0 2px 4px rgba(0, 0, 0, 0.05),
+        0 4px 6px rgba(37, 99, 235, 0.1);
       display: flex;
       justify-content: space-between;
       align-items: center;
       transition: all 0.2s ease;
-      color: #1a1a1a;
+      border: 1px solid rgba(37, 99, 235, 0.1);
+    }
+  
+    .task-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 
+        0 4px 6px rgba(0, 0, 0, 0.1),
+        0 6px 8px rgba(37, 99, 235, 0.2);
     }
   
     .task-selected {
       border: 2px solid #2563eb;
+      background: rgba(37, 99, 235, 0.05);
     }
   
     .task-content {
@@ -454,5 +493,33 @@
   
     .btn-delete:hover {
       background: #b91c1c;
+    }
+  
+    /* Melhorias na acessibilidade e interatividade */
+    .btn,
+    .task-input {
+        transition: all 0.2s ease;
+    }
+
+    .btn:focus,
+    .task-input:focus {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+        box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
+    }
+
+    /* Adicionando feedback visual para interação via teclado */
+    .btn:focus-visible,
+    .task-input:focus-visible {
+        outline: 2px solid #2563eb;
+        outline-offset: 2px;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+        .btn,
+        .task-input,
+        .task-card {
+            transition: none;
+        }
     }
   </style>
