@@ -215,10 +215,10 @@
     }
   </script>
   
-  <div class="min-h-screen bg-gradient-to-br from-slate-900/90 via-purple-900/90 to-slate-900/90 p-8 pb-32 backdrop-blur-md relative">
-    <!-- Botão de Som -->
+  <div class="min-h-screen bg-gradient-to-br from-slate-900/90 via-purple-900/90 to-slate-900/90 p-4 md:p-8 pb-32 backdrop-blur-md relative">
+    <!-- Botão de Som - Ajustado para mobile -->
     <button
-      class="fixed top-4 right-4 z-50 glass-button-outline p-3 rounded-full"
+      class="fixed top-2 right-2 md:top-4 md:right-4 z-50 glass-button-outline p-2 md:p-3 rounded-full"
       on:click={() => isMuted = !isMuted}
     >
       {#if isMuted}
@@ -234,22 +234,24 @@
     </button>
 
     <div class="max-w-6xl mx-auto">
-      <div class="glass-container p-8 rounded-3xl mb-24">
-        <h1 class="font-display text-7xl font-bold text-center mb-12 animate-gradient">
+      <div class="glass-container p-4 md:p-8 rounded-3xl mb-24">
+        <!-- Título responsivo -->
+        <h1 class="font-display text-4xl md:text-7xl font-bold text-center mb-8 md:mb-12 animate-gradient">
           Dados do Kamasutra
         </h1>
   
         <!-- Seleção de Posições -->
         <div class="mb-8">
-          <h2 class="font-display text-3xl text-white/90 mb-8 text-center backdrop-blur-sm tracking-wider">
+          <h2 class="font-display text-2xl md:text-3xl text-white/90 mb-4 md:mb-8 text-center backdrop-blur-sm tracking-wider">
             Escolha suas Posições 
             <span class="text-pink-400">({selectedPositions.length}/20)</span>
           </h2>
           
-          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          <!-- Grid ajustado para mobile -->
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-8 mb-8">
             {#each allPositions as position}
               <button
-                class="glass-card group relative overflow-hidden rounded-3xl transition-all duration-500 hover:scale-105"
+                class="glass-card group relative overflow-hidden rounded-2xl md:rounded-3xl transition-all duration-500 hover:scale-105"
                 on:click={() => togglePosition(position)}
               >
                 <div class="absolute inset-0 bg-gradient-to-br from-purple-900/50 to-pink-900/50"></div>
@@ -260,9 +262,9 @@
                     class="w-full h-full object-cover opacity-40 group-hover:opacity-60 transition-all duration-500 scale-105"
                   />
                 </div>
-                <div class="relative p-8 backdrop-blur-sm bg-white/5 h-full">
-                  <h3 class="font-display text-2xl font-bold text-white mb-3">{position.name}</h3>
-                  <p class="text-white/90 text-lg font-light">{position.description}</p>
+                <div class="relative p-4 md:p-8 backdrop-blur-sm bg-white/5 h-full">
+                  <h3 class="font-display text-xl md:text-2xl font-bold text-white mb-2 md:mb-3">{position.name}</h3>
+                  <p class="text-white/90 text-base md:text-lg font-light">{position.description}</p>
                   <div class="absolute top-4 right-4">
                     {#if selectedPositions.some(p => p.name === position.name)}
                       <span class="bg-gradient-to-r from-pink-500 to-purple-500 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
@@ -277,25 +279,25 @@
         </div>
       </div>
 
-      <!-- Banner de Propaganda (movido para depois do conteúdo principal) -->
-      <div class="fixed bottom-32 left-0 right-0 z-30 px-8">
+      <!-- Banner de Propaganda - Ajustado para mobile -->
+      <div class="fixed bottom-24 md:bottom-32 left-0 right-0 z-30 px-4 md:px-8">
         <div class="max-w-6xl mx-auto">
           <div class="glass-container overflow-hidden">
             <a href="https://erecaoduradoura.com.br" 
                target="_blank"
                class="block relative group"
             >
-              <div class="relative overflow-hidden rounded-2xl">
+              <div class="relative overflow-hidden rounded-xl md:rounded-2xl">
                 <img
                   src="https://images.unsplash.com/photo-1517960413843-0aee8e2b3285?q=80&w=1200"
                   alt="Ereção Duradoura"
-                  class="w-full h-24 object-cover transform group-hover:scale-105 transition-transform duration-500"
+                  class="w-full h-16 md:h-24 object-cover transform group-hover:scale-105 transition-transform duration-500"
                 />
                 <div class="absolute inset-0 bg-gradient-to-r from-purple-900/70 to-pink-900/70 backdrop-blur-sm"></div>
                 <div class="absolute inset-0 flex items-center justify-center">
                   <div class="text-center">
-                    <h3 class="text-xl font-bold text-white mb-1">Descubra o Segredo</h3>
-                    <p class="text-white/90 text-sm">Clique aqui para uma performance extraordinária</p>
+                    <h3 class="text-lg md:text-xl font-bold text-white mb-0 md:mb-1">Descubra o Segredo</h3>
+                    <p class="text-white/90 text-xs md:text-sm">Clique aqui para uma performance extraordinária</p>
                   </div>
                 </div>
               </div>
@@ -305,8 +307,8 @@
       </div>
     </div>
 
-    <!-- Área fixa inferior para o botão -->
-    <div class="fixed bottom-0 left-0 right-0 z-40 p-4 bg-gradient-to-t from-slate-900 to-transparent h-24 flex items-center justify-center">
+    <!-- Botão de Rolar - Ajustado para mobile -->
+    <div class="fixed bottom-0 left-0 right-0 z-40 p-2 md:p-4 bg-gradient-to-t from-slate-900 to-transparent h-20 md:h-24 flex items-center justify-center">
       <button
         on:click={rollDice}
         disabled={selectedPositions.length < 6 || isRolling}
@@ -385,10 +387,9 @@
       animation: gradient 8s ease infinite;
     }
 
-    .floating-button {
-      @apply px-16 py-6 text-2xl;
-      margin-bottom: 1rem;
-      animation: float 3s ease-in-out infinite;
+    .floating-button.s-6vshDfNb189Y {
+      @apply px-6 py-3 md:px-16 md:py-6 text-lg md:text-2xl rounded-xl md:rounded-2xl;
+      margin-bottom: 0.5rem;
     }
 
     .modal-content {
@@ -431,24 +432,54 @@
       100% { background-position: 0% 50%; }
     }
 
-    /* Ajustes para desktop e mobile */
-    @media (min-width: 768px) {
-      .floating-button {
-        @apply px-16 py-6 text-2xl;
-        margin-bottom: 1rem;
+    /* Ajustes responsivos aprimorados */
+    .floating-button.s-6vshDfNb189Y {
+      @apply px-6 py-3 md:px-16 md:py-6 text-lg md:text-2xl rounded-xl md:rounded-2xl;
+      margin-bottom: 0.5rem;
+    }
+
+    /* Ajustes para telas muito pequenas */
+    @media (max-width: 360px) {
+      .floating-button.s-6vshDfNb189Y {
+        @apply px-4 py-2 text-base;
+      }
+
+      h1 {
+        @apply text-3xl;
+      }
+
+      h2 {
+        @apply text-xl;
       }
     }
 
-    @media (max-width: 767px) {
-      .floating-button {
-        @apply px-8 py-4 text-xl;
-      }
-    }
-
-    /* Garantir que o banner não sobreponha em telas menores */
+    /* Ajuste para garantir espaço suficiente para o banner e botão */
     @media (max-height: 700px) {
       .glass-container {
-        margin-bottom: 8rem;
+        margin-bottom: 10rem;
+      }
+    }
+
+    /* Ajuste para o modal em mobile */
+    @media (max-width: 767px) {
+      .modal-content {
+        @apply mx-2;
+      }
+
+      .modal-content .relative.p-12 {
+        @apply p-6;
+      }
+
+      .modal-content h2 {
+        @apply text-3xl mb-4;
+      }
+
+      .modal-content p {
+        @apply text-lg;
+      }
+
+      .floating-button.s-6vshDfNb189Y {
+        margin-bottom: 1rem;
       }
     }
   </style>
