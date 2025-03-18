@@ -13,6 +13,8 @@
 <script>
   import { P } from 'flowbite-svelte';
 import { onMount } from 'svelte';
+import Canvas from './Canvas.svelte';
+import OrderPanels from './OrderPanels.svelte';
 
   let prediction = $state([]);
   let posts = $state([]);
@@ -97,52 +99,75 @@ import { onMount } from 'svelte';
   }
 </script>
 
-<div class="min-h-screen bg-gradient-to-l from-blue-700 via-blue-500 to-blue-900 text-gray-100">
-  <div class="max-w-4xl mx-auto py-10 px-5">
-    <header class="text-center mb-8">
-      <h1 class="text-4xl font-bold mb-3 text-white drop-shadow-lg">{blogName}</h1>
-      <p class="text-lg text-gray-200"> Noticias sobre finanças e investimentos e sinais de trades .</p>
+<div class="min-h-screen bg-gradient-to-l from-gray-900 via-black to-gray-900 text-gray-100 p-4 md:p-8">
+  <div class="max-w-7xl mx-auto">
+    <!-- Header -->
+    <header class="mb-12 text-center">
+      <h1 class="text-5xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-300 drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]">
+        Crypto Trading View
+      </h1>
+      <p class="text-xl text-orange-200/80 mt-4">
+        Análise técnica e ordens em tempo real
+      </p>
     </header>
-    
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      {#each prediction as value}
-        <div 
-          class="bg-white rounded-lg shadow-md p-6 mb-6 relative group hover:z-10"
-        >
-          <h2 class="text-2xl font-bold mb-4 text-gray-800">{value.signal}</h2>
-          <div class='flex'>
-            <p class="text-gray-600 mb-4">{value.lastPrice}</p>
-            <span class="text-gray-600 ml-4">{value.change}</span>
-          </div>
-          
-          <!-- Informações de statistics exibidas ao hover -->
-          <div 
-            class="grid grid-cols-1 md:grid-cols-2 gap-4 absolute top-full left-0 w-full bg-white rounded-lg shadow-md p-4 opacity-0 transition-opacity duration-200 ease-in-out group-hover:opacity-100 max-h-60 overflow-y-auto"
-          >
-            {#each Object.entries(value.statistics) as [key, val]}
-              <div class="bg-gray-50 p-4 rounded-md shadow">
-                <h2 class="font-bold text-gray-700 mb-2">{key}</h2>
-                <p class="text-gray-600">{val}</p>
-              </div>
-            {/each}
+
+    <!-- Banner Binance -->
+    <div class="mb-12">
+      <a href="https://accounts.binance.com/register?ref=SEU_ID_AQUI" 
+         target="_blank"
+         class="block relative group overflow-hidden rounded-2xl">
+        <div class="relative h-48 overflow-hidden">
+          <img
+            src="https://public.bnbstatic.com/image/cms/blog/20230613/1c5f7d0c-33e7-4ead-8076-e4c3cd8e4362.png"
+            alt="Binance Referral"
+            class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+          />
+          <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent flex items-center p-8">
+            <div>
+              <h3 class="text-3xl font-bold text-orange-500 mb-2">Trade na Binance</h3>
+              <p class="text-xl text-white/90">A maior exchange do mundo</p>
+              <button class="mt-4 px-6 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg font-semibold transition-colors">
+                Começar Agora
+              </button>
+            </div>
           </div>
         </div>
-      {/each}
+      </a>
     </div>
-    
-    <style>
-      /* Garante que a seção de detalhes de statistics esteja oculta fora do hover */
-      .group-hover\:opacity-100:hover .opacity-0 {
-        opacity: 1;
-      }
-    </style>
-    
+
+    <!-- Trading View Container -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div class="lg:col-span-2 glass-panel">
+        <Canvas />
+      </div>
+      <div class="glass-panel">
+        <OrderPanels />
+      </div>
     </div>
+  </div>
 </div>
 
 <style>
   :global(body) {
     margin: 0;
     font-family: 'Inter', sans-serif;
+    background-color: black;
+  }
+
+  .glass-panel {
+    @apply backdrop-blur-xl bg-gray-800/30 border border-orange-500/20 rounded-2xl p-4 shadow-[0_0_20px_rgba(249,115,22,0.1)];
+  }
+
+  @keyframes neon {
+    0%, 100% {
+      text-shadow: 0 0 10px rgba(249,115,22,0.8),
+                   0 0 20px rgba(249,115,22,0.8),
+                   0 0 30px rgba(249,115,22,0.8);
+    }
+    50% {
+      text-shadow: 0 0 20px rgba(249,115,22,0.5),
+                   0 0 30px rgba(249,115,22,0.5),
+                   0 0 40px rgba(249,115,22,0.5);
+    }
   }
 </style>

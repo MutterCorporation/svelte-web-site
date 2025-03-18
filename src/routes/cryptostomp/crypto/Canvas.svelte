@@ -366,68 +366,121 @@ function getYAtPrice(price) {
   }
   </script>
   
-  <div class="controls">
-    <button 
-      class:active={selectedTool === 'support'} 
-      on:click={() => selectedTool = selectedTool === 'support' ? null : 'support'}
-    >
-      Linha de Suporte
-    </button>
-    
-    <button 
-      class:active={selectedTool === 'resistance'} 
-      on:click={() => selectedTool = selectedTool === 'resistance' ? null : 'resistance'}
-    >
-      Linha de Resistência
-    </button>
-    
-    <button on:click={clearLines}>
-      Limpar Linhas
-    </button>
-  </div>
-  
-  <div class="chart-container">
-    <canvas
-      bind:this={canvas}
-      style="width: 100%; height: 500px;"
-      on:mousedown={startDrawing}
-      on:mouseup={stopDrawing}
-      on:mousemove={handleMouseMove}
-    ></canvas>
+  <div class="trading-view-container">
+    <div class="toolbar">
+      <div class="tool-group">
+        <button class="tool-button">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+          </svg>
+        </button>
+        <button class="tool-button active">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
+          </svg>
+        </button>
+      </div>
+
+      <div class="interval-selector">
+        <button class="interval-button active">1m</button>
+        <button class="interval-button">5m</button>
+        <button class="interval-button">15m</button>
+        <button class="interval-button">1h</button>
+        <button class="interval-button">4h</button>
+        <button class="interval-button">1d</button>
+      </div>
+
+      <div class="indicators">
+        <button class="indicator-button">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z" />
+          </svg>
+          Indicadores
+        </button>
+      </div>
+    </div>
+
+    <div class="chart-container">
+      <canvas
+        bind:this={canvas}
+        style="width: 100%; height: 500px;"
+        on:mousedown={startDrawing}
+        on:mouseup={stopDrawing}
+        on:mousemove={handleMouseMove}
+      ></canvas>
+    </div>
   </div>
   
   <style>
+  .trading-view-container {
+    @apply h-full flex flex-col;
+  }
+
+  .toolbar {
+    @apply flex items-center justify-between p-4 border-b border-gray-700/50;
+  }
+
+  .tool-group {
+    @apply flex gap-2;
+  }
+
+  .tool-button {
+    @apply p-2 rounded-lg text-gray-400 hover:text-orange-500 transition-colors;
+  }
+
+  .tool-button.active {
+    @apply text-orange-500 bg-orange-500/10;
+  }
+
+  .interval-selector {
+    @apply flex gap-1;
+  }
+
+  .interval-button {
+    @apply px-3 py-1 rounded-lg text-sm text-gray-400 hover:text-white transition-all;
+  }
+
+  .interval-button.active {
+    @apply bg-orange-500 text-white;
+  }
+
+  .indicators {
+    @apply flex items-center;
+  }
+
+  .indicator-button {
+    @apply flex items-center gap-2 px-4 py-2 rounded-lg text-gray-400 hover:text-white transition-all;
+    background: rgba(31, 31, 31, 0.6);
+  }
+
   .chart-container {
-    width: 100%;
-    height: 500px;
-    background: white;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    padding: 16px;
+    @apply flex-1 relative;
+    background: rgba(17, 17, 17, 0.3);
   }
-  
-  .controls {
-    margin-bottom: 1rem;
-    display: flex;
-    gap: 1rem;
+
+  canvas {
+    @apply w-full h-full;
   }
-  
-  button {
-    padding: 0.5rem 1rem;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    background: white;
-    cursor: pointer;
-    transition: all 0.2s;
+
+  /* Estilização para elementos do gráfico */
+  :global(.chart-line) {
+    stroke: rgb(249,115,22);
+    stroke-width: 2;
   }
-  
-  button:hover {
-    background: #f5f5f5;
+
+  :global(.chart-grid) {
+    stroke: rgba(255, 255, 255, 0.1);
   }
-  
-  button.active {
-    background: #2196F3;
-    color: white;
-    border-color: #2196F3;
+
+  :global(.chart-label) {
+    fill: rgb(209, 213, 219);
+    font-size: 12px;
+  }
+
+  :global(.chart-crosshair) {
+    stroke: rgba(249,115,22, 0.5);
+    stroke-width: 1;
+    stroke-dasharray: 3,3;
   }
   </style>

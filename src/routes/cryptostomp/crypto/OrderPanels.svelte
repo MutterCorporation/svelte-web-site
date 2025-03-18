@@ -40,137 +40,117 @@
     }
 </script>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 p-4 bg-white rounded-lg shadow">
-    <!-- Buy/Sell Panel -->
-    <div class="p-4 rounded-lg {side === 'buy' ? 'bg-green-50' : 'bg-red-50'}">
-        <div class="flex justify-between mb-4">
-            <button 
-                class="px-4 py-2 rounded-lg font-semibold {side === 'buy' ? 'bg-green-500 text-white' : 'bg-gray-200'}"
-                on:click={() => side = 'buy'}
-            >
-                Comprar
-            </button>
-            <button 
-                class="px-4 py-2 rounded-lg font-semibold {side === 'sell' ? 'bg-red-500 text-white' : 'bg-gray-200'}"
-                on:click={() => side = 'sell'}
-            >
-                Vender
-            </button>
-        </div>
+<div class="order-panels">
+  <div class="tabs">
+    <button class="tab-button active">Spot</button>
+    <button class="tab-button">Futures</button>
+  </div>
 
-        <div class="space-y-4">
-            <!-- Order Type -->
-            <div>
-                <label class="block text-sm font-medium mb-1">Tipo de Ordem</label>
-                <select 
-                    bind:value={orderType}
-                    class="w-full p-2 border rounded-lg"
-                >
-                    <option value="limit">Limit</option>
-                    <option value="market">Market</option>
-                </select>
-            </div>
-
-            <!-- Quantity -->
-            <div>
-                <label class="block text-sm font-medium mb-1">Quantidade</label>
-                <input 
-                    type="number"
-                    bind:value={quantity}
-                    min="0"
-                    step="0.0001"
-                    class="w-full p-2 border rounded-lg"
-                    placeholder="0.00"
-                />
-            </div>
-
-            <!-- Price -->
-            {#if orderType === 'limit'}
-                <div>
-                    <label class="block text-sm font-medium mb-1">Preço</label>
-                    <input 
-                        type="number"
-                        bind:value={price}
-                        min="0"
-                        step="0.01"
-                        class="w-full p-2 border rounded-lg"
-                        placeholder="0.00"
-                    />
-                </div>
-            {/if}
-
-            <!-- Total -->
-            <div class="pt-2 border-t">
-                <div class="flex justify-between">
-                    <span class="font-medium">Total:</span>
-                    <span class="font-bold">${$totalAmount}</span>
-                </div>
-            </div>
-        </div>
+  <div class="order-form">
+    <div class="price-info">
+      <span class="price">$45,123.45</span>
+      <span class="change positive">+2.45%</span>
     </div>
 
-    <!-- Stop Loss Panel -->
-    <div class="p-4 bg-gray-50 rounded-lg">
-        <h3 class="text-lg font-semibold mb-4">Stop Loss</h3>
-        
-        <div class="space-y-4">
-            <div>
-                <label class="block text-sm font-medium mb-1">Preço Stop</label>
-                <input 
-                    type="number"
-                    bind:value={stopPrice}
-                    min="0"
-                    step="0.01"
-                    class="w-full p-2 border rounded-lg"
-                    placeholder="0.00"
-                />
-            </div>
-
-            <div class="flex gap-2">
-                <button 
-                    class="flex-1 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
-                    on:click={() => {
-                        stopPrice = (parseFloat(price) * 0.95).toFixed(2); // 5% below current price
-                    }}
-                >
-                    -5%
-                </button>
-                <button 
-                    class="flex-1 px-4 py-2 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600"
-                    on:click={() => {
-                        stopPrice = (parseFloat(price) * 0.90).toFixed(2); // 10% below current price
-                    }}
-                >
-                    -10%
-                </button>
-            </div>
-        </div>
+    <div class="order-type-selector">
+      <button class="order-type active">Limite</button>
+      <button class="order-type">Mercado</button>
+      <button class="order-type">Stop-Limit</button>
     </div>
 
-    <!-- Action Buttons -->
-    <div class="col-span-1 md:col-span-2 flex gap-4 mt-4">
-        <button 
-            class="flex-1 py-3 rounded-lg font-semibold text-white {side === 'buy' ? 'bg-green-500 hover:bg-green-600' : 'bg-red-500 hover:bg-red-600'}"
-            on:click={handleOrder}
-        >
-            {side === 'buy' ? 'Confirmar Compra' : 'Confirmar Venda'}
-        </button>
-        <button 
-            class="px-6 py-3 rounded-lg font-semibold bg-gray-200 hover:bg-gray-300"
-            on:click={handleReset}
-        >
-            Limpar
-        </button>
+    <div class="input-group">
+      <label>Preço</label>
+      <input type="number" class="order-input" placeholder="0.00" />
     </div>
+
+    <div class="input-group">
+      <label>Quantidade</label>
+      <input type="number" class="order-input" placeholder="0.00" />
+    </div>
+
+    <div class="order-buttons">
+      <button class="buy-button">Comprar BTC</button>
+      <button class="sell-button">Vender BTC</button>
+    </div>
+  </div>
 </div>
 
 <style>
-    input[type="number"]::-webkit-inner-spin-button,
-    input[type="number"]::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-    input[type="number"] {
-        -moz-appearance: textfield;
-    }
+  .order-panels {
+    @apply p-4;
+  }
+
+  .tabs {
+    @apply flex gap-2 mb-6;
+  }
+
+  .tab-button {
+    @apply px-6 py-2 rounded-lg text-gray-300 transition-all;
+    background: rgba(31, 31, 31, 0.6);
+  }
+
+  .tab-button.active {
+    @apply bg-orange-500 text-white;
+  }
+
+  .order-form {
+    @apply space-y-6;
+  }
+
+  .price-info {
+    @apply flex items-center gap-4 mb-6;
+  }
+
+  .price {
+    @apply text-3xl font-bold text-white;
+  }
+
+  .change {
+    @apply text-lg font-semibold;
+  }
+
+  .change.positive {
+    @apply text-green-400;
+  }
+
+  .order-type-selector {
+    @apply flex gap-2 mb-6;
+  }
+
+  .order-type {
+    @apply px-4 py-2 rounded-lg text-sm text-gray-300 transition-all;
+    background: rgba(31, 31, 31, 0.6);
+  }
+
+  .order-type.active {
+    @apply bg-orange-500 text-white;
+  }
+
+  .input-group {
+    @apply space-y-2;
+  }
+
+  .input-group label {
+    @apply text-sm text-gray-400;
+  }
+
+  .order-input {
+    @apply w-full px-4 py-3 rounded-lg text-white bg-gray-800/50 border border-gray-700/50 focus:border-orange-500/50 focus:outline-none transition-all;
+  }
+
+  .order-buttons {
+    @apply grid grid-cols-2 gap-4 mt-8;
+  }
+
+  .buy-button, .sell-button {
+    @apply px-6 py-3 rounded-lg font-semibold text-white transition-all;
+  }
+
+  .buy-button {
+    @apply bg-green-500 hover:bg-green-600;
+  }
+
+  .sell-button {
+    @apply bg-red-500 hover:bg-red-600;
+  }
 </style>

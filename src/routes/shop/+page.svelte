@@ -9,10 +9,19 @@
   import { Footer, FooterCopyright, FooterLinkGroup, FooterBrand, FooterLink } from 'flowbite-svelte';
   import Header from '../../components/Header.svelte';
 	import ProductModal from '../../components/ProductModal.svelte';
+  // import { Toaster, toast } from 'svelte-french-toast';
+
 
 
   let showWelcome = true;
-  let categories = ['Todos', 'Investimentos', 'Saúde', 'Educação', 'Entretenimento'];
+  let showCookieConsent = true;
+  let categories = [
+    { id: 1, name: 'Tênis', icon: '👟' },
+    { id: 2, name: 'Fitness Feminino', icon: '💪' },
+    { id: 3, name: 'Fitness Masculino', icon: '🏋️' },
+    { id: 4, name: 'Acessórios', icon: '🎽' },
+    { id: 5, name: 'Suplementos', icon: '🥤' }
+  ];
   let selectedCategory = 'Todos';
   let searchQuery = '';
 
@@ -42,6 +51,17 @@
 
   let filteredImages = images;
 
+  let featuredProducts = [
+    {
+      id: 1,
+      name: 'Nike Air Max 2024',
+      price: 899.90,
+      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff',
+      category: 'Tênis'
+    },
+    // Adicione mais produtos
+  ];
+
   $: {
     filteredImages = images.filter(image => {
       const matchesCategory = selectedCategory === 'Todos' || image.category === selectedCategory;
@@ -51,10 +71,26 @@
     });
   }
 
+  function acceptCookies() {
+    localStorage.setItem('cookiesAccepted', 'true');
+    showCookieConsent = false;
+    toast.success('Preferências salvas!');
+  }
+
   onMount(() => {
+    if (localStorage.getItem('cookiesAccepted')) {
+      showCookieConsent = false;
+    }
+    
     setTimeout(() => {
       showWelcome = false;
     }, 3000);
+    
+    // Animação de entrada
+    toast.success('Bem-vindo à nossa loja!', {
+      icon: '🏪',
+      duration: 3000
+    });
   });
 </script>
 
@@ -72,43 +108,199 @@
 <Header />
 <Cart />
 
-<!-- Hero Section -->
-<div
-  class="relative h-[50vh] bg-gradient-to-r from-pink-500 to-purple-600"
-  in:fly={{ y: 50, duration: 1000 }}
->
-  <div class="absolute inset-0 bg-black/30"></div>
-  <div class="container mx-auto flex h-full items-center px-4">
-    <div class="relative z-10 text-white">
-      <h1 class="mb-4 text-5xl font-bold">Descubra Produtos Incríveis</h1>
-      <p class="mb-8 text-xl">Encontre os melhores produtos digitais para transformar sua vida</p>
-      <div class="flex gap-4">
-        <input
-          type="text"
-          bind:value={searchQuery}
-          placeholder="Buscar produtos..."
-          class="w-full max-w-md rounded-lg px-4 py-2 text-gray-800 focus:outline-none focus:ring-2 focus:ring-pink-500"
-        />
+<div class="min-h-screen bg-gradient-to-br from-gray-100 to-gray-200">
+  <!-- Header com Navigation -->
+  <header class="sticky top-0 z-50 bg-white/80 backdrop-blur-lg shadow-lg">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16">
+        <div class="flex items-center">
+          <a href="/shop" class="flex items-center space-x-2">
+            <span class="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-600 to-pink-600">
+              FitStore
+            </span>
+          </a>
+        </div>
+
+        <div class="flex items-center space-x-4">
+          <a href="/shop/login" class="nav-link">Login</a>
+          <a href="/shop/cart" class="relative">
+            <svg class="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+            </svg>
+            <span class="absolute -top-2 -right-2 bg-purple-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+              0
+            </span>
+          </a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="relative h-[70vh] overflow-hidden">
+    <div class="absolute inset-0">
+      <img
+        src="https://images.unsplash.com/photo-1571902943202-507ec2618e8f"
+        alt="Hero"
+        class="w-full h-full object-cover"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-black/70 to-transparent" />
+    </div>
+    
+    <div class="relative max-w-7xl mx-auto px-4 h-full flex items-center">
+      <div class="max-w-xl" in:fly="{{ y: 50, duration: 1000 }}">
+        <h1 class="text-5xl font-bold text-white mb-6">
+          Seu Estilo, Sua Força
+        </h1>
+        <p class="text-xl text-gray-200 mb-8">
+          Descubra a nova coleção de moda fitness e tênis para seu treino
+        </p>
+        <a href="#products" class="inline-flex items-center px-8 py-3 rounded-full bg-purple-600 text-white font-semibold hover:bg-purple-700 transform hover:scale-105 transition-all">
+          Explorar Agora
+          <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3" />
+          </svg>
+        </a>
       </div>
     </div>
-  </div>
+  </section>
+
+  <!-- Categorias -->
+  <section class="py-16 bg-white">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Categorias</h2>
+      
+      <div class="grid grid-cols-2 md:grid-cols-5 gap-6">
+        {#each categories as category}
+          <a
+            href={`/shop/category/${category.id}`}
+            class="group relative overflow-hidden rounded-2xl bg-gradient-to-br from-purple-100 to-pink-100 p-6 text-center transform hover:scale-105 transition-all"
+            in:fly="{{ y: 50, duration: 500, delay: category.id * 100 }}"
+          >
+            <span class="text-4xl mb-3 block">{category.icon}</span>
+            <h3 class="font-semibold text-gray-800">{category.name}</h3>
+          </a>
+        {/each}
+      </div>
+    </div>
+  </section>
+
+  <!-- Produtos em Destaque -->
+  <section id="products" class="py-16 bg-gray-100">
+    <div class="max-w-7xl mx-auto px-4">
+      <h2 class="text-3xl font-bold text-center mb-12">Destaques</h2>
+      
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        {#each featuredProducts as product}
+          <div
+            class="bg-white rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all transform hover:scale-105"
+            in:fly="{{ y: 50, duration: 500 }}"
+          >
+            <img
+              src={product.image}
+              alt={product.name}
+              class="w-full h-64 object-cover"
+            />
+            <div class="p-6">
+              <h3 class="font-semibold text-lg mb-2">{product.name}</h3>
+              <p class="text-purple-600 font-bold">
+                R$ {product.price.toFixed(2)}
+              </p>
+              <button
+                class="mt-4 w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition-colors"
+                on:click={() => toast.success('Produto adicionado ao carrinho!')}
+              >
+                Adicionar ao Carrinho
+              </button>
+            </div>
+          </div>
+        {/each}
+      </div>
+    </div>
+  </section>
+
+  <!-- Cookie Consent -->
+  {#if showCookieConsent}
+    <div
+      class="fixed bottom-0 left-0 right-0 bg-white shadow-lg p-4"
+      in:fly="{{ y: 100, duration: 500 }}"
+      out:fade
+    >
+      <div class="max-w-7xl mx-auto flex items-center justify-between">
+        <p class="text-gray-700">
+          Utilizamos cookies para melhorar sua experiência. Ao continuar navegando, você concorda com nossa política de privacidade.
+        </p>
+        <button
+          class="ml-4 px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+          on:click={acceptCookies}
+        >
+          Aceitar
+        </button>
+      </div>
+    </div>
+  {/if}
+
+  <!-- Newsletter -->
+  <section class="bg-purple-600 py-16">
+    <div class="max-w-7xl mx-auto px-4 text-center">
+      <h2 class="text-3xl font-bold text-white mb-6">
+        Fique por dentro das novidades
+      </h2>
+      <form
+        class="max-w-md mx-auto flex gap-4"
+        on:submit|preventDefault={() => toast.success('Newsletter assinada com sucesso!')}
+      >
+        <input
+          type="email"
+          placeholder="Seu melhor e-mail"
+          class="flex-1 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-white"
+        />
+        <button
+          type="submit"
+          class="px-6 py-2 bg-white text-purple-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors"
+        >
+          Assinar
+        </button>
+      </form>
+    </div>
+  </section>
 </div>
 
-<!-- Categories -->
-<div class="bg-white py-8">
-  <div class="container mx-auto px-4">
-    <div class="flex flex-wrap justify-center gap-4">
-      {#each categories as category}
-        <button
-          class="rounded-full px-6 py-2 transition-all {selectedCategory === category ? 'bg-pink-500 text-white' : 'bg-gray-100 text-gray-800 hover:bg-gray-200'}"
-          on:click={() => selectedCategory = category}
-        >
-          {category}
-        </button>
-      {/each}
-    </div>
-  </div>
-</div>
+<!-- <Toaster /> -->
+
+<style>
+  .nav-link {
+    @apply text-gray-700 hover:text-purple-600 font-medium transition-colors;
+  }
+
+  /* Animações personalizadas */
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  /* Estilo para scrollbar personalizado */
+  :global(body::-webkit-scrollbar) {
+    width: 12px;
+  }
+
+  :global(body::-webkit-scrollbar-track) {
+    background: #f1f1f1;
+  }
+
+  :global(body::-webkit-scrollbar-thumb) {
+    background: #9333ea;
+    border-radius: 6px;
+  }
+
+  :global(body::-webkit-scrollbar-thumb:hover) {
+    background: #7e22ce;
+  }
+</style>
 
 <!-- Products Grid -->
 <div class="min-h-screen bg-gradient-to-b from-pink-50 to-white py-12">
@@ -129,24 +321,6 @@
         {/each}
       </div>
     {/if}
-  </div>
-</div>
-
-<!-- Newsletter Section -->
-<div class="bg-pink-600 py-16 text-white">
-  <div class="container mx-auto px-4 text-center">
-    <h2 class="mb-4 text-3xl font-bold">Fique por dentro das novidades</h2>
-    <p class="mb-8">Receba ofertas exclusivas e novos lançamentos diretamente no seu e-mail</p>
-    <div class="mx-auto flex max-w-md gap-4">
-      <input
-        type="email"
-        placeholder="Seu melhor e-mail"
-        class="w-full rounded-lg px-4 py-2 text-gray-800"
-      />
-      <button class="rounded-lg bg-purple-700 px-6 py-2 font-semibold hover:bg-purple-800">
-        Inscrever
-      </button>
-    </div>
   </div>
 </div>
 
