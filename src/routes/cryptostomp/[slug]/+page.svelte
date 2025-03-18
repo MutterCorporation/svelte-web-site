@@ -76,121 +76,102 @@
 	});
 </script>
 
-{#if error}
-  <div class="error-container">
-    <h1>Erro</h1>
-    <p>{errorMessage}</p>
-  </div>
-{:else}
-  <div class="container">
-    <div class="post">
-		<h1 class="post-title">{title}</h1> <!-- Substituindo a imagem pelo título -->
-      <div class="post-body">
-        {modifiedText}
-      </div>
-    </div>
-  </div>
-{/if}
+<div class="min-h-screen bg-gradient-to-l from-gray-900 via-black to-gray-900 py-12">
+	{#if error}
+		<div class="error-container">
+			<h1>Erro</h1>
+			<p>{errorMessage}</p>
+		</div>
+	{:else}
+		<div class="container">
+			<!-- Banner Binance -->
+			<div class="mb-12">
+				<a href="https://accounts.binance.com/register?ref=SEU_ID_AQUI" 
+					target="_blank"
+					class="block relative group overflow-hidden rounded-2xl">
+					<div class="relative h-48 overflow-hidden">
+						<img
+							src="https://public.bnbstatic.com/image/cms/blog/20230613/1c5f7d0c-33e7-4ead-8076-e4c3cd8e4362.png"
+							alt="Binance Referral"
+							class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
+						/>
+						<div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent flex items-center p-8">
+							<div>
+								<h3 class="text-3xl font-bold text-orange-500 mb-2">Comece a Trader Agora</h3>
+								<p class="text-xl text-white/90">Ganhe bônus no seu primeiro depósito</p>
+								<button class="mt-4 px-6 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg font-semibold transition-colors">
+									Criar Conta
+								</button>
+							</div>
+						</div>
+					</div>
+				</a>
+			</div>
+
+			<div class="post">
+				<h1 class="post-title">{title}</h1>
+				<div class="post-body">
+					{modifiedText}
+				</div>
+			</div>
+		</div>
+	{/if}
+</div>
 
 <style>
-	/* Adicionando estilos para blocos de código */
-	.code-block {
-		background: #f5f5f5;
-		padding: 1rem;
-		border-radius: 5px;
-		overflow-x: auto;
-	}
-
-	.code-block .language-js {
-		color: #d73a49;
-	}
-
-	/* Outros estilos existentes */
-	body {
-		font-family: 'Arial', sans-serif;
-		margin: 0;
-		padding: 0;
-		background: linear-gradient(to right, #f8f9fa, #e9ecef);
-	}
-
 	.container {
 		max-width: 800px;
 		margin: 0 auto;
 		padding: 20px;
-		background: #fff;
-		border-radius: 8px;
-		box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-		margin-top: 40px;
-	}
-
-	.post {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
-	}
-
-	.post-image {
-		max-width: 100%;
-		height: auto;
-		border-radius: 8px;
-		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+		background: rgba(17, 17, 17, 0.7);
+		backdrop-filter: blur(10px);
+		border: 1px solid rgba(249,115,22,0.2);
+		border-radius: 16px;
+		box-shadow: 0 0 20px rgba(249,115,22,0.1);
 	}
 
 	.post-title {
 		font-size: 2.5em;
-		color: #343a40;
-		margin: 0;
+		color: rgb(249,115,22);
+		margin: 0 0 1em 0;
 		line-height: 1.2;
+		text-shadow: 0 0 10px rgba(249,115,22,0.3);
 	}
 
 	.post-body {
 		font-size: 1.1em;
-		color: #495057;
+		color: #e5e5e5;
 		white-space: pre-wrap;
 		word-wrap: break-word;
 		line-height: 1.8;
-	}
-
-	.post-body h1,
-	.post-body h2,
-	.post-body h3 {
-		margin-top: 1em;
-		margin-bottom: 0.5em;
-		color: #343a40;
-	}
-
-	.post-body code {
-		background: #f8f9fa;
-		border-radius: 4px;
-		padding: 2px 4px;
-		font-size: 0.9em;
-	}
-
-	.post-body pre {
-		background: #f1f3f5;
-		border-radius: 4px;
-		padding: 10px;
-		overflow-x: auto;
 	}
 
 	.error-container {
 		max-width: 600px;
 		margin: 0 auto;
 		padding: 20px;
-		background: #f8d7da;
-		color: #721c24;
-		border: 1px solid #f5c6cb;
+		background: rgba(220, 38, 38, 0.1);
+		color: #ef4444;
+		border: 1px solid rgba(220, 38, 38, 0.3);
 		border-radius: 8px;
-		box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+		backdrop-filter: blur(10px);
 		text-align: center;
 	}
 
-	.error-container h1 {
-		font-size: 2em;
-		margin-bottom: 10px;
+	.post-body h1,
+	.post-body h2,
+	.post-body h3 {
+		color: rgb(249,115,22);
+		margin-top: 1.5em;
+		margin-bottom: 0.5em;
 	}
 
-	.error-container p {
-		font-size: 1.2em;
+	.code-block {
+		background: rgba(31, 31, 31, 0.8);
+		border: 1px solid rgba(249,115,22,0.2);
+		padding: 1rem;
+		border-radius: 8px;
+		overflow-x: auto;
+		margin: 1em 0;
 	}
 </style>
