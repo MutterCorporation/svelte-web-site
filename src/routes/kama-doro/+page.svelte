@@ -43,9 +43,17 @@
     imageUrl?: string;
   }
 
+  // URLs dos sons
+  const SOUND_URLS = {
+    click: 'https://cdn.pixabay.com/download/audio/2022/03/24/audio_c8c6a797f1.mp3?filename=click-button-140881.mp3',
+    timerEnd: 'https://cdn.pixabay.com/download/audio/2022/03/19/audio_c8c6a797f1.mp3?filename=notification-sound-127856.mp3',
+    hover: 'https://cdn.pixabay.com/download/audio/2021/08/04/audio_c8c6a797f1.mp3?filename=hover-pop-125867.mp3'
+  };
+
   let newTaskInput = '';
   let timer: number;
   let selectedMinutes = 25;
+  let lastSelectedMinutes = selectedMinutes;
   let time = selectedMinutes * 60;
   let isRunning = false;
   let currentPosition: Position = { 
@@ -75,14 +83,20 @@
   async function fetchRandomPosition() {
     loading = true;
     try {
-      const randomIndex = Math.floor(Math.random() * 10) + 1;
+      const randomIndex = Math.floor(Math.random() * 450) + 1; // Gera número entre 1 e 450
       const response = await fetch(`https://dev.muttercorp.com.br/kamasutra/${randomIndex}`, {
         headers: {
           'accept': '*/*'
         }
       });
       
-      if (!response.ok) throw new Error('Falha ao carregar posição');
+      if (!response.ok) {
+        // Se a posição não existir, tenta novamente com outro número
+        if (response.status === 404) {
+          return fetchRandomPosition();
+        }
+        throw new Error('Falha ao carregar posição');
+      }
       
       const data: KamasutraPosition = await response.json();
       currentPosition = {
@@ -110,6 +124,7 @@
   };
 
   function updateTimer() {
+    lastSelectedMinutes = selectedMinutes;
     time = selectedMinutes * 60;
   }
 
@@ -124,7 +139,9 @@
           clearInterval(timer);
           isRunning = false;
           playSound(timerEndSound);
-          fetchRandomPosition(); // Busca nova posição quando o timer acabar
+          fetchRandomPosition();
+          time = lastSelectedMinutes * 60; // Restaura o último tempo selecionado
+          notify();
         }
       }, 1000) as unknown as number;
     }
@@ -138,7 +155,7 @@
   function resetTimer() {
     clearInterval(timer);
     isRunning = false;
-    time = selectedMinutes * 60;
+    time = lastSelectedMinutes * 60; // Usa o último tempo selecionado
   }
 
   // Task Management
@@ -195,13 +212,20 @@
   }
 
   onMount(() => {
-    clickSound = new Audio('../sounds/click.mp3');
-    timerEndSound = new Audio('../sounds/timer-end.mp3');
-    hoverSound = new Audio('../sounds/hover.mp3');
+    // Inicializa os sons com as URLs do CDN
+    clickSound = new Audio(SOUND_URLS.click);
+    timerEndSound = new Audio(SOUND_URLS.timerEnd);
+    hoverSound = new Audio(SOUND_URLS.hover);
+    
+    // Pré-carrega os sons
+    clickSound.load();
+    timerEndSound.load();
+    hoverSound.load();
     
     checkMobile();
     window.addEventListener('resize', checkMobile);
-    fetchRandomPosition(); // Busca posição inicial
+    fetchRandomPosition();
+    lastSelectedMinutes = selectedMinutes;
 
     Notification.requestPermission();
     return () => {
@@ -214,10 +238,14 @@
     isMobile = window.innerWidth < 768;
   }
 
-  function playSound(sound: HTMLAudioElement) {
+  async function playSound(sound: HTMLAudioElement) {
     if (!isMuted && sound) {
-      sound.currentTime = 0;
-      sound.play().catch(err => console.error('Erro ao tocar som:', err));
+      try {
+        sound.currentTime = 0;
+        await sound.play();
+      } catch (err) {
+        console.error('Erro ao tocar som:', err);
+      }
     }
   }
 </script>
@@ -294,11 +322,14 @@
       <div class="relative w-64 h-64 md:w-96 md:h-96 mx-auto mb-8 md:mb-16">
         <div class="absolute inset-0 bg-gradient-to-r from-purple-600 to-pink-600 rounded-full blur-2xl opacity-50"></div>
         <div class="relative w-full h-full bg-gradient-to-br from-purple-900/80 to-slate-900/80 rounded-full 
-                    border border-white/20 backdrop-blur-md flex items-center justify-center
+                    border border-white/20 backdrop-blur-md flex flex-col items-center justify-center
                     shadow-[0_0_50px_rgba(168,85,247,0.3)] hover:shadow-[0_0_70px_rgba(168,85,247,0.4)] 
                     transition-all duration-500">
           <span class="text-5xl md:text-8xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-pink-400 to-purple-400">
             {formatTime(time)}
+          </span>
+          <span class="text-sm md:text-base text-white/60 mt-2">
+            Tempo selecionado: {lastSelectedMinutes < 1 ? '30 segundos' : `${lastSelectedMinutes} ${lastSelectedMinutes === 1 ? 'minuto' : 'minutos'}`}
           </span>
         </div>
       </div>
@@ -319,7 +350,7 @@
             on:click={pauseTimer}
             class="glass-button-alt px-8 py-4 md:px-12 md:py-6 rounded-full font-bold text-xl md:text-2xl text-white/90
                    shadow-[0_0_30px_rgba(168,85,247,0.3)] hover:shadow-[0_0_50px_rgba(168,85,247,0.5)]
-                   hover:scale-105 transition-all duration-500"
+                   hover:scale-105 transition-all duration-500 {time <= 10 ? 'animate-pulse' : ''}"
           >
             Pausar
           </button>
