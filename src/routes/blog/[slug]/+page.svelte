@@ -202,8 +202,8 @@
 
 	.post-image {
 		width: 100%;
-		max-height: 400px;
-		object-fit: cover;
+		height: 100%;
+		object-fit: contain;
 		transition: transform 0.3s;
 	}
 
@@ -224,6 +224,8 @@
 		line-height: 1.8;
 		font-size: 1.1rem;
 	}
+
+	
 
 	.post-body {
 		margin: 2rem 0;
@@ -286,6 +288,17 @@
 		margin-top: 3rem;
 		border-top: 1px solid rgba(255, 255, 255, 0.1);
 		padding-top: 2rem;
+	}
+
+	.post-image {
+		width: 100%;
+		height: 100%;
+		object-fit: contain;
+		transition: transform 0.3s;
+	}
+
+	.post-image:hover {
+		transform: scale(1.02);
 	}
 
 	/* Botões */
