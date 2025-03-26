@@ -80,7 +80,7 @@
 
         <div class="action-buttons">
             <TouchButton {openModal} />
-            <a href="/path/to/your/cv.pdf" download class="brutal-button">
+            <a href="/Profile.pdf" download class="brutal-button">
                 <span class="button-text">DOWNLOAD CV</span>
                 <span class="button-glitch"></span>
             </a>
