@@ -18,7 +18,7 @@ let { children } = $props();
 		box-sizing: border-box;
 		font-family: 'Inter', system-ui, -apple-system, sans-serif;
 		background-color: #000;
-		color: #fff;
+		color: #0a0a0a;
 	}
 
 	:global(html) {
