@@ -257,6 +257,37 @@
 textarea {
     color: #000 !important;
 }	
+.preview {
+  color: #000 !important; /* Força a cor do texto principal */
+  background-color: #fff !important; /* Melhora o contraste */
+  border: 2px solid #e0e0e0;
+  padding: 20px;
+  margin-top: 30px;
+}
+
+.preview :global(*) {
+  color: inherit !important; /* Herda a cor do container pai */
+}
+
+.preview :global(code) {
+  background-color: #1a1a1a !important;
+  color: #f8f8f8 !important;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
+
+.preview :global(a) {
+  color: #0066cc !important;
+  text-decoration: underline;
+}
+
+.preview :global(h1),
+.preview :global(h2),
+.preview :global(h3) {
+  color: #1a1a1a !important;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 0.5em;
+}
 
 	@keyframes pulse {
 		0% {
