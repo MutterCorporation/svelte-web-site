@@ -3,109 +3,79 @@
 	let isLoading = true;
 	let isAuthenticated = false;
 
-	// Função para validar o token
 	async function validateToken() {
 		const token = localStorage.getItem('MutterCorp');
-		if (!token) {
-			return false; // Não autenticado se não houver token
-		}
+		if (!token) return false;
 
-		const response = await fetch('https://dev.muttercorp.com.br/users/check-admin', {
-			method: 'GET',
-			headers: {
-				accept: '*/*',
-				Authorization: `Bearer ${token}` // Envia o token no cabeçalho Authorization
-			}
-		});
-
-		if (response.ok) {
-			return true; // Autenticado
-		} else {
-			return false; // Não autenticado
+		try {
+			const response = await fetch('https://dev.muttercorp.com.br/users/check-admin', {
+				headers: { Authorization: `Bearer ${token}` }
+			});
+			return response.ok;
+		} catch (error) {
+			return false;
 		}
 	}
 
 	onMount(async () => {
 		isAuthenticated = await validateToken();
-		isLoading = false; // A autenticação terminou
-		if (!isAuthenticated) {
-			window.location.href = '/login'; // Redireciona para login se não autenticado
-		}
+		isLoading = false;
+		if (!isAuthenticated) window.location.href = '/login';
 	});
 </script>
 
-<div class="container">
-	<header>
-		<h1>Página Admin</h1>
-	</header>
-	<p class="message">Este conteúdo só é acessível para administradores autenticados.</p>
-</div>
+{#if isLoading}
+	<div class="skeleton-container">
+		<div class="skeleton-header"></div>
+		<div class="skeleton-message"></div>
+	</div>
+{:else if isAuthenticated}
+	<div class="container">
+		<header>
+			<h1>Página Admin</h1>
+		</header>
+		<p class="message">Este conteúdo só é acessível para administradores autenticados.</p>
+	</div>
+{/if}
 
 <style>
-	/* Seu CSS permanece inalterado, incluindo os estilos do esqueleto */
-	body {
-		font-family: Arial, sans-serif;
-		background-color: #f4f4f4;
-		margin: 0;
-		padding: 0;
-	}
-
-	.container {
-		max-width: 800px;
-		margin: 0 auto;
-		padding: 20px;
-		background: #fff;
-		border-radius: 8px;
-		box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-	}
-
-	header {
-		text-align: center;
-		margin-bottom: 20px;
-	}
-
+	/* Cores melhoradas para melhor contraste */
 	h1 {
-		font-size: 2em;
-		color: #333;
+		color: #2c3e50; /* Azul mais escuro */
+		font-size: 2.2em;
 	}
 
 	.message {
-		margin-top: 20px;
-		font-size: 1.2em;
-		color: #333;
+		color: #34495e; /* Cinza-azulado escuro */
+		font-size: 1.3em;
+		line-height: 1.6;
 	}
 
-	/* Skeleton styles */
-	.skeleton {
-		opacity: 0.6;
+	/* Efeito skeleton durante o loading */
+	.skeleton-container {
+		max-width: 800px;
+		margin: 0 auto;
+		padding: 20px;
+	}
+
+	.skeleton-header {
+		height: 40px;
+		width: 60%;
+		margin: 0 auto 20px;
+		background: #ecf0f1;
+		border-radius: 4px;
 		animation: pulse 1.5s infinite;
 	}
 
-	.skeleton-text {
-		background-color: #e0e0e0;
+	.skeleton-message {
+		height: 100px;
+		background: #ecf0f1;
 		border-radius: 4px;
-		height: 20px;
-		width: 100%;
-		margin-bottom: 10px;
-	}
-
-	.skeleton-button {
-		background-color: #e0e0e0;
-		border-radius: 4px;
-		height: 50px;
-		width: 100px;
-		margin-top: 15px;
+		animation: pulse 1.5s infinite;
 	}
 
 	@keyframes pulse {
-		0% {
-			opacity: 0.6;
-		}
-		50% {
-			opacity: 1;
-		}
-		100% {
-			opacity: 0.6;
-		}
+		0%, 100% { opacity: 0.6; }
+		50% { opacity: 1; }
 	}
 </style>

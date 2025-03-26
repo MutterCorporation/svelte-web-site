@@ -12,7 +12,7 @@
 
 	async function fetchPosts() {
 		try {
-			const response = await fetch('https://api.example.com/posts');
+			const response = await fetch('https://dev.muttercorp.com.br/blog/');
 			posts = await response.json();
 		} catch (error) {
 			console.error('Error fetching posts:', error);
