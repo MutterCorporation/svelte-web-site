@@ -12,6 +12,11 @@ let { children } = $props();
 
 
 <style>
+
+	:global(input),
+	:global(textarea) {
+	color: #000 !important;
+	}
 	:global(body) {
 		margin: 0;
 		padding: 0;
