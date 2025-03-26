@@ -39,6 +39,10 @@
 {/if}
 
 <style>
+
+	input {
+    color: #000 !important;
+	}	
 	/* Cores melhoradas para melhor contraste */
 	h1 {
 		color: #2c3e50; /* Azul mais escuro */

@@ -127,6 +127,10 @@
 
 <style>
 	/* Seu CSS permanece inalterado, incluindo os estilos do esqueleto */
+	input {
+
+	}
+
 	body {
 		font-family: Arial, sans-serif;
 		background-color: #f4f4f4;
@@ -243,6 +247,16 @@
 		width: 100px;
 		margin-top: 15px;
 	}
+
+	input[type='text'],
+	textarea {
+    color: #000 !important;
+	}
+
+	input,
+textarea {
+    color: #000 !important;
+}	
 
 	@keyframes pulse {
 		0% {
