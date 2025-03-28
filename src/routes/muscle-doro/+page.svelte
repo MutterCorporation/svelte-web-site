@@ -2,8 +2,9 @@
   import { onMount } from 'svelte';
   import { currentWorkout, timeLeft, isRunning as storeIsRunning, currentExercise, selectedWorkoutType, workoutNumber, workoutTypes } from './store/store';
   import { mockWorkouts } from './mockData';
-  import { startNewWorkout, finishExercise, finishWorkout, currentWorkoutData } from './store/exerciseStore';
+  import { startNewWorkout, finishExercise, finishWorkout, currentWorkoutData, showReportModal, closeReportModal, getWorkoutReport } from './store/exerciseStore';
   import { browser } from '$app/environment';
+  import { leaderboardData } from './store/leaderboardStore';
 
   // Variáveis de estado
   let loading = false;
@@ -16,13 +17,16 @@
   let currentWeight = '';
   let actualReps = '';
   let notes = '';
+  let showLeaderboardModal = false;
+  let showPremiumModal = false;
+  let isNearBottom = false;
 
   // Sons
-  let hoverSound: HTMLAudioElement;
-  let clickSound: HTMLAudioElement;
+  let hoverSound: HTMLAudioElement | null = null;
+  let clickSound: HTMLAudioElement | null = null;
 
   // Funções de som
-  function playSound(sound: HTMLAudioElement) {
+  function playSound(sound: HTMLAudioElement | null) {
     if (!sound) return;
     sound.currentTime = 0;
     sound.play().catch(() => {});
@@ -109,8 +113,13 @@
 
       console.log('Treino encontrado:', workout);
       currentWorkout.set(workout);
-      startNewWorkout($selectedWorkoutType, $workoutNumber);
+      startNewWorkout($selectedWorkoutType, $workoutNumber, workout);
       selectNextExercise();
+
+      // Configurar timer com a duração do treino
+      selectedMinutes = workout.duration;
+      time = selectedMinutes * 60;
+      timeLeft.set(time);
     } catch (err) {
       console.error('Erro ao buscar treino:', err);
     } finally {
@@ -127,7 +136,9 @@
       reps: Number(actualReps) || 0,
       duration: Date.now() - (workoutStartTime || Date.now()),
       notes,
-      timestamp: Date.now()
+      timestamp: Date.now(),
+      targetReps: $currentExercise.reps,
+      targetSets: $currentExercise.sets
     };
 
     console.log('Exercício finalizado:', exerciseData);
@@ -259,26 +270,53 @@
     console.log('Carregando treino atual...');
   }
 
+  // Função para verificar se está próximo do final da página
+  function checkScroll() {
+    if (browser) {
+      const scrollPosition = window.scrollY + window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const threshold = 200; // pixels antes do final
+      
+      isNearBottom = documentHeight - scrollPosition < threshold;
+    }
+  }
+
   onMount(() => {
     if (browser) {
-      hoverSound = new Audio('/sounds/hover.mp3');
-      clickSound = new Audio('/sounds/click.mp3');
+      try {
+        hoverSound = new Audio('/sounds/hover.mp3');
+        clickSound = new Audio('/sounds/click.mp3');
+      } catch (error) {
+        console.error('Erro ao carregar sons:', error);
+      }
+
+      // Adicionar listener de scroll
+      window.addEventListener('scroll', checkScroll);
+      checkScroll(); // Verificar posição inicial
+
+      // Inicializar timer
+      time = selectedMinutes * 60;
+      timeLeft.set(time);
+
+      // Buscar treino inicial
+      fetchWorkout();
+
+      return () => {
+        clearInterval(timerInterval);
+        window.removeEventListener('scroll', checkScroll);
+      };
     }
-
-    // Inicializar timer
-    time = selectedMinutes * 60;
-    timeLeft.set(time);
-
-    // Buscar treino inicial
-    fetchWorkout();
-
-    return () => {
-      clearInterval(timerInterval);
-    };
   });
 </script>
 
 <div class="container">
+  <div class="banner">
+    <div class="banner-content">
+      <h2>MUSCLE-DORO</h2>
+      <p>SUA JORNADA FITNESS COMEÇA AQUI</p>
+    </div>
+  </div>
+
   <div class="glass-card">
     <h1>MUSCLE-DORO</h1>
     
@@ -359,32 +397,6 @@
           RESETAR
         </button>
       </div>
-      <div class="time-selector">
-        <button 
-          class="time-option" 
-          class:selected={selectedMinutes === 25}
-          on:click={() => { selectedMinutes = 25; updateTimer(); }}
-          on:mouseenter={() => playSound(hoverSound)}
-        >
-          25min
-        </button>
-        <button 
-          class="time-option"
-          class:selected={selectedMinutes === 5}
-          on:click={() => { selectedMinutes = 5; updateTimer(); }}
-          on:mouseenter={() => playSound(hoverSound)}
-        >
-          5min
-        </button>
-        <button 
-          class="time-option"
-          class:selected={selectedMinutes === 15}
-          on:click={() => { selectedMinutes = 15; updateTimer(); }}
-          on:mouseenter={() => playSound(hoverSound)}
-        >
-          15min
-        </button>
-      </div>
     </div>
 
     <div class="exercise-section">
@@ -417,6 +429,38 @@
       {/if}
     </div>
   </div>
+
+  <button 
+    class="leaderboard-button"
+    class:near-bottom={isNearBottom}
+    on:click={() => showLeaderboardModal = true}
+    on:mouseenter={() => playSound(hoverSound)}
+    aria-label="Abrir placar de usuários"
+  >
+    <span class="leaderboard-icon">🏆</span>
+    <span class="leaderboard-text">PLACAR</span>
+  </button>
+
+  <button 
+    class="premium-button"
+    class:near-bottom={isNearBottom}
+    on:click={() => showPremiumModal = true}
+    on:mouseenter={() => playSound(hoverSound)}
+    aria-label="Abrir versão premium"
+  >
+    <span class="premium-icon">⭐</span>
+    <span class="premium-text">PREMIUM</span>
+  </button>
+
+  <div class="promo-banner">
+    <div class="promo-content">
+      <h3>QUER EVOLUIR MAIS RÁPIDO?</h3>
+      <p>ACESSE O CURSO COMPLETO DE MUSCULAÇÃO</p>
+      <a href="#" class="promo-button" on:mouseenter={() => playSound(hoverSound)}>
+        SAIBA MAIS
+      </a>
+    </div>
+  </div>
 </div>
 
 {#if showExerciseModal}
@@ -434,6 +478,7 @@
       class="modal-content" 
       on:click|stopPropagation
       on:keydown|stopPropagation
+      role="document"
     >
       <h3 id="modal-title">FINALIZAR EXERCÍCIO</h3>
       <div class="form-group">
@@ -443,6 +488,7 @@
           id="weight"
           bind:value={currentWeight} 
           placeholder="Ex: 20"
+          aria-label="Carga em quilogramas"
         />
       </div>
       <div class="form-group">
@@ -452,6 +498,7 @@
           id="reps"
           bind:value={actualReps} 
           placeholder="Ex: 12"
+          aria-label="Número de repetições realizadas"
         />
       </div>
       <div class="form-group">
@@ -460,20 +507,224 @@
           id="notes"
           bind:value={notes} 
           placeholder="Observações sobre o exercício..."
+          aria-label="Anotações sobre o exercício"
         ></textarea>
       </div>
       <div class="modal-buttons">
         <button 
           class="cancel-button"
           on:click={() => showExerciseModal = false}
+          aria-label="Cancelar finalização do exercício"
         >
           CANCELAR
         </button>
         <button 
           class="confirm-button"
           on:click={finishCurrentExercise}
+          aria-label="Finalizar exercício"
         >
           FINALIZAR
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+{#if $showReportModal && $currentWorkoutData}
+  {@const report = getWorkoutReport($currentWorkoutData)}
+  <div 
+    class="modal-overlay" 
+    on:click={closeReportModal}
+    on:keydown={(e) => {
+      if (e.key === 'Escape') closeReportModal();
+    }}
+    role="dialog"
+    aria-labelledby="report-title"
+    aria-modal="true"
+  >
+    <div 
+      class="modal-content report-content" 
+      on:click|stopPropagation
+      on:keydown|stopPropagation
+      role="document"
+    >
+      <h3 id="report-title">RELATÓRIO DO TREINO</h3>
+      <div class="report-summary">
+        <div class="report-item">
+          <span class="report-label">TREINO:</span>
+          <span class="report-value">{report.name}</span>
+        </div>
+        <div class="report-item">
+          <span class="report-label">MÚSCULO:</span>
+          <span class="report-value">{report.targetMuscle}</span>
+        </div>
+        <div class="report-item">
+          <span class="report-label">DIFICULDADE:</span>
+          <span class="report-value">{report.difficulty}</span>
+        </div>
+        <div class="report-item">
+          <span class="report-label">DURAÇÃO PLANEJADA:</span>
+          <span class="report-value">{report.targetDuration}min</span>
+        </div>
+        <div class="report-item">
+          <span class="report-label">DURAÇÃO REAL:</span>
+          <span class="report-value">{report.actualDuration}min</span>
+        </div>
+        <div class="report-item">
+          <span class="report-label">TOTAL DE PESO:</span>
+          <span class="report-value">{report.totalWeight}kg</span>
+        </div>
+        <div class="report-item">
+          <span class="report-label">TOTAL DE REPETIÇÕES:</span>
+          <span class="report-value">{report.totalReps}</span>
+        </div>
+        <div class="report-item">
+          <span class="report-label">TOTAL DE SÉRIES:</span>
+          <span class="report-value">{report.totalSets}</span>
+        </div>
+      </div>
+      <div class="report-exercises">
+        <h4>EXERCÍCIOS REALIZADOS</h4>
+        {#each report.exercises as exercise}
+          <div class="exercise-report">
+            <h5>{exercise.name}</h5>
+            <div class="exercise-details">
+              <span>PESO: {exercise.weight}kg</span>
+              <span>REPS: {exercise.reps}</span>
+              <span>SÉRIES: {exercise.targetSets}</span>
+            </div>
+            {#if exercise.notes}
+              <p class="exercise-notes">{exercise.notes}</p>
+            {/if}
+          </div>
+        {/each}
+      </div>
+      <div class="modal-buttons">
+        <button 
+          class="confirm-button"
+          on:click={closeReportModal}
+          aria-label="Fechar relatório do treino"
+        >
+          FECHAR
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+{#if showLeaderboardModal}
+  <div 
+    class="modal-overlay" 
+    on:click={() => showLeaderboardModal = false}
+    on:keydown={(e) => {
+      if (e.key === 'Escape') showLeaderboardModal = false;
+    }}
+    role="dialog"
+    aria-labelledby="leaderboard-title"
+    aria-modal="true"
+  >
+    <div 
+      class="modal-content leaderboard-content" 
+      on:click|stopPropagation
+      on:keydown|stopPropagation
+      role="document"
+    >
+      <h3 id="leaderboard-title">PLACAR DE USUÁRIOS</h3>
+      <div class="leaderboard-list">
+        {#each $leaderboardData as user, index}
+          <div class="leaderboard-item" class:top-three={index < 3}>
+            <div class="rank">{index + 1}</div>
+            <div class="user-info">
+              <span class="user-name">{user.name}</span>
+              <span class="user-stats">
+                {user.workouts} treinos • {user.totalTime}min
+              </span>
+            </div>
+          </div>
+        {/each}
+      </div>
+      <div class="modal-buttons">
+        <button 
+          class="confirm-button"
+          on:click={() => showLeaderboardModal = false}
+          aria-label="Fechar placar"
+        >
+          FECHAR
+        </button>
+      </div>
+    </div>
+  </div>
+{/if}
+
+{#if showPremiumModal}
+  <div 
+    class="modal-overlay" 
+    on:click={() => showPremiumModal = false}
+    on:keydown={(e) => {
+      if (e.key === 'Escape') showPremiumModal = false;
+    }}
+    role="dialog"
+    aria-labelledby="premium-title"
+    aria-modal="true"
+  >
+    <div 
+      class="modal-content premium-content" 
+      on:click|stopPropagation
+      on:keydown|stopPropagation
+      role="document"
+    >
+      <h3 id="premium-title">VERSÃO PREMIUM</h3>
+      <div class="premium-features">
+        <div class="feature-item">
+          <span class="feature-icon">🎯</span>
+          <div class="feature-info">
+            <h4>PLANOS PERSONALIZADOS</h4>
+            <p>Treinos adaptados ao seu nível e objetivos</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">📊</span>
+          <div class="feature-info">
+            <h4>ANÁLISE DE PROGRESSO</h4>
+            <p>Acompanhe sua evolução com gráficos detalhados</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">🎥</span>
+          <div class="feature-info">
+            <h4>VÍDEOS TUTORIAIS</h4>
+            <p>Aprenda a execução correta dos exercícios</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <span class="feature-icon">💪</span>
+          <div class="feature-info">
+            <h4>SUPORTE ESPECIAL</h4>
+            <p>Atendimento prioritário e dicas exclusivas</p>
+          </div>
+        </div>
+      </div>
+      <div class="premium-price">
+        <span class="price">R$ 9,90</span>
+        <span class="period">/mês</span>
+      </div>
+      <div class="modal-buttons">
+        <button 
+          class="cancel-button"
+          on:click={() => showPremiumModal = false}
+          aria-label="Fechar modal premium"
+        >
+          FECHAR
+        </button>
+        <button 
+          class="confirm-button"
+          on:click={() => {
+            // Aqui você pode adicionar a lógica para assinatura
+            console.log('Iniciar assinatura premium');
+          }}
+          aria-label="Assinar versão premium"
+        >
+          ASSINAR AGORA
         </button>
       </div>
     </div>
@@ -484,10 +735,40 @@
   .container {
     min-height: 100vh;
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     padding: 20px;
     background: #000000;
+  }
+
+  .banner {
+    width: 100%;
+    background: #000000;
+    color: #ffffff;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border: 4px solid #000000;
+    box-shadow: 8px 8px 0 #000000;
+  }
+
+  .banner-content {
+    text-align: center;
+  }
+
+  .banner-content h2 {
+    color: #ffffff;
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .banner-content p {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
   }
 
   .glass-card {
@@ -553,11 +834,13 @@
   }
 
   .time-display {
-    font-size: 4rem;
+    font-size: 5rem;
     font-weight: 900;
     color: #ffffff;
     margin-bottom: 1rem;
     font-family: monospace;
+    text-shadow: 4px 4px 0 #000000;
+    letter-spacing: 2px;
   }
 
   .timer-controls {
@@ -571,12 +854,13 @@
     background: #ffffff;
     border: 2px solid #000000;
     color: #000000;
-    padding: 0.8rem 1.5rem;
+    padding: 1rem 2rem;
     font-weight: 900;
     text-transform: uppercase;
     cursor: pointer;
     transition: all 0.2s ease;
     box-shadow: 4px 4px 0 #000000;
+    font-size: 1.2rem;
   }
 
   .timer-button:hover:not(:disabled) {
@@ -587,34 +871,6 @@
   .timer-button:disabled {
     opacity: 0.5;
     cursor: not-allowed;
-  }
-
-  .time-selector {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-  }
-
-  .time-option {
-    background: #ffffff;
-    border: 2px solid #000000;
-    color: #000000;
-    padding: 0.5rem 1rem;
-    font-weight: 900;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: 4px 4px 0 #000000;
-  }
-
-  .time-option.selected {
-    background: #000000;
-    color: #ffffff;
-  }
-
-  .time-option:hover {
-    transform: translate(-2px, -2px);
-    box-shadow: 6px 6px 0 #000000;
   }
 
   .exercise-section {
@@ -878,6 +1134,162 @@
     box-shadow: 6px 6px 0 #000000;
   }
 
+  .report-content {
+    max-height: 90vh;
+    overflow-y: auto;
+  }
+
+  .report-summary {
+    background: #000000;
+    color: #ffffff;
+    padding: 1rem;
+    margin-bottom: 1.5rem;
+    border: 2px solid #000000;
+  }
+
+  .report-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .report-label {
+    color: #ffffff;
+  }
+
+  .report-value {
+    color: #ffffff;
+  }
+
+  .report-exercises {
+    margin-bottom: 1.5rem;
+  }
+
+  .report-exercises h4 {
+    color: #000000;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .exercise-report {
+    background: #ffffff;
+    border: 2px solid #000000;
+    padding: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  .exercise-report h5 {
+    color: #000000;
+    margin-bottom: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .exercise-report .exercise-details {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 0.5rem;
+    color: #000000;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .exercise-report .exercise-notes {
+    color: #000000;
+    font-style: italic;
+    margin-top: 0.5rem;
+  }
+
+  .leaderboard-button {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #000000;
+    padding: 1rem 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px 0 #000000;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 100;
+  }
+
+  .leaderboard-button.near-bottom {
+    bottom: auto;
+    top: 2rem;
+  }
+
+  .leaderboard-icon {
+    font-size: 1.5rem;
+  }
+
+  .leaderboard-content {
+    max-width: 600px;
+  }
+
+  .leaderboard-list {
+    margin: 1.5rem 0;
+  }
+
+  .leaderboard-item {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    background: #ffffff;
+    border: 2px solid #000000;
+    margin-bottom: 0.5rem;
+    transition: all 0.2s ease;
+  }
+
+  .leaderboard-item.top-three {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .rank {
+    width: 40px;
+    height: 40px;
+    background: #000000;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 900;
+    font-size: 1.2rem;
+    margin-right: 1rem;
+  }
+
+  .top-three .rank {
+    background: #ffffff;
+    color: #000000;
+  }
+
+  .user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .user-name {
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .user-stats {
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
   @media (max-width: 768px) {
     .container {
       padding: 10px;
@@ -920,6 +1332,209 @@
     .workout-type-button {
       width: 100%;
       max-width: 200px;
+    }
+
+    .report-item {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .exercise-report .exercise-details {
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .banner-content h2 {
+      font-size: 2rem;
+    }
+
+    .banner-content p {
+      font-size: 1rem;
+    }
+
+    .leaderboard-button {
+      bottom: 1rem;
+      right: 1rem;
+      padding: 0.8rem 1.5rem;
+    }
+
+    .leaderboard-button.near-bottom {
+      bottom: auto;
+      top: 1rem;
+    }
+
+    .leaderboard-content {
+      width: 95%;
+      margin: 1rem;
+    }
+  }
+
+  /* Remover seletor não utilizado */
+  .time-selector {
+    display: none;
+  }
+
+  .promo-banner {
+    width: 100%;
+    background: #000000;
+    color: #ffffff;
+    padding: 2rem;
+    margin-top: 2rem;
+    border: 4px solid #000000;
+    box-shadow: 8px 8px 0 #000000;
+  }
+
+  .promo-content {
+    text-align: center;
+  }
+
+  .promo-content h3 {
+    color: #ffffff;
+    font-size: 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .promo-content p {
+    color: #ffffff;
+    font-size: 1.2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+  }
+
+  .promo-button {
+    display: inline-block;
+    background: #ffffff;
+    color: #000000;
+    border: 2px solid #000000;
+    padding: 1rem 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: 4px 4px 0 #000000;
+  }
+
+  .promo-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000000;
+  }
+
+  .premium-button {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: linear-gradient(45deg, #FFD700, #FFA500);
+    color: #000000;
+    border: 2px solid #000000;
+    padding: 1rem 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px 0 #000000;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 100;
+  }
+
+  .premium-button.near-bottom {
+    bottom: auto;
+    top: 2rem;
+  }
+
+  .premium-icon {
+    font-size: 1.5rem;
+  }
+
+  .premium-content {
+    max-width: 600px;
+  }
+
+  .premium-features {
+    margin: 2rem 0;
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 2px solid #000000;
+    margin-bottom: 1rem;
+  }
+
+  .feature-icon {
+    font-size: 2rem;
+  }
+
+  .feature-info h4 {
+    color: #000000;
+    margin-bottom: 0.25rem;
+    font-size: 1.1rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .feature-info p {
+    color: #000000;
+    font-size: 0.9rem;
+    opacity: 0.8;
+  }
+
+  .premium-price {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 1rem;
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #000000;
+  }
+
+  .price {
+    font-size: 2.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .period {
+    font-size: 1.2rem;
+    opacity: 0.8;
+  }
+
+  @media (max-width: 768px) {
+    .promo-content h3 {
+      font-size: 1.5rem;
+    }
+
+    .promo-content p {
+      font-size: 1rem;
+    }
+
+    .premium-button {
+      bottom: 1rem;
+      left: 1rem;
+      padding: 0.8rem 1.5rem;
+    }
+
+    .premium-button.near-bottom {
+      bottom: auto;
+      top: 1rem;
+    }
+
+    .feature-item {
+      flex-direction: column;
+      text-align: center;
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
     }
   }
 </style>
