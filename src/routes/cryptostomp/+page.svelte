@@ -6,6 +6,7 @@
 	let posts = $state([]);
 	let blogName = 'Investing Notices';
 	let hasError = $state(false);
+	let cryptoPrices = $state([]);
 
 	export function load() {
 		const token = localStorage.getItem('MutterCorp');
@@ -46,9 +47,32 @@
 		}
 	}
 
+	// Função para buscar preços das criptomoedas
+	async function fetchCryptoPrices() {
+		try {
+			const symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'ADAUSDT'];
+			const prices = await Promise.all(
+				symbols.map(async (symbol) => {
+					const response = await fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`);
+					const data = await response.json();
+					return {
+						symbol: symbol.replace('USDT', ''),
+						price: parseFloat(data.lastPrice).toFixed(2),
+						change: parseFloat(data.priceChangePercent).toFixed(2)
+					};
+				})
+			);
+			cryptoPrices = prices;
+		} catch (error) {
+			console.error('Erro ao buscar preços:', error);
+		}
+	}
+
 	onMount(() => {
 		fetchPosts();
-		// fetchStatist()
+		fetchCryptoPrices();
+		// Atualizar preços a cada 30 segundos
+		setInterval(fetchCryptoPrices, 30000);
 	});
 
 	function goToPost(postId) {
@@ -88,6 +112,19 @@
 				Notícias sobre finanças, investimentos e sinais de trades.
 			</p>
 		</header>
+
+		<!-- Tags de Criptomoedas -->
+		<div class="mb-8 flex flex-wrap gap-4 justify-center">
+			{#each cryptoPrices as crypto}
+				<div class="bg-gray-800/50 backdrop-blur-sm border border-orange-500/20 rounded-lg px-4 py-2 flex items-center gap-2">
+					<span class="text-orange-500 font-bold">{crypto.symbol}</span>
+					<span class="text-white">${crypto.price}</span>
+					<span class={crypto.change >= 0 ? 'text-green-500' : 'text-red-500'}>
+						{crypto.change >= 0 ? '+' : ''}{crypto.change}%
+					</span>
+				</div>
+			{/each}
+		</div>
 
 		<!-- Banner Binance -->
 		<div class="mb-12">
