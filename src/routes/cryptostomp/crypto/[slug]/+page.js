@@ -1,5 +1,5 @@
-export const load = ({ params }) => {
-    return {
-        slug: params.slug
-    }
+export function load({ params }) {
+	return {
+		symbol: params.slug.toUpperCase()
+	};
 }

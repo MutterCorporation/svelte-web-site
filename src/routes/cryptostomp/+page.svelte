@@ -1,12 +1,24 @@
-<script>
-	import { P } from 'flowbite-svelte';
+<script lang="ts">
 	import { onMount } from 'svelte';
 
-	let prediction = $state([]);
-	let posts = $state([]);
-	let blogName = 'Investing Notices';
+	interface Post {
+		id: string;
+		title: string;
+		modifiedText: string;
+		createdAt: string;
+	}
+
+	interface CryptoPrice {
+		symbol: string;
+		price: string;
+		change: number;
+	}
+
+	let prediction = $state<Post[]>([]);
+	let posts = $state<Post[]>([]);
+	let blogName = 'CryptoStomp';
 	let hasError = $state(false);
-	let cryptoPrices = $state([]);
+	let cryptoPrices = $state<CryptoPrice[]>([]);
 
 	export function load() {
 		const token = localStorage.getItem('MutterCorp');
@@ -47,7 +59,6 @@
 		}
 	}
 
-	// Função para buscar preços das criptomoedas
 	async function fetchCryptoPrices() {
 		try {
 			const symbols = ['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'ADAUSDT'];
@@ -58,7 +69,7 @@
 					return {
 						symbol: symbol.replace('USDT', ''),
 						price: parseFloat(data.lastPrice).toFixed(2),
-						change: parseFloat(data.priceChangePercent).toFixed(2)
+						change: parseFloat(data.priceChangePercent)
 					};
 				})
 			);
@@ -75,31 +86,33 @@
 		setInterval(fetchCryptoPrices, 30000);
 	});
 
-	function goToPost(postId) {
+	function goToPost(postId: string) {
 		window.location.href = `/cryptostomp/${postId}`;
 	}
 </script>
 
 <svelte:head>
-	<title>{blogName} - Tecnologia, Ciências e Música</title>
+	<title>CryptoStomp - Análise Técnica de Criptomoedas</title>
 	<meta
 		name="description"
-		content="Bem-vindo ao {blogName}, onde compartilho minhas experiências e conhecimentos sobre tecnologia, ciência e música."
+		content="Análise técnica em tempo real de criptomoedas na Binance. Gráficos de candlestick, indicadores técnicos e dados históricos para traders."
 	/>
 	<meta
 		name="keywords"
-		content="Tecnologia, Ciência, Música, Blog, {blogName}, Desenvolvimento, Svelte, JavaScript"
+		content="Criptomoedas, Bitcoin, Ethereum, Análise Técnica, Trading, Binance, Gráficos, Candlestick, RSI, MACD"
 	/>
-	<meta name="author" content="Maikon Weber" />
-	<meta property="og:title" content="{blogName} - Tecnologia, Ciência e Música" />
+	<meta name="author" content="CryptoStomp" />
+	<meta property="og:title" content="CryptoStomp - Análise Técnica de Criptomoedas" />
 	<meta
 		property="og:description"
-		content="Descubra artigos sobre tecnologia, ciência e música no {blogName}."
+		content="Análise técnica em tempo real de criptomoedas na Binance. Gráficos de candlestick, indicadores técnicos e dados históricos para traders."
 	/>
-	<meta property="og:url" content="https://muttercorp.com.br/blog" />
+	<meta property="og:image" content="https://assets.coingecko.com/coins/images/1/small/bitcoin.png" />
+	<meta property="og:url" content="https://muttercorp.com.br/cryptostomp" />
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta property="og:type" content="website" />
 </svelte:head>
+
 
 <div class="min-h-screen bg-gradient-to-l from-gray-900 via-black to-gray-900 text-gray-100">
 	<div class="mx-auto max-w-6xl px-5 py-10">
@@ -109,7 +122,7 @@
 				{blogName}
 			</h1>
 			<p class="text-xl text-orange-200/80">
-				Notícias sobre finanças, investimentos e sinais de trades.
+				Análise Técnica de Criptomoedas em Tempo Real
 			</p>
 		</header>
 
@@ -120,7 +133,7 @@
 					<span class="text-orange-500 font-bold">{crypto.symbol}</span>
 					<span class="text-white">${crypto.price}</span>
 					<span class={crypto.change >= 0 ? 'text-green-500' : 'text-red-500'}>
-						{crypto.change >= 0 ? '+' : ''}{crypto.change}%
+						{crypto.change >= 0 ? '+' : ''}{crypto.change.toFixed(2)}%
 					</span>
 				</div>
 			{/each}

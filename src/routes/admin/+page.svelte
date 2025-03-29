@@ -24,6 +24,18 @@
 	});
 </script>
 
+<svelte:head>
+	<title>Painel Administrativo | MutterCorp</title>
+	<meta name="description" content="Painel administrativo para gerenciamento de conteúdo e configurações" />
+	<meta name="keywords" content="Admin, Painel, Gerenciamento, MutterCorp" />
+	<meta name="author" content="MutterCorp" />
+	<meta property="og:title" content="Painel Administrativo | MutterCorp" />
+	<meta property="og:description" content="Painel administrativo para gerenciamento de conteúdo e configurações" />
+	<meta property="og:url" content="https://muttercorp.com.br/admin" />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary" />
+</svelte:head>
+
 {#if isLoading}
 	<div class="skeleton-container">
 		<div class="skeleton-header"></div>

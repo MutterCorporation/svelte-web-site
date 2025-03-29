@@ -1,248 +1,259 @@
-<script>
-    import { onMount } from 'svelte';
-    import Canvas from '../Canvas.svelte';
-	import OrderPanels from '../OrderPanels.svelte';
-    
-    let slug = '';
-    let limit = '1m';
-    let size = 100;
-    /**
-     * @type {never[]}
-     */
-    let dataGraph = [];
-    let isLoading = false;
-    let hasError = false;
-    let refreshInterval;
+<script lang="ts">
+	import { onMount } from 'svelte';
+	import { createChart, ColorType } from 'lightweight-charts';
+	import type { IChartApi, ISeriesApi, CandlestickData, Time } from 'lightweight-charts';
 
-    const timeIntervals = [
-        { value: '1m', label: '1 Minuto' },
-        { value: '5m', label: '5 Minutos' },
-        { value: '1h', label: '1 Hora' },
-        { value: '1d', label: '1 Dia' }
-    ];
+	interface PageData {
+		symbol: string;
+	}
 
-    const sizeOptions = [
-        { value: 50, label: '50 candles' },
-        { value: 100, label: '100 candles' },
-        { value: 200, label: '200 candles' },
-        { value: 500, label: '500 candles' }
-    ];
+	const { data } = $props<{ data: PageData }>();
+	const symbol = data.symbol;
+	console.log('Símbolo recebido:', symbol);
 
-    onMount(() => {
-        const path = window.location.pathname;
-        slug = path.split('/').pop();
-        loadData();
-        startAutoRefresh();
+	interface KlineData extends CandlestickData<Time> {
+		time: Time;
+		open: number;
+		high: number;
+		low: number;
+		close: number;
+	}
 
-        return () => {
-            if (refreshInterval) {
-                clearInterval(refreshInterval);
-            }
-        };
-    });
+	let chartData = $state<KlineData[]>([]);
+	let loading = $state(true);
+	let error = $state<string | null>(null);
+	let chartContainer: HTMLDivElement | null = null;
+	let chart: IChartApi | null = null;
+	let candlestickSeries: ISeriesApi<'Candlestick'> | null = null;
 
-    function startAutoRefresh() {
-        if (refreshInterval) {
-            clearInterval(refreshInterval);
-        }
+	async function fetchKlines(interval = '1d', limit = 100): Promise<KlineData[]> {
+		try {
+			const url = `https://api1.binance.com/api/v3/klines?symbol=${symbol}USDT&interval=${interval}&limit=${limit}`;
+			console.log('URL da requisição:', url);
+			
+			const response = await fetch(url);
+			console.log('Status da resposta:', response.status);
+			
+			if (!response.ok) {
+				throw new Error(`HTTP error! status: ${response.status}`);
+			}
+			
+			const data = await response.json();
+			console.log('Dados recebidos:', data.length, 'registros');
+			
+			if (!Array.isArray(data) || data.length === 0) {
+				throw new Error('Dados inválidos recebidos da API');
+			}
 
-        const refreshTimes = {
-            '1m': 10000,
-            '5m': 30000,
-            '1h': 60000,
-            '1d': 300000
-        };
+			const formattedData: KlineData[] = data.map((kline: any[]) => ({
+				time: (kline[0] / 1000) as Time,
+				open: parseFloat(kline[1]),
+				high: parseFloat(kline[2]),
+				low: parseFloat(kline[3]),
+				close: parseFloat(kline[4])
+			}));
 
-        refreshInterval = setInterval(() => {
-            loadData();
-        }, refreshTimes[limit]);
-    }
+			console.log('Dados formatados:', formattedData.length, 'registros');
+			return formattedData;
+		} catch (err) {
+			console.error('Erro detalhado:', err);
+			error = err instanceof Error ? err.message : 'Erro ao carregar dados';
+			return [];
+		}
+	}
 
-    async function loadData() {
-        if (isLoading) return;
+	async function initChart() {
+		console.log('Iniciando initChart');
+		if (!chartContainer) {
+			console.error('Container do gráfico não encontrado');
+			return;
+		}
 
-        isLoading = true;
-        hasError = false;
+		try {
+			console.log('Iniciando criação do gráfico');
+			// Criar o gráfico
+			chart = createChart(chartContainer, {
+				layout: {
+					background: { type: ColorType.Solid, color: 'transparent' },
+					textColor: '#d1d4dc'
+				},
+				grid: {
+					vertLines: { color: 'rgba(42, 46, 57, 0.5)' },
+					horzLines: { color: 'rgba(42, 46, 57, 0.5)' }
+				},
+				width: chartContainer.clientWidth,
+				height: 500
+			});
 
-        try {
-            await fetchGraph(slug, limit, size);
-        } catch (error) {
-            hasError = true;
-        } finally {
-            isLoading = false;
-        }
-    }
+			console.log('Gráfico criado, adicionando série de candlesticks');
+			// Criar série de candlesticks
+			candlestickSeries = chart.addCandlestickSeries({
+				upColor: '#26a69a',
+				downColor: '#ef5350',
+				borderVisible: false,
+				wickUpColor: '#26a69a',
+				wickDownColor: '#ef5350'
+			});
 
-    async function fetchGraph(slug, limit, size) {
-        try {
-            const token = localStorage.getItem('MutterCorp');
-            const res = await fetch(
-                `https://dev.muttercorp.com.br/binance/market-kline-data?symbol=${slug.toUpperCase()}&interval=${limit}&limit=${size}`,
-                {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}`
-                    }
-                }
-            );
+			// Carregar dados iniciais
+			console.log('Carregando dados iniciais');
+			const klines = await fetchKlines();
+			if (klines.length > 0 && candlestickSeries) {
+				chartData = klines;
+				candlestickSeries.setData(klines);
+				console.log('Dados carregados no gráfico');
 
-            if (res.ok) {
-                const data = await res.json();
-                dataGraph = data;
-            } else {
-                if (res.status === 403 || res.status === 401) {
-                    localStorage.removeItem('MutterCorp');
-                    window.location.href = '/login';
-                } else if (res.status === 500) {
-                    hasError = true;
-                }
-            }
-        } catch (error) {
-            hasError = true;
-        }
-    }
+				// Ajustar visualização
+				chart.timeScale().fitContent();
+				console.log('Visualização ajustada');
 
-    function handleIntervalChange() {
-        loadData();
-        startAutoRefresh();
-    }
+				// Atualizar dados a cada minuto
+				setInterval(async () => {
+					const newKlines = await fetchKlines('1m', 1);
+					if (newKlines.length > 0 && candlestickSeries) {
+						candlestickSeries.update(newKlines[0]);
+					}
+				}, 60000);
+			} else {
+				throw new Error('Nenhum dado recebido da API');
+			}
+		} catch (err) {
+			console.error('Erro ao inicializar gráfico:', err);
+			error = err instanceof Error ? err.message : 'Erro ao inicializar gráfico';
+		}
+	}
 
-    function handleSizeChange() {
-        loadData();
-    }
+	$effect(() => {
+		console.log('Effect detectou mudança no chartContainer:', !!chartContainer);
+		if (chartContainer) {
+			console.log('Container encontrado, iniciando gráfico');
+			initChart();
+		}
+	});
 
-    function handleManualRefresh() {
-        loadData();
-    }
+	onMount(() => {
+		console.log('Componente montado');
+		loading = false;
+
+		// Ajustar tamanho do gráfico quando a janela for redimensionada
+		const handleResize = () => {
+			if (chart && chartContainer) {
+				chart.applyOptions({
+					width: chartContainer.clientWidth
+				});
+			}
+		};
+
+		window.addEventListener('resize', handleResize);
+
+		return () => {
+			window.removeEventListener('resize', handleResize);
+			if (chart) {
+				chart.remove();
+			}
+		};
+	});
 </script>
 
-<div class="container">
-    <div class="controls">
-        <div class="control-group">
-            <label for="time-interval">Intervalo de Tempo</label>
-            <select id="time-interval" bind:value={limit} on:change={handleIntervalChange}>
-                {#each timeIntervals as interval}
-                    <option value={interval.value}>{interval.label}</option>
-                {/each}
-            </select>
-        </div>
+<svelte:head>
+	<title>{symbol}/USDT - Análise Técnica | CryptoStomp</title>
+	<meta
+		name="description"
+		content="Análise técnica em tempo real de {symbol}/USDT na Binance. Gráficos de candlestick, indicadores técnicos e dados históricos para traders."
+	/>
+	<meta
+		name="keywords"
+		content="Criptomoedas, {symbol}, USDT, Análise Técnica, Trading, Binance, Gráficos, Candlestick, RSI, MACD"
+	/>
+	<meta name="author" content="CryptoStomp" />
+	<meta property="og:title" content="{symbol}/USDT - Análise Técnica | CryptoStomp" />
+	<meta
+		property="og:description"
+		content="Análise técnica em tempo real de {symbol}/USDT na Binance. Gráficos de candlestick, indicadores técnicos e dados históricos para traders."
+	/>
+	<meta property="og:image" content="https://conteudointimo.s3.amazonaws.com/56e93a94570d8e976ded439a2c17ff6ee370bd0b9adb9b7776e105b3f31ce880.jpeg" />
+	<meta property="og:url" content={`https://muttercorp.com.br/cryptostomp/crypto/${symbol.toLowerCase()}`} />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="og:type" content="website" />
+</svelte:head>
 
-        <div class="control-group">
-            <label for="size">Tamanho</label>
-            <select id="size" bind:value={size} on:change={handleSizeChange}>
-                {#each sizeOptions as option}
-                    <option value={option.value}>{option.label}</option>
-                {/each}
-            </select>
-        </div>
+<div class="min-h-screen bg-gradient-to-l from-gray-900 via-black to-gray-900 text-gray-100 py-10">
+	<div class="mx-auto max-w-7xl px-5">
+		<!-- Header -->
+		<header class="mb-8 text-center">
+			<h1 class="text-4xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-orange-500 to-orange-300 drop-shadow-[0_0_15px_rgba(249,115,22,0.5)]">
+				{symbol}/USDT
+			</h1>
+			<p class="text-xl text-orange-200/80 mt-2">
+				Análise Técnica e Dados em Tempo Real
+			</p>
+		</header>
 
-        <button on:click={handleManualRefresh} disabled={isLoading} class="refresh-btn">
-            {#if isLoading}
-                <span class="loader"></span> Carregando...
-            {:else}
-                Atualizar
-            {/if}
-        </button>
-    </div>
+		{#if loading}
+			<div class="flex justify-center items-center h-96">
+				<div class="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-orange-500"></div>
+			</div>
+		{:else if error}
+			<div class="text-center text-red-500 p-4 bg-red-900/20 rounded-lg">
+				<p class="font-bold mb-2">Erro ao carregar dados</p>
+				<p>{error}</p>
+			</div>
+		{:else}
+			<!-- Gráfico Principal -->
+			<div class="bg-gray-800/50 backdrop-blur-sm border border-orange-500/20 rounded-xl p-4 mb-8">
+				<div bind:this={chartContainer} class="w-full h-[500px]"></div>
+			</div>
 
-    {#if hasError}
-        <div class="error">
-            Erro ao carregar os dados. Tente novamente.
-        </div>
-    {/if}
+			<!-- Informações Adicionais -->
+			<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+				<!-- Estatísticas -->
+				<div class="bg-gray-800/50 backdrop-blur-sm border border-orange-500/20 rounded-xl p-4">
+					<h2 class="text-xl font-bold text-orange-500 mb-4">Estatísticas</h2>
+					<div class="space-y-4">
+						{#if chartData.length > 0}
+							<div class="grid grid-cols-2 gap-4">
+								<div class="bg-gray-900/50 p-3 rounded-lg">
+									<p class="text-sm text-gray-400">Preço Atual</p>
+									<p class="text-lg font-bold text-white">${chartData[chartData.length - 1].close}</p>
+								</div>
+								<div class="bg-gray-900/50 p-3 rounded-lg">
+									<p class="text-sm text-gray-400">Variação 24h</p>
+									<p class="text-lg font-bold text-white">
+										{((chartData[chartData.length - 1].close - chartData[0].open) / chartData[0].open * 100).toFixed(2)}%
+									</p>
+								</div>
+							</div>
+						{/if}
+					</div>
+				</div>
 
-    <p class="slug">Slug atual: <strong>{slug}</strong></p>
-    <Canvas data={dataGraph}/>
-    <OrderPanels />
+				<!-- Indicadores Técnicos -->
+				<div class="bg-gray-800/50 backdrop-blur-sm border border-orange-500/20 rounded-xl p-4">
+					<h2 class="text-xl font-bold text-orange-500 mb-4">Indicadores Técnicos</h2>
+					<div class="space-y-4">
+						{#if chartData.length > 0}
+							<div class="grid grid-cols-2 gap-4">
+								<div class="bg-gray-900/50 p-3 rounded-lg">
+									<p class="text-sm text-gray-400">RSI (14)</p>
+									<p class="text-lg font-bold text-white">Calculando...</p>
+								</div>
+								<div class="bg-gray-900/50 p-3 rounded-lg">
+									<p class="text-sm text-gray-400">MACD</p>
+									<p class="text-lg font-bold text-white">Calculando...</p>
+								</div>
+							</div>
+						{/if}
+					</div>
+				</div>
+			</div>
+		{/if}
+	</div>
 </div>
 
-
 <style>
-    .container {
-        font-family: Arial, sans-serif;
-        max-width: 900px;
-        margin: 0 auto;
-        padding: 2rem;
-        background-color: #f9f9f9;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .controls {
-        display: flex;
-        gap: 1.5rem;
-        margin-bottom: 1.5rem;
-        align-items: flex-end;
-        flex-wrap: wrap;
-    }
-
-    .control-group {
-        display: flex;
-        flex-direction: column;
-    }
-
-    label {
-        font-size: 0.9rem;
-        color: #333;
-        margin-bottom: 0.5rem;
-    }
-
-    select, button {
-        padding: 0.75rem 1rem;
-        border-radius: 6px;
-        border: 1px solid #ddd;
-        font-size: 1rem;
-    }
-
-    button {
-        background-color: #007BFF;
-        color: white;
-        cursor: pointer;
-        transition: background-color 0.3s;
-    }
-
-    button:disabled {
-        background-color: #cccccc;
-        cursor: not-allowed;
-    }
-
-    button:hover:not(:disabled) {
-        background-color: #0056b3;
-    }
-
-    .error {
-        color: #d9534f;
-        background-color: #f2dede;
-        padding: 0.75rem;
-        border: 1px solid #ebcccc;
-        border-radius: 6px;
-        margin-bottom: 1rem;
-    }
-
-    .slug {
-        font-size: 1.1rem;
-        color: #555;
-    }
-
-    .refresh-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-    }
-
-    .loader {
-        border: 2px solid #f3f3f3;
-        border-top: 2px solid #007BFF;
-        border-radius: 50%;
-        width: 1rem;
-        height: 1rem;
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+	:global(body) {
+		margin: 0;
+		font-family: 'Inter', sans-serif;
+		background-color: black;
+	}
 </style>
