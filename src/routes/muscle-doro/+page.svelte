@@ -10,7 +10,7 @@
   let loading = false;
   let time = 0;
   let isRunning = false;
-  let selectedMinutes = 25;
+  let selectedHours = 1;
   let currentExerciseIndex = 0;
   let workoutStartTime: number | null = null;
   let showExerciseModal = false;
@@ -34,15 +34,16 @@
 
   // Funções do timer
   function formatTime(seconds: number): string {
-    const minutes = Math.floor(seconds / 60);
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
     const remainingSeconds = seconds % 60;
-    return `${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    return `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
   function startTimer() {
     if (!isRunning) {
       isRunning = true;
-      workoutStartTime = Date.now();
+      storeIsRunning.set(true);
       playSound(clickSound);
     }
   }
@@ -50,19 +51,22 @@
   function pauseTimer() {
     if (isRunning) {
       isRunning = false;
+      storeIsRunning.set(false);
       playSound(clickSound);
     }
   }
 
   function resetTimer() {
     isRunning = false;
-    time = selectedMinutes * 60;
-    workoutStartTime = null;
+    storeIsRunning.set(false);
+    time = selectedHours * 3600;
+    timeLeft.set(time);
     playSound(clickSound);
   }
 
   function updateTimer() {
-    time = selectedMinutes * 60;
+    time = selectedHours * 3600;
+    timeLeft.set(time);
     resetTimer();
   }
 
@@ -117,8 +121,8 @@
       selectNextExercise();
 
       // Configurar timer com a duração do treino
-      selectedMinutes = workout.duration;
-      time = selectedMinutes * 60;
+      selectedHours = workout.duration;
+      time = selectedHours * 3600;
       timeLeft.set(time);
     } catch (err) {
       console.error('Erro ao buscar treino:', err);
@@ -236,8 +240,8 @@
   }
 
   // Atualizar tempo selecionado
-  $: if (selectedMinutes) {
-    console.log('Tempo selecionado:', selectedMinutes, 'minutos');
+  $: if (selectedHours) {
+    console.log('Tempo selecionado:', selectedHours, 'horas');
   }
 
   // Atualizar estado de execução do timer
@@ -295,7 +299,7 @@
       checkScroll(); // Verificar posição inicial
 
       // Inicializar timer
-      time = selectedMinutes * 60;
+      time = selectedHours * 3600;
       timeLeft.set(time);
 
       // Buscar treino inicial
@@ -307,6 +311,11 @@
       };
     }
   });
+
+  // Atualizar timer quando o treino mudar
+  $: if ($currentWorkout) {
+    updateTimer();
+  }
 </script>
 
 <div class="container">
@@ -372,6 +381,41 @@
     
     <div class="timer-section">
       <div class="time-display">{formatTime(time)}</div>
+      <div class="time-selector">
+        <button 
+          class="time-button"
+          class:selected={selectedHours === 1}
+          on:click={() => {
+            selectedHours = 1;
+            updateTimer();
+          }}
+          on:mouseenter={() => playSound(hoverSound)}
+        >
+          1 HORA
+        </button>
+        <button 
+          class="time-button"
+          class:selected={selectedHours === 2}
+          on:click={() => {
+            selectedHours = 2;
+            updateTimer();
+          }}
+          on:mouseenter={() => playSound(hoverSound)}
+        >
+          2 HORAS
+        </button>
+        <button 
+          class="time-button"
+          class:selected={selectedHours === 3}
+          on:click={() => {
+            selectedHours = 3;
+            updateTimer();
+          }}
+          on:mouseenter={() => playSound(hoverSound)}
+        >
+          3 HORAS
+        </button>
+      </div>
       <div class="timer-controls">
         <button 
           class="timer-button" 
@@ -841,6 +885,35 @@
     font-family: monospace;
     text-shadow: 4px 4px 0 #000000;
     letter-spacing: 2px;
+  }
+
+  .time-selector {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    margin-bottom: 1rem;
+  }
+
+  .time-button {
+    background: #ffffff;
+    border: 2px solid #000000;
+    color: #000000;
+    padding: 0.8rem 1.5rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 4px 4px 0 #000000;
+  }
+
+  .time-button.selected {
+    background: #000000;
+    color: #ffffff;
+  }
+
+  .time-button:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0 #000000;
   }
 
   .timer-controls {
@@ -1369,11 +1442,6 @@
       width: 95%;
       margin: 1rem;
     }
-  }
-
-  /* Remover seletor não utilizado */
-  .time-selector {
-    display: none;
   }
 
   .promo-banner {

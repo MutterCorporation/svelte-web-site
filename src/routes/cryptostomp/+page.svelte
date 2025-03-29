@@ -91,12 +91,12 @@
 
 		<!-- Banner Binance -->
 		<div class="mb-12">
-			<a href="https://accounts.binance.com/register?ref=SEU_ID_AQUI" 
+			<a href="https://www.binance.com/referral/earn-together/refertoearn2000usdc/claim?hl=en&ref=GRO_14352_14CQL&utm_source=Lite_web_account" 
 			   target="_blank"
 			   class="block relative group overflow-hidden rounded-2xl">
 				<div class="relative h-48 overflow-hidden">
 					<img
-						src="https://public.bnbstatic.com/image/cms/blog/20230613/1c5f7d0c-33e7-4ead-8076-e4c3cd8e4362.png"
+						src="https://conteudointimo.s3.amazonaws.com/56e93a94570d8e976ded439a2c17ff6ee370bd0b9adb9b7776e105b3f31ce880.jpeg"
 						alt="Binance Referral"
 						class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
 					/>
