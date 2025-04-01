@@ -496,6 +496,17 @@
     <span class="premium-text">PREMIUM</span>
   </button>
 
+  <a 
+    href="/muscle-doro/exercises"
+    class="exercises-button"
+    class:near-bottom={isNearBottom}
+    on:mouseenter={() => playSound(hoverSound)}
+    aria-label="Ver catálogo de exercícios"
+  >
+    <span class="exercises-icon">💪</span>
+    <span class="exercises-text">EXERCÍCIOS</span>
+  </a>
+
   <div class="promo-banner">
     <div class="promo-content">
       <h3>QUER EVOLUIR MAIS RÁPIDO?</h3>
@@ -1603,6 +1614,48 @@
 
     .feature-icon {
       font-size: 1.5rem;
+    }
+  }
+
+  .exercises-button {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    background: #000000;
+    color: #ffffff;
+    border: 2px solid #000000;
+    padding: 1rem 2rem;
+    font-weight: 900;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 4px 4px 0 #000000;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 100;
+    text-decoration: none;
+  }
+
+  .exercises-button.near-bottom {
+    bottom: auto;
+    top: 2rem;
+  }
+
+  .exercises-icon {
+    font-size: 1.5rem;
+  }
+
+  @media (max-width: 768px) {
+    .exercises-button {
+      bottom: 1rem;
+      left: 1rem;
+      padding: 0.8rem 1.5rem;
+    }
+
+    .exercises-button.near-bottom {
+      bottom: auto;
+      top: 1rem;
     }
   }
 </style>
