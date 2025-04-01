@@ -31,30 +31,39 @@
 
 	async function fetchPosts(page = 1, size = 30) {
 		try {
-			const token = localStorage.getItem('MutterCorp');
 			const res = await fetch(
 				`https://dev.muttercorp.com.br/investing-new?page=${page}&pageSize=${size}`,
 				{
 					method: 'GET',
 					headers: {
-						'Content-Type': 'application/json',
-						Authorization: `Bearer ${token}`
+						'Content-Type': 'application/json'
 					}
 				}
 			);
 
+			console.log('Status da resposta:', res.status);
+			console.log('Resposta ok?', res.ok);
+
 			if (res.ok) {
 				const data = await res.json();
-				posts = data;
-			} else {
-				if (res.status === 403 || res.status === 401) {
-					localStorage.removeItem('MutterCorp');
-					window.location.href = '/login';
-				} else if (res.status === 500) {
+				console.log('Dados recebidos:', data);
+				
+				// Verifica se data é um array ou se tem uma propriedade que contém o array
+				if (Array.isArray(data)) {
+					posts = data;
+				} else if (data.data && Array.isArray(data.data)) {
+					posts = data.data;
+				} else if (data.items && Array.isArray(data.items)) {
+					posts = data.items;
+				} else {
+					console.log('Estrutura dos dados:', JSON.stringify(data, null, 2));
 					hasError = true;
 				}
+			} else {
+				hasError = true;
 			}
 		} catch (error) {
+			console.error('Erro na requisição:', error);
 			hasError = true;
 		}
 	}
