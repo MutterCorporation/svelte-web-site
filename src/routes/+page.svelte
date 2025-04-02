@@ -53,6 +53,7 @@
       title: "Omnichat Whitelabel",
       description: "Plataforma de atendimento multicanal personalizada com sua marca",
       icon: "💬",
+      link: "/omnichat",
       features: [
         "Integração com WhatsApp, Instagram e Facebook",
         "Chat em tempo real no seu site",
@@ -198,7 +199,8 @@
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
         {#each services as service, i}
-          <div 
+          <a 
+            href={service.link}
             class="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10 hover:border-blue-500/50 transition-all"
             in:fly="{{ y: 50, duration: 500, delay: i * 200 }}"
           >
@@ -215,7 +217,7 @@
                 </li>
               {/each}
             </ul>
-          </div>
+          </a>
         {/each}
       </div>
     </div>
