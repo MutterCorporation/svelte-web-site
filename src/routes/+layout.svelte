@@ -1,4 +1,6 @@
-<script>import "../app.css";
+<script>
+
+import "../app.css";
 /** @type {{children?: import('svelte').Snippet}} */
 let { children } = $props();
 
@@ -7,7 +9,6 @@ let { children } = $props();
 <main class="font-sans antialiased">
 	{@render children?.()}
 </main>
-
 
 
 

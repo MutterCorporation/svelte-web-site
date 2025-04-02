@@ -2,6 +2,7 @@
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
   import { workoutBuilder } from '../store/workoutBuilderStore';
+  import type { ExerciseInWorkout } from '../store/workoutBuilderStore';
 
   interface Exercise {
     id: string;
@@ -71,7 +72,7 @@
     workoutBuilder.updateExercise(uid, updates);
   }
 
-  function saveWorkout() {
+  async function saveWorkout() {
     if (!$workoutBuilder.selectedExercises.length) {
       alert('Adicione pelo menos um exercício ao treino');
       return;
@@ -84,21 +85,45 @@
 
     const totalDuration = workoutBuilder.calculateTotalDuration($workoutBuilder.selectedExercises);
 
-    workoutBuilder.saveWorkoutTemplate({
+    const workoutPayload = {
       name: workoutName,
       description: workoutDescription,
       exercises: $workoutBuilder.selectedExercises,
       totalDuration,
       difficulty: workoutDifficulty,
-      targetMuscle: workoutTargetMuscle
-    });
+      targetMuscle: workoutTargetMuscle,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
 
-    // Limpar formulário
-    workoutName = '';
-    workoutDescription = '';
-    workoutDifficulty = 'INICIANTE';
-    workoutTargetMuscle = '';
-    workoutBuilder.clearSelectedExercises();
+    try {
+      const response = await fetch('https://dev.muttercorp.com.br/muscle-doro/workouts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(workoutPayload)
+      });
+
+      if (!response.ok) {
+        throw new Error('Erro ao salvar treino');
+      }
+
+      const savedWorkout = await response.json();
+      console.log('Treino salvo com sucesso:', savedWorkout);
+
+      // Limpar formulário
+      workoutName = '';
+      workoutDescription = '';
+      workoutDifficulty = 'INICIANTE';
+      workoutTargetMuscle = '';
+      workoutBuilder.clearSelectedExercises();
+
+      alert('Treino salvo com sucesso!');
+    } catch (err) {
+      console.error('Erro ao salvar treino:', err);
+      alert('Erro ao salvar treino. Tente novamente mais tarde.');
+    }
   }
 
   onMount(() => {

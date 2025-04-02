@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
 
-interface ExerciseInWorkout {
+export interface ExerciseInWorkout {
   uid: string;
   name: string;
   sets: number;
