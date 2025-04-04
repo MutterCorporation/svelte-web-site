@@ -43,33 +43,45 @@
         showToastMessage('Network error', 'error');
       }
     }
-  </script>
-  
-  <div class='flex justify-center items-center h-screen'> 
-    <Card class='bg-blue-400'>
-      <form class="flex flex-col space-y-6" onsubmit={login}>
-        <h3 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
-        <Label class="space-y-2">
-          <span>Email</span>
-          <Input bind:value={username}  name="email" placeholder="username" required />
-        </Label>
-        <Label class="space-y-2">
-          <span>Your password</span>
-          <Input bind:value={password} type="password" name="password" placeholder="•••••" required />
-        </Label>
-        <div class="flex items-start">
-          <Checkbox>Remember me</Checkbox>
-          <a href="/" class="ms-auto text-sm text-primary-700 hover:underline dark:text-primary-500"> Lost password? </a>
-        </div>
-        <Button type="submit" class="w-full bg-red-600">Login to your account</Button>
-        <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
-          Not registered? <a href="/blue-sky-phase/register" class="text-primary-700 hover:underline dark:text-primary-500"> Create account </a>
-        </div>
-      </form>
-    </Card>
-  </div>
-  
-  {#if showToast}
-    <Toast message={toastMessage} type={toastType} />
-  {/if}
+</script>
+
+<svelte:head>
+	<title>Login | Finance Table</title>
+	<meta name="description" content="Acesse sua conta Finance Table para gerenciar suas finanças" />
+	<meta name="keywords" content="Login, Finance Table, Acesso, Autenticação, Finanças" />
+	<meta name="author" content="MutterCorp" />
+	<meta property="og:title" content="Login | Finance Table" />
+	<meta property="og:description" content="Acesse sua conta Finance Table para gerenciar suas finanças" />
+	<meta property="og:url" content="https://muttercorp.com.br/finance-table/login" />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary" />
+</svelte:head>
+
+<div class='flex justify-center items-center h-screen'> 
+  <Card class='bg-blue-400'>
+    <form class="flex flex-col space-y-6" onsubmit={login}>
+      <h3 class="text-xl font-medium text-gray-900 dark:text-white">Sign in to our platform</h3>
+      <Label class="space-y-2">
+        <span>Email</span>
+        <Input bind:value={username}  name="email" placeholder="username" required />
+      </Label>
+      <Label class="space-y-2">
+        <span>Your password</span>
+        <Input bind:value={password} type="password" name="password" placeholder="•••••" required />
+      </Label>
+      <div class="flex items-start">
+        <Checkbox>Remember me</Checkbox>
+        <a href="/" class="ms-auto text-sm text-primary-700 hover:underline dark:text-primary-500"> Lost password? </a>
+      </div>
+      <Button type="submit" class="w-full bg-red-600">Login to your account</Button>
+      <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
+        Not registered? <a href="/blue-sky-phase/register" class="text-primary-700 hover:underline dark:text-primary-500"> Create account </a>
+      </div>
+    </form>
+  </Card>
+</div>
+
+{#if showToast}
+  <Toast message={toastMessage} type={toastType} />
+{/if}
   

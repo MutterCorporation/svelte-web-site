@@ -45,6 +45,18 @@
   }
 </script>
 
+<svelte:head>
+	<title>Login | MutterCorp</title>
+	<meta name="description" content="Acesse sua conta MutterCorp para gerenciar suas aplicações" />
+	<meta name="keywords" content="Login, MutterCorp, Acesso, Autenticação" />
+	<meta name="author" content="MutterCorp" />
+	<meta property="og:title" content="Login | MutterCorp" />
+	<meta property="og:description" content="Acesse sua conta MutterCorp para gerenciar suas aplicações" />
+	<meta property="og:url" content="https://muttercorp.com.br/login" />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary" />
+</svelte:head>
+
 <div class='flex justify-center items-center h-screen'> 
   <Card class='bg-blue-400'>
     <form class="flex flex-col space-y-6" onsubmit={login}>

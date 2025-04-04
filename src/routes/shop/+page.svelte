@@ -94,6 +94,19 @@
   });
 </script>
 
+<svelte:head>
+	<title>FitStore - Produtos para Fitness e Saúde</title>
+	<meta name="description" content="Encontre os melhores produtos para fitness, saúde e bem-estar. Tênis, roupas, acessórios e suplementos com os melhores preços." />
+	<meta name="keywords" content="Fitness, Saúde, Tênis, Roupas Fitness, Suplementos, Acessórios, Bem-estar" />
+	<meta name="author" content="MutterCorp" />
+	<meta property="og:title" content="FitStore - Produtos para Fitness e Saúde" />
+	<meta property="og:description" content="Encontre os melhores produtos para fitness, saúde e bem-estar. Tênis, roupas, acessórios e suplementos com os melhores preços." />
+	<meta property="og:image" content="https://conteudointimo.s3.amazonaws.com/56e93a94570d8e976ded439a2c17ff6ee370bd0b9adb9b7776e105b3f31ce880.jpeg" />
+	<meta property="og:url" content="https://muttercorp.com.br/shop" />
+	<meta property="og:type" content="website" />
+	<meta name="twitter:card" content="summary_large_image" />
+</svelte:head>
+
 <!-- Welcome Overlay -->
 {#if showWelcome}
   <div

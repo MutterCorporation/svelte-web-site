@@ -1,45 +1,28 @@
-<svelte:head>
-	{#if modifiedText}
-		<title>{`${getPreviewText(title, 60)}... - Maikon Weber Blog`}</title>
-		<meta name="description" content={`${getPreviewText(preview, 160)}...`}>
-		<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Maikon Weber, Desenvolvimento, Svelte, JavaScript">
-		<meta name="author" content="Maikon Weber">
-		<meta property="og:title" content={`${getPreviewText(title, 60)}... - Maikon Weber Blog`}>
-		<meta property="og:description" content={`${getPreviewText(preview, 160)}...`}>
-		<meta property="og:image" content={img || 'default-image-url'}>
-		<meta property="og:url" content={`https://muttercorp.com.br/blog/${window.location.pathname.split('/').pop()}`}>
-		<meta name="twitter:card" content="summary_large_image">
-		<meta property="og:type" content="article">
-	{:else}
-		<title>Maikon Weber Blog</title>
-		<meta name="description" content="Bem-vindo ao Maikon Weber Blog, onde compartilho minhas experiências e conhecimentos sobre tecnologia, ciência e música.">
-		<meta name="keywords" content="Tecnologia, Ciência, Música, Blog, Maikon Weber, Desenvolvimento, Svelte, JavaScript">
-		<meta name="author" content="Maikon Weber">
-		<meta property="og:title" content="CryptoStomp">
-		<meta property="og:description" content="Descubra artigos sobre tecnologia, ciência e música no Maikon Weber Blog.">
-		<meta property="og:image" content="default-image-url">
-		<meta property="og:url" content="https://muttercorp.com.br/cryptostomp">
-		<meta name="twitter:card" content="summary_large_image">
-		<meta property="og:type" content="website">
-	{/if}
-</svelte:head>
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
+	import { page } from '$app/stores';
 
-	let blogName = "CryptoStomp"
+	interface Post {
+		title: string;
+		modifiedText: string;
+		img?: string;
+	}
+
+	const blogName = "CryptoStomp";
+	const preview = '';
 	let error = $state(false);
-	let preview = ''
-	let modifiedText = $state('')
-	let title = $state('')
+	let modifiedText = $state('');
+	let title = $state('');
 	let errorMessage = $state('');
 	let img = '';
+	let isLoading = $state(true);
 
-	function getPreviewText(text, maxLength) {
+	function getPreviewText(text: string, maxLength: number): string {
 		return text.length > maxLength ? text.slice(0, maxLength) : text;
 	}
 
-
-	async function fetchPostData(slug) {
+	async function fetchPostData(slug: string) {
+		console.log('Iniciando fetch do post com slug:', slug);
 		try {
 			const response = await fetch(`https://dev.muttercorp.com.br/investing-new/${slug}`, {
 				method: 'GET',
@@ -48,50 +31,100 @@
 				}
 			});
 
+			console.log('Status da resposta:', response.status);
+
 			if (!response.ok) {
-				throw new Error('Failed to fetch post data');
+				throw new Error(`Falha ao buscar dados: ${response.status}`);
 			}
 
 			const data = await response.json();
+			console.log('Dados recebidos:', data);
 
 			if (!data) {
-				throw new Error('Post not found');
+				throw new Error('Post não encontrado');
 			}
 
-			// img = data.img;
-			// const html = data.text;
-			title = data.title
-			modifiedText = data.modifiedText
-			error = false; // Reset error state if fetch is successful
-		} catch (error) {
-			// console.error(error);
+			img = data.img || 'https://assets.coingecko.com/coins/images/1/small/bitcoin.png';
+			title = data.title || 'Título não disponível';
+			modifiedText = data.modifiedText || 'Conteúdo não disponível';
+			console.log('Dados processados:', { title, modifiedText: `${modifiedText.substring(0, 100)}...` });
+			
+			error = false;
+		} catch (err) {
+			console.error('Erro ao buscar post:', err);
 			error = true;
-			errorMessage = error.message || 'An unexpected error occurred';
+			errorMessage = err instanceof Error ? err.message : 'Ocorreu um erro inesperado';
+		} finally {
+			isLoading = false;
 		}
 	}
 
 	onMount(() => {
-		const slug = window.location.pathname.split('/').pop(); // Supondo que o slug está no final da URL
-		fetchPostData(slug);
+		console.log('Componente montado');
+		const slug = $page.params.slug;
+		console.log('Slug extraído:', slug);
+		if (slug) {
+			fetchPostData(slug);
+		} else {
+			error = true;
+			errorMessage = 'Slug não encontrado';
+			isLoading = false;
+		}
 	});
 </script>
 
+<svelte:head>
+	<title>{title ? `${title} | CryptoStomp` : 'CryptoStomp - Análise Técnica de Criptomoedas'}</title>
+	<meta
+		name="description"
+		content={modifiedText ? getPreviewText(modifiedText, 160) : 'Análise técnica em tempo real de criptomoedas na Binance. Gráficos de candlestick, indicadores técnicos e dados históricos para traders.'}
+	/>
+	<meta
+		name="keywords"
+		content="Criptomoedas, Bitcoin, Ethereum, Análise Técnica, Trading, Binance, Gráficos, Candlestick, RSI, MACD, {title}"
+	/>
+	<meta name="author" content="CryptoStomp" />
+	<meta property="og:title" content={title ? `${title} | CryptoStomp` : 'CryptoStomp - Análise Técnica de Criptomoedas'} />
+	<meta
+		property="og:description"
+		content={modifiedText ? getPreviewText(modifiedText, 160) : 'Análise técnica em tempo real de criptomoedas na Binance. Gráficos de candlestick, indicadores técnicos e dados históricos para traders.'}
+	/>
+	<meta property="og:image" content={img} />
+	<meta property="og:url" content={`https://muttercorp.com.br/cryptostomp/${$page.params.slug}`} />
+	<meta name="twitter:card" content="summary_large_image" />
+	<meta property="og:type" content="article" />
+</svelte:head>
+
 <div class="min-h-screen bg-gradient-to-l from-gray-900 via-black to-gray-900 py-12">
-	{#if error}
+	{#if isLoading}
+		<div class="container mx-auto px-4 text-center">
+			<div class="animate-pulse space-y-4">
+				<div class="h-8 bg-gray-700 rounded w-3/4 mx-auto"></div>
+				<div class="space-y-3">
+					<div class="h-4 bg-gray-700 rounded"></div>
+					<div class="h-4 bg-gray-700 rounded w-5/6"></div>
+					<div class="h-4 bg-gray-700 rounded w-4/6"></div>
+				</div>
+			</div>
+		</div>
+	{:else if error}
 		<div class="error-container">
-			<h1>Erro</h1>
-			<p>{errorMessage}</p>
+			<h1 class="text-2xl font-bold mb-4">Erro</h1>
+			<p class="text-lg">{errorMessage}</p>
+			<a href="/cryptostomp" class="inline-block mt-6 px-6 py-2 bg-orange-500 hover:bg-orange-600 rounded-lg text-white transition-colors">
+				Voltar para Home
+			</a>
 		</div>
 	{:else}
 		<div class="container">
 			<!-- Banner Binance -->
 			<div class="mb-12">
-				<a href="https://accounts.binance.com/register?ref=SEU_ID_AQUI" 
+				<a href="https://www.binance.com/referral/earn-together/refertoearn2000usdc/claim?hl=en&ref=GRO_14352_14CQL&utm_source=Lite_web_account" 
 					target="_blank"
 					class="block relative group overflow-hidden rounded-2xl">
 					<div class="relative h-48 overflow-hidden">
 						<img
-							src="https://public.bnbstatic.com/image/cms/blog/20230613/1c5f7d0c-33e7-4ead-8076-e4c3cd8e4362.png"
+							src="https://conteudointimo.s3.amazonaws.com/56e93a94570d8e976ded439a2c17ff6ee370bd0b9adb9b7776e105b3f31ce880.jpeg"
 							alt="Binance Referral"
 							class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
 						/>
@@ -109,9 +142,13 @@
 			</div>
 
 			<div class="post">
-				<h1 class="post-title">{title}</h1>
+				<h1 class="post-title">{title || 'Carregando...'}</h1>
 				<div class="post-body">
-					{modifiedText}
+					{#if modifiedText}
+						{@html modifiedText}
+					{:else}
+						<p class="text-gray-400">Carregando conteúdo...</p>
+					{/if}
 				</div>
 			</div>
 		</div>
@@ -144,6 +181,7 @@
 		white-space: pre-wrap;
 		word-wrap: break-word;
 		line-height: 1.8;
+		padding: 0 1rem;
 	}
 
 	.error-container {
@@ -158,20 +196,37 @@
 		text-align: center;
 	}
 
-	.post-body h1,
-	.post-body h2,
-	.post-body h3 {
+	.post-body h1 {
 		color: rgb(249,115,22);
 		margin-top: 1.5em;
 		margin-bottom: 0.5em;
 	}
 
-	.code-block {
-		background: rgba(31, 31, 31, 0.8);
-		border: 1px solid rgba(249,115,22,0.2);
-		padding: 1rem;
-		border-radius: 8px;
-		overflow-x: auto;
-		margin: 1em 0;
+	/* Responsividade */
+	@media (max-width: 768px) {
+		.container {
+			padding: 15px;
+			margin: 0 15px;
+		}
+
+		.post-title {
+			font-size: 2em;
+		}
+
+		.post-body {
+			font-size: 1em;
+			padding: 0;
+		}
+	}
+
+	@media (max-width: 480px) {
+		.container {
+			padding: 10px;
+			margin: 0 10px;
+		}
+
+		.post-title {
+			font-size: 1.8em;
+		}
 	}
 </style>
