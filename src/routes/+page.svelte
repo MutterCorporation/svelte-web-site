@@ -18,10 +18,10 @@
   // Apps disponíveis
   const apps = [
     {
-      title: "Kama-Doro",
+      title: "Sexpomodoro",
       description: "Timer Pomodoro com posições do Kamasutra",
       icon: "🕐",
-      link: "/kama-doro",
+      link: "https://sexpomodoro.com.br",
       color: "from-pink-500 to-red-500"
     },
     {
@@ -72,17 +72,6 @@
         "Dashboard de performance"
       ]
     },
-    {
-      title: "Investing Notice",
-      description: "Análise e sinais de investimento em tempo real",
-      icon: "📈",
-      features: [
-        "Sinais de trading em tempo real",
-        "Análise técnica automatizada",
-        "Alertas personalizados",
-        "Integração com corretoras"
-      ]
-    }
   ];
 
   const stats = [
