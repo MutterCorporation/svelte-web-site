@@ -66,6 +66,9 @@
 				'Integração com e-mail marketing',
 				'Dashboard de performance'
 			]
+		},
+		{
+			
 		}
 	];
 

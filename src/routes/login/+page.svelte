@@ -43,7 +43,32 @@
       showToastMessage('Network error', 'error');
     }
   }
+
+  async function loginWithGoogleOauth() {
+    try {
+      // Redirect to Google OAuth endpoint
+      const res = await fetch('https://dev.muttercorp.com.br/auth/google?tenant_code=muttercorp', {
+        method: 'GET',
+        headers: { 'accept': '*/*' }
+      });
+
+        const data = await res.json();
+        window.location.href = data.redirect_url;
+
+      if (res.redirected) {
+        window.location.href = res.url;
+      } else {
+        showToastMessage('Google login failed', 'error');
+      }
+    } catch (error) {
+      showToastMessage('Network error', 'error');
+    }
+  }
+
+
+
 </script>
+
 
 <svelte:head>
 	<title>Login | MutterCorp</title>
@@ -74,10 +99,10 @@
         <a href="/" class="ms-auto text-sm text-primary-700 hover:underline dark:text-primary-500"> Lost password? </a>
       </div>
       <Button type="submit" class="w-full bg-red-600">Login to your account</Button>
+      <Button on:click={loginWithGoogleOauth} class="w-full bg-blue-600">Login with Google</Button>
       <div class="text-sm font-medium text-gray-500 dark:text-gray-300">
         Not registered? <a href="/blue-sky-phase/register" class="text-primary-700 hover:underline dark:text-primary-500"> Create account </a>
-      </div>
-    </form>
+      </form>
   </Card>
 </div>
 

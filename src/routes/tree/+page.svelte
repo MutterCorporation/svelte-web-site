@@ -19,7 +19,7 @@
         {
             title: "Aplicações",
             links: [
-                { name: "Kama-Doro", url: "/kama-doro", icon: "⏰", color: "bg-pink-600" },
+                { name: "Kama-Doro", url: "www.sexpomodoro.com.br", icon: "⏰", color: "bg-pink-600" },
                 { name: "Job Hunter", url: "/job-hunter", icon: "💼", color: "bg-purple-600" },
                 { name: "Finance Table", url: "/finance-table", icon: "💰", color: "bg-green-600" },
                 { name: "Cryptostomp", url: "/cryptostomp", icon: "📈", color: "bg-blue-600" }
@@ -33,6 +33,7 @@
                 { name: "BlueSky", url: "https://bsky.app/profile/muttercorp.com.br", icon: "☁️", color: "bg-sky-500" },
                 { name: "Twitch", url: "https://www.twitch.tv/maikonweber", icon: "🎮", color: "bg-purple-700" },
                 { name: "SoundCloud", url: "https://soundcloud.com/search?q=maikon%20weber%20carvalho", icon: "🎵", color: "bg-orange-600" }
+                { name: "LinkedIn", url: "https://www.linkedin.com/in/maikonwebercorp/", icon: "🔗", color: "bg-blue-700" }
             ]
         },
         {
