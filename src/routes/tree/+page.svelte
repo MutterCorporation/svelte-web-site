@@ -32,7 +32,7 @@
                 { name: "X", url: "https://x.com/MaikonWeber1", icon: "🐦", color: "bg-black" },
                 { name: "BlueSky", url: "https://bsky.app/profile/muttercorp.com.br", icon: "☁️", color: "bg-sky-500" },
                 { name: "Twitch", url: "https://www.twitch.tv/maikonweber", icon: "🎮", color: "bg-purple-700" },
-                { name: "SoundCloud", url: "https://soundcloud.com/search?q=maikon%20weber%20carvalho", icon: "🎵", color: "bg-orange-600" }
+                { name: "SoundCloud", url: "https://soundcloud.com/search?q=maikon%20weber%20carvalho", icon: "🎵", color: "bg-orange-600" },
                 { name: "LinkedIn", url: "https://www.linkedin.com/in/maikonwebercorp/", icon: "🔗", color: "bg-blue-700" }
             ]
         },
@@ -40,7 +40,10 @@
             title: "Conteúdo",
             links: [
                 { name: "Blog", url: "https://muttercorp.com.br/blog/", icon: "📝", color: "bg-yellow-600" },
+                { name: "Carderno de Linguas", url: "https://spurious-distance-5d8.notion.site/Aulas-de-Linguas-20227a442c8880a3ba4efa828af0b1c7", icon: "📝", color: "bg-yellow-600" },
                 { name: "Biblioteca TI", url: "https://drive.google.com/drive/folders/13IJWGRoithYsfv8mIMup2Ieno_rsFI3A", icon: "📚", color: "bg-green-700" },
+                { name: "Carderno de Programação", url: "https://spurious-distance-5d8.notion.site/Livro-da-Programa-o-20227a442c88804cb783e27df30b04ba", icon: "📝", color: "bg-yellow-600" },
+                { name: "Minha Biografia", url: "https://spurious-distance-5d8.notion.site/Biografia-20327a442c88805ab1e7df310de2ad7f?source=copy_link", icon: "📝", color: "bg-yellow-600" },  
                 { name: "Notícias Investimento", url: "https://muttercorp.com.br/cryptostomp", icon: "📊", color: "bg-blue-800" },
                 { name: "Livro", url: "https://drive.google.com/drive/folders/1k7WVLtxa_riyXEs15HYLCkkfVChCp-SV", icon: "📖", color: "bg-red-700" }
             ]
