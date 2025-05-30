@@ -11,7 +11,7 @@
 	let tweetOption = $state('normal'); // Default tweet option
 	let isLoading = $state(true); // Control loading state
 	let isAuthenticated = $state(false);
-	
+
 	// Blog options
 	const blogs = [
 		{ id: 'blog1', name: 'Blog Principal' },
@@ -102,24 +102,30 @@
 				alert('Erro ao enviar o post');
 			});
 	}
-	
+
 	function submitTweet() {
 		if (tweetMemory.length > 300) {
 			alert('O tweet excede o limite de 300 caracteres!');
 			return;
 		}
 		
-		// Create FormData
-		const formData = new FormData();
-		formData.append('text', tweetMemory);
-		formData.append('option', tweetOption);
-		
-		fetch('https://dev.muttercorp.com.br/tweet-memory', {
+		const payload = {
+			text: tweetMemory,
+			options: {
+				cmd: "string",
+				only_save: true,
+				ia: true
+			}
+		};
+
+		fetch('https://dev.muttercorp.com.br/blog/twitter', {
 			method: 'POST',
 			headers: {
-				Authorization: `Bearer ${localStorage.getItem('MutterCorp')}`
+				'accept': '*/*',
+				'Authorization': `Bearer ${localStorage.getItem('MutterCorp')}`,
+				'Content-Type': 'application/json'
 			},
-			body: formData
+			body: JSON.stringify(payload)
 		})
 			.then((response) => response.json())
 			.then((data) => {
@@ -151,7 +157,7 @@
 		<header class="brutalist-header">
 			<h1 class="glitch-text">BLOG ADMIN CONTROL</h1>
 		</header>
-		
+
 		<div class="grid-container">
 			<!-- Left column: Form -->
 			<div class="form-column">
@@ -167,7 +173,7 @@
 								</select>
 							</div>
 						</div>
-						
+
 						<div class="form-group">
 							<label for="image">IMAGEM:</label>
 							<div class="file-input-wrapper">
@@ -182,24 +188,24 @@
 								{/if}
 							</div>
 						</div>
-						
+
 						<div class="form-group">
 							<label for="title">TÍTULO:</label>
 							<input type="text" id="title" bind:value={title} class="brutalist-input" />
 						</div>
-						
+
 						<div class="form-group">
 							<label for="preview-text">PREVIEW TEXT:</label>
 							<textarea id="preview-text" bind:value={preview} class="brutalist-textarea small-textarea"></textarea>
 						</div>
 					</div>
-					
+
 					<div class="form-section">
 						<div class="form-group">
 							<label for="body">CONTEÚDO (MARKDOWN):</label>
 							<textarea id="body" bind:value={body} class="brutalist-textarea large-textarea"></textarea>
 						</div>
-						
+
 						<div class="button-group">
 							<button type="button" on:click={handleConvertMarkdown} class="brutalist-button secondary">
 								PREVIEW
@@ -208,14 +214,14 @@
 						</div>
 					</div>
 				</form>
-				
+
 				<!-- Tweet memory section -->
 				<div class="tweet-section">
 					<h2 class="section-title">TWEET MEMORY</h2>
 					<div class="form-group">
-						<textarea 
-							bind:value={tweetMemory} 
-							maxlength="300" 
+						<textarea
+							bind:value={tweetMemory}
+							maxlength="300"
 							class="brutalist-textarea tweet-textarea"
 							placeholder="Digite seu tweet (máximo 300 caracteres)..."
 						></textarea>
@@ -223,21 +229,21 @@
 							{tweetMemory.length}/300
 						</div>
 					</div>
-					
+
 					<div class="tweet-options">
 						{#each tweetOptions as option}
 							<label class="option-label">
-								<input type="radio" name="tweetOption" value={option.id} 
+								<input type="radio" name="tweetOption" value={option.id}
 									bind:group={tweetOption} class="option-radio" />
 								<span class="option-text">{option.name}</span>
 							</label>
 						{/each}
 					</div>
-					
+
 					<button on:click={submitTweet} class="brutalist-button accent">ENVIAR TWEET</button>
 				</div>
 			</div>
-			
+
 			<!-- Right column: Preview -->
 			<div class="preview-column">
 				<h2 class="section-title">PREVIEW DO POST</h2>
@@ -269,11 +275,11 @@
 		font-family: 'Courier New', monospace;
 		color: #000;
 	}
-	
+
 	* {
 		box-sizing: border-box;
 	}
-	
+
 	/* Loading State */
 	.loading-container {
 		display: flex;
@@ -282,19 +288,19 @@
 		height: 100vh;
 		background-color: #000;
 	}
-	
+
 	.loading-text {
 		font-size: 40px;
 		font-weight: bold;
 		color: #fff;
 		animation: blink 1s infinite;
 	}
-	
+
 	@keyframes blink {
 		0%, 100% { opacity: 1; }
 		50% { opacity: 0; }
 	}
-	
+
 	/* Brutalist Container */
 	.brutalist-container {
 		max-width: 1600px;
@@ -304,7 +310,7 @@
 		border: 4px solid #000;
 		box-shadow: 12px 12px 0 #000;
 	}
-	
+
 	/* Brutalist Header */
 	.brutalist-header {
 		background-color: #000;
@@ -314,7 +320,7 @@
 		margin-bottom: 20px;
 		border-bottom: 4px solid #ff3e00;
 	}
-	
+
 	.glitch-text {
 		font-size: 36px;
 		font-weight: bold;
@@ -323,7 +329,7 @@
 		position: relative;
 		margin: 0;
 	}
-	
+
 	.glitch-text::before,
 	.glitch-text::after {
 		content: "BLOG ADMIN CONTROL";
@@ -333,7 +339,7 @@
 		width: 100%;
 		height: 100%;
 	}
-	
+
 	.glitch-text::before {
 		color: cyan;
 		z-index: -1;
@@ -341,7 +347,7 @@
 		transform: translate(-2px, 2px);
 		animation: glitch 2s infinite linear alternate-reverse;
 	}
-	
+
 	.glitch-text::after {
 		color: magenta;
 		z-index: -2;
@@ -349,7 +355,7 @@
 		transform: translate(2px, -2px);
 		animation: glitch 3s infinite linear alternate-reverse;
 	}
-	
+
 	@keyframes glitch {
 		0% { transform: translate(-2px, 2px); }
 		25% { transform: translate(-1px, -1px); }
@@ -357,7 +363,7 @@
 		75% { transform: translate(2px, -2px); }
 		100% { transform: translate(-2px, 2px); }
 	}
-	
+
 	/* Grid Layout */
 	.grid-container {
 		display: grid;
@@ -365,32 +371,32 @@
 		gap: 20px;
 		padding: 0 20px 20px;
 	}
-	
+
 	@media (max-width: 1200px) {
 		.grid-container {
 			grid-template-columns: 1fr;
 		}
 	}
-	
+
 	/* Form Column */
 	.form-column {
 		display: flex;
 		flex-direction: column;
 		gap: 30px;
 	}
-	
+
 	.form-section {
 		border: 3px solid #000;
 		padding: 20px;
 		margin-bottom: 20px;
 		background-color: #f0f0f0;
 	}
-	
+
 	/* Form Elements */
 	.form-group {
 		margin-bottom: 20px;
 	}
-	
+
 	label {
 		display: block;
 		font-weight: bold;
@@ -398,7 +404,7 @@
 		font-size: 18px;
 		text-transform: uppercase;
 	}
-	
+
 	.brutalist-input,
 	.brutalist-textarea,
 	.brutalist-select {
@@ -411,7 +417,7 @@
 		color: #000;
 		transition: border-color 0.3s;
 	}
-	
+
 	.brutalist-input:focus,
 	.brutalist-textarea:focus,
 	.brutalist-select:focus {
@@ -419,33 +425,33 @@
 		border-color: #ff3e00;
 		box-shadow: 4px 4px 0 #000;
 	}
-	
+
 	.small-textarea {
 		height: 80px;
 		resize: none;
 	}
-	
+
 	.large-textarea {
 		height: 300px;
 		resize: vertical;
 	}
-	
+
 	.file-input-wrapper {
 		border: 3px dashed #000;
 		padding: 15px;
 		background-color: #fff;
 	}
-	
+
 	.file-name {
 		margin-top: 10px;
 		font-weight: bold;
 		word-break: break-all;
 	}
-	
+
 	.select-wrapper {
 		position: relative;
 	}
-	
+
 	.select-wrapper::after {
 		content: '▼';
 		position: absolute;
@@ -454,14 +460,14 @@
 		transform: translateY(-50%);
 		pointer-events: none;
 	}
-	
+
 	/* Buttons */
 	.button-group {
 		display: flex;
 		gap: 15px;
 		margin-top: 20px;
 	}
-	
+
 	.brutalist-button {
 		padding: 12px 20px;
 		border: 3px solid #000;
@@ -473,39 +479,39 @@
 		cursor: pointer;
 		transition: all 0.2s;
 	}
-	
+
 	.brutalist-button:hover {
 		transform: translate(-4px, -4px);
 		box-shadow: 4px 4px 0 #000;
 	}
-	
+
 	.brutalist-button:active {
 		transform: translate(2px, 2px);
 		box-shadow: none;
 	}
-	
+
 	.primary {
 		background-color: #ff3e00;
 		color: #fff;
 	}
-	
+
 	.secondary {
 		background-color: #000;
 		color: #fff;
 	}
-	
+
 	.accent {
 		background-color: #0077ff;
 		color: #fff;
 	}
-	
+
 	/* Tweet Section */
 	.tweet-section {
 		border: 3px solid #0077ff;
 		padding: 20px;
 		background-color: #f0f0f0;
 	}
-	
+
 	.section-title {
 		font-size: 24px;
 		text-transform: uppercase;
@@ -514,55 +520,55 @@
 		border-bottom: 3px solid #000;
 		padding-bottom: 10px;
 	}
-	
+
 	.tweet-textarea {
 		height: 120px;
 		resize: none;
 		border-color: #0077ff;
 	}
-	
+
 	.char-counter {
 		text-align: right;
 		margin-top: 5px;
 		font-weight: bold;
 	}
-	
+
 	.char-counter.warning {
 		color: #ff3e00;
 	}
-	
+
 	.tweet-options {
 		display: flex;
 		flex-wrap: wrap;
 		gap: 15px;
 		margin: 15px 0;
 	}
-	
+
 	.option-label {
 		display: flex;
 		align-items: center;
 		cursor: pointer;
 		margin-bottom: 0;
 	}
-	
+
 	.option-radio {
 		margin-right: 8px;
 		transform: scale(1.5);
 		accent-color: #0077ff;
 	}
-	
+
 	.option-text {
 		font-size: 16px;
 		text-transform: none;
 	}
-	
+
 	/* Preview Column */
 	.preview-column {
 		position: sticky;
 		top: 20px;
 		align-self: flex-start;
 	}
-	
+
 	.preview-container {
 		border: 3px solid #000;
 		padding: 20px;
@@ -571,7 +577,7 @@
 		max-height: 90vh;
 		overflow-y: auto;
 	}
-	
+
 	.preview-placeholder {
 		display: flex;
 		justify-content: center;
@@ -583,7 +589,7 @@
 		text-align: center;
 		padding: 20px;
 	}
-	
+
 	.preview-title {
 		margin-top: 0;
 		margin-bottom: 30px;
@@ -591,12 +597,12 @@
 		border-bottom: 3px solid #000;
 		padding-bottom: 15px;
 	}
-	
+
 	.preview-html {
 		font-family: Arial, sans-serif;
 		line-height: 1.6;
 	}
-	
+
 	.preview-html :global(h1),
 	.preview-html :global(h2),
 	.preview-html :global(h3) {
@@ -604,12 +610,12 @@
 		margin-bottom: 15px;
 		font-weight: bold;
 	}
-	
+
 	.preview-html :global(a) {
 		color: #0077ff;
 		text-decoration: underline;
 	}
-	
+
 	.preview-html :global(code) {
 		background-color: #f0f0f0;
 		border: 1px solid #ddd;
@@ -617,7 +623,7 @@
 		font-family: 'Courier New', monospace;
 		border-radius: 3px;
 	}
-	
+
 	.preview-html :global(pre) {
 		background-color: #1a1a1a;
 		color: #f8f8f8;
@@ -626,32 +632,32 @@
 		overflow-x: auto;
 		border: 3px solid #000;
 	}
-	
+
 	.preview-html :global(img) {
 		max-width: 100%;
 		height: auto;
 		border: 3px solid #000;
 	}
-	
+
 	.preview-html :global(blockquote) {
 		border-left: 5px solid #ff3e00;
 		padding-left: 15px;
 		margin-left: 0;
 		color: #666;
 	}
-	
+
 	.preview-html :global(table) {
 		border-collapse: collapse;
 		width: 100%;
 		margin: 20px 0;
 	}
-	
+
 	.preview-html :global(th),
 	.preview-html :global(td) {
 		border: 2px solid #000;
 		padding: 8px 12px;
 	}
-	
+
 	.preview-html :global(th) {
 		background-color: #f0f0f0;
 	}
