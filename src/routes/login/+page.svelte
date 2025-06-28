@@ -4,6 +4,8 @@
   import Footer from "../../components/Footer.svelte";
   import Toast from "../../components/Toster.svelte";
   import { Card, Button, Label, Input, Checkbox } from 'flowbite-svelte';
+  import { login as apiLogin } from '../../services/api-service.js';
+  import { setAuthToken } from '../../services/api.js';
 
   let username = '';
   let password = '';
@@ -20,31 +22,21 @@
     }, 3000);
   }
 
-  async function login(event) {
+  async function handleLogin(event) {
     event.preventDefault();
     try {
-      const res = await fetch('https://dev.muttercorp.com.br/auth/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username, password })
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        console.log(data);
-        localStorage.setItem('MutterCorp', data.token);
-        showToastMessage('Logged in successfully', 'success');
-        window.location.href = '/admin';
-      } else {
-        const errorData = await res.json();
-        showToastMessage(errorData.message || 'Login failed', 'error');
-      }
+      const data = await apiLogin(username, password);
+      console.log(data);
+      setAuthToken(data.token);
+      showToastMessage('Logged in successfully', 'success');
+      window.location.href = '/admin';
     } catch (error) {
-      showToastMessage('Network error', 'error');
+      console.error('Login error:', error);
+      showToastMessage(error.message || 'Login failed', 'error');
     }
   }
 
-  async function loginWithGoogleOauth() {
+  async function handleGoogleLogin() {
     try {
       window.location.href = 'https://dev.muttercorp.com.br/auth/google?tenant_code=muttercorp';
     } catch (error) {
@@ -68,7 +60,7 @@
 
 <div class="flex min-h-screen items-center justify-center bg-gray-50 p-4">
   <Card class="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
-    <form class="flex flex-col space-y-6" on:submit|preventDefault={login}>
+    <form class="flex flex-col space-y-6" on:submit|preventDefault={handleLogin}>
       <h3 class="text-2xl font-semibold text-gray-900 dark:text-white text-center">Acesse sua conta</h3>
 
       <Label class="space-y-2">
@@ -101,7 +93,7 @@
 
       <Button type="submit" class="w-full bg-red-600 hover:bg-red-700 focus:ring-red-500">Entrar</Button>
 
-      <Button on:click={loginWithGoogleOauth} type="button" class="w-full bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 mt-2">
+      <Button on:click={handleGoogleLogin} type="button" class="w-full bg-blue-600 hover:bg-blue-700 focus:ring-blue-500 mt-2">
         Entrar com Google
       </Button>
 

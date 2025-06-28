@@ -2,7 +2,7 @@
   /** @type {{logoSrc?: string}} */
   let { logoSrc = '/logo.png' } = $props();
   
-  let menuOpen = false;
+  let menuOpen = $state(false);
 
   function toggleMenu() {
     menuOpen = !menuOpen;
@@ -11,6 +11,20 @@
   function handleClick() {
     // @ts-ignore
     navigator('/');
+  }
+
+  function handleKeyDown(event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      handleClick();
+    }
+  }
+
+  function handleMenuKeyDown(event) {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      toggleMenu();
+    }
   }
 </script>
 <style>
@@ -111,25 +125,38 @@ img:hover {
 
 <header class="flex justify-between items-center bg-gradient-to-r from-red-600 to-gray-800 text-white px-8 py-4 shadow-lg">
   <div class="flex items-center">
-    <img
-      src={logoSrc}
-      alt="MutterCorp Logo"
-      class="w-12 h-12 transition-transform duration-500 hover:scale-110 cursor-pointer"
-      onclick={handleClick}
-    />
+    <button
+      type="button"
+      class="bg-transparent border-none p-0 cursor-pointer"
+      on:click={handleClick}
+      on:keydown={handleKeyDown}
+      aria-label="Ir para página inicial"
+    >
+      <img
+        src={logoSrc}
+        alt="MutterCorp Logo"
+        class="w-12 h-12 transition-transform duration-500 hover:scale-110"
+      />
+    </button>
   </div>
-  <div
-    class="flex justify-center items-center text-2xl cursor-pointer transition-transform duration-300 hover:scale-110"
-    onclick={toggleMenu}
+  <button
+    type="button"
+    class="flex justify-center items-center text-2xl cursor-pointer transition-transform duration-300 hover:scale-110 bg-transparent border-none p-2"
+    on:click={toggleMenu}
+    on:keydown={handleMenuKeyDown}
+    aria-label="Abrir menu de navegação"
+    aria-expanded={menuOpen}
   >
     <i class="fas fa-bars"></i>
-  </div>
+  </button>
 </header>
 
 <div
   class={`fixed top-0 right-0 h-full w-64 bg-gray-800 text-white shadow-lg transform ${
     menuOpen ? 'translate-x-0' : 'translate-x-full'
   } transition-transform duration-300 flex flex-col p-6`}
+  role="navigation"
+  aria-label="Menu de navegação"
 >
   <a href="#home" class="text-lg my-2 hover:text-red-400 transition-colors">
     Home
