@@ -6,7 +6,11 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
+	import ViewCounter from '../../components/ViewCounter.svelte';
 
+	/**
+	 * @type {any[]}
+	 */
 	let posts = [];
 	let loading = true;
 	
@@ -27,7 +31,7 @@
 			const data = await response.json();
 			
 			// Mapeamento dos dados recebidos para o formato esperado pelos componentes
-			posts = data.map(post => ({
+			posts = data.map((/** @type {{ titulo: any; img: any; preview: any; created_at: string | number | Date; id: { toString: () => any; }; text: any; }} */ post) => ({
 				title: post.titulo || 'Sem título', // Use titulo do API e garanta que existe
 				image: post.img || 'https://placehold.co/600x400/0a0a2e/00f6ff?text=CyberBlog', // Use fallback se imagem não existir
 				excerpt: post.preview || 'Sem prévia disponível', // Use preview do API
@@ -91,6 +95,9 @@
 						<div class="card-content">
 							<h2 class="cyber-title">{post.title}</h2>
 							<p class="cyber-text">{post.excerpt}</p>
+							<div class="card-meta">
+								<ViewCounter postId={post.slug} />
+							</div>
 							<div class="card-footer">
 								<span class="cyber-date">{post.date}</span>
 								<a href={`/blog/${post.slug}`} class="cyber-button">
@@ -302,5 +309,11 @@
 
 	@keyframes spin {
 		to { transform: rotate(360deg); }
+	}
+
+	.card-meta {
+		margin-bottom: 1rem;
+		padding-bottom: 0.5rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 	}
 </style>
