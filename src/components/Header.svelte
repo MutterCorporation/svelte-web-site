@@ -128,8 +128,8 @@ img:hover {
     <button
       type="button"
       class="bg-transparent border-none p-0 cursor-pointer"
-      on:click={handleClick}
-      on:keydown={handleKeyDown}
+      onclick={handleClick}
+      onkeydown={handleKeyDown}
       aria-label="Ir para página inicial"
     >
       <img
@@ -142,8 +142,8 @@ img:hover {
   <button
     type="button"
     class="flex justify-center items-center text-2xl cursor-pointer transition-transform duration-300 hover:scale-110 bg-transparent border-none p-2"
-    on:click={toggleMenu}
-    on:keydown={handleMenuKeyDown}
+    onclick={toggleMenu}
+    onkeydown={handleMenuKeyDown}
     aria-label="Abrir menu de navegação"
     aria-expanded={menuOpen}
   >

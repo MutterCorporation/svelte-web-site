@@ -1,4 +1,6 @@
 <script>
+	import { t } from '../../../lib/i18n/texts.js';
+	
 	/** @type {{closeModal: any}} */
 	let { closeModal } = $props();
 
@@ -9,7 +11,7 @@
 
 	async function handleSubmit() {
 		if (message.length > 500) {
-			alert('A mensagem deve ter no máximo 500 caracteres.');
+			alert(t('TREE.MODAL.MAX_CHARS_ERROR'));
 			return;
 		}
 
@@ -33,14 +35,14 @@
 			});
 
 			if (response.ok) {
-				alert('Mensagem enviada com sucesso!');
+				alert(t('TREE.MODAL.SUCCESS'));
 				closeModal();
 			} else {
-				alert('Houve um problema ao enviar a mensagem. Tente novamente.');
+				alert(t('TREE.MODAL.ERROR'));
 			}
 		} catch (error) {
 			console.error('Erro ao enviar a mensagem:', error);
-			alert('Erro ao enviar a mensagem. Verifique sua conexão e tente novamente.');
+			alert(t('TREE.MODAL.NETWORK_ERROR'));
 		}
 	}
 
@@ -54,19 +56,19 @@
 <div class="modal-overlay" onclick={handleOverlayClick}>
 	<div class="modal-content">
 		<button class="close-button" onclick={closeModal}>✖</button>
-		<h2>Deixe sua mensagem</h2>
+		<h2>{t('TREE.MODAL.TITLE')}</h2>
 		<textarea
-			placeholder="Escreva sua mensagem (máx. 500 caracteres)"
+			placeholder={t('TREE.MODAL.MESSAGE_PLACEHOLDER')}
 			bind:value={message}
 			maxlength="500"
 		></textarea>
-		<input type="text" placeholder="Nome (opcional)" bind:value={name} disabled={isAnonymous} />
-		<input type="email" placeholder="Email (opcional)" bind:value={email} disabled={isAnonymous} />
+		<input type="text" placeholder={t('TREE.MODAL.NAME_PLACEHOLDER')} bind:value={name} disabled={isAnonymous} />
+		<input type="email" placeholder={t('TREE.MODAL.EMAIL_PLACEHOLDER')} bind:value={email} disabled={isAnonymous} />
 		<label>
 			<input type="checkbox" bind:checked={isAnonymous} />
-			Enviar como anônimo
+			{t('TREE.MODAL.ANONYMOUS')}
 		</label>
-		<button onclick={handleSubmit}>Enviar</button>
+		<button onclick={handleSubmit}>{t('TREE.MODAL.SEND')}</button>
 	</div>
 </div>
 

@@ -2,6 +2,7 @@
 <script>
     import { onMount } from 'svelte';
     import Chart from 'chart.js/auto';
+    import { t } from '../../../../lib/i18n/texts.js';
     
     // Dados fictícios para demonstração
     const recentOrders = [
@@ -13,6 +14,7 @@
       { id: 'ORD-5284', product: 'BCAA 2:1:1', customer: 'Roberto Almeida', date: '08/04/2025', status: 'Entregue', value: 'R$ 79,90' },
     ];
   
+    /** @type {Record<string, string>} */
     const statusColors = {
       'Enviado': 'bg-blue-500',
       'Processando': 'bg-yellow-500',
@@ -21,7 +23,9 @@
       'Cancelado': 'bg-gray-500'
     };
   
+    /** @type {HTMLCanvasElement} */
     let salesChartCanvas;
+    /** @type {HTMLCanvasElement} */
     let performanceChartCanvas;
   
     onMount(() => {
@@ -80,7 +84,7 @@
   </script>
   
   <div>
-    <h1 class="text-2xl font-semibold text-gray-900">Visão Geral</h1>
+    <h1 class="text-2xl font-semibold text-gray-900">{t('ADMIN.OVERVIEW.TITLE')}</h1>
     
     <!-- Stats -->
     <div class="mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -93,14 +97,14 @@
               </svg>
             </div>
             <div class="ml-5 w-0 flex-1">
-              <dt class="text-sm font-medium text-gray-500 truncate">Total de Vendas</dt>
+              <dt class="text-sm font-medium text-gray-500 truncate">{t('ADMIN.OVERVIEW.TOTAL_SALES')}</dt>
               <dd class="flex items-baseline">
                 <div class="text-2xl font-semibold text-gray-900">R$ 24.389,50</div>
                 <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">
                   <svg class="self-center flex-shrink-0 h-5 w-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
                   </svg>
-                  <span class="sr-only">Aumento</span>
+                  <span class="sr-only">{t('ADMIN.OVERVIEW.INCREASE')}</span>
                   12%
                 </div>
               </dd>
@@ -118,7 +122,7 @@
               </svg>
             </div>
             <div class="ml-5 w-0 flex-1">
-              <dt class="text-sm font-medium text-gray-500 truncate">Novos Pedidos</dt>
+              <dt class="text-sm font-medium text-gray-500 truncate">{t('ADMIN.OVERVIEW.NEW_ORDERS')}</dt>
               <dd class="flex items-baseline">
                 <div class="text-2xl font-semibold text-gray-900">43</div>
                 <div class="ml-2 flex items-baseline text-sm font-semibold text-green-600">

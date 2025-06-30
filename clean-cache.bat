@@ -1,0 +1,6 @@
+@echo off
+echo Limpando cache do projeto...
+wsl -e bash -c "cd /home/maikoncarvalho/Projetos/svelte-web-site && rm -rf node_modules/.vite && rm -rf .svelte-kit && npm run build"
+echo Cache limpo! Agora iniciando servidor...
+wsl -e bash -c "cd /home/maikoncarvalho/Projetos/svelte-web-site && npm run dev"
+pause 

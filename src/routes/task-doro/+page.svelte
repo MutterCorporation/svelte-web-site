@@ -1,6 +1,7 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
     import { tasks, timeLeft, isRunning, currentTask } from './store/store';
+    import { t, tf } from '../../lib/i18n/texts.js';
   
     let interval;
     let newTaskInput = '';
@@ -81,8 +82,8 @@
     // Notification
     function notify() {
       if (Notification.permission === "granted") {
-        new Notification("Pomodoro Completed!", {
-          body: "Time to take a break!",
+        new Notification(t('TASK_DORO.NOTIFICATIONS.COMPLETED_TITLE'), {
+          body: t('TASK_DORO.NOTIFICATIONS.COMPLETED_BODY'),
         });
         if ($currentTask) {
           incrementPomodoro($currentTask);
@@ -100,14 +101,14 @@
   </script>
   
   <svelte:head>
-    <title>Task-Doro | Gerenciador de Tarefas com Pomodoro</title>
+    <title>{t('TASK_DORO.TITLE')}</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
   </svelte:head>
   
   <div class="container">
     <header class="header" role="banner">
-      <h1 class="title">Task-Doro</h1>
-      <p class="subtitle">Gerencie seu tempo com elegância</p>
+      <h1 class="title">{t('TASK_DORO.BRAND')}</h1>
+      <p class="subtitle">{t('TASK_DORO.SUBTITLE')}</p>
     </header>
   
     <!-- Timer Display -->
@@ -120,23 +121,23 @@
           {#if !$isRunning}
             <button 
               class="btn btn-primary" 
-              on:click={startPomodoro}
-              aria-label="Iniciar timer">
-              Iniciar
+              onclick={startPomodoro}
+              aria-label={t('TASK_DORO.TIMER.START_ARIA')}>
+              {t('TASK_DORO.TIMER.START')}
             </button>
           {:else}
             <button 
               class="btn btn-danger" 
-              on:click={stopPomodoro}
-              aria-label="Parar timer">
-              Parar
+              onclick={stopPomodoro}
+              aria-label={t('TASK_DORO.TIMER.STOP_ARIA')}>
+              {t('TASK_DORO.TIMER.STOP')}
             </button>
           {/if}
           <button 
             class="btn btn-secondary" 
-            on:click={resetPomodoro}
-            aria-label="Reiniciar timer">
-            Reiniciar
+            onclick={resetPomodoro}
+            aria-label={t('TASK_DORO.TIMER.RESET_ARIA')}>
+            {t('TASK_DORO.TIMER.RESET')}
           </button>
         </div>
       </div>
@@ -148,22 +149,22 @@
         <input
           type="text"
           bind:value={newTaskInput}
-          placeholder="Adicione uma nova tarefa..."
+          placeholder={t('TASK_DORO.TASKS.ADD_PLACEHOLDER')}
           class="task-input"
-          on:keydown={e => e.key === 'Enter' && addTask()}
-          aria-label="Nova tarefa"
+          onkeydown={e => e.key === 'Enter' && addTask()}
+          aria-label={t('TASK_DORO.TASKS.NEW_TASK_ARIA')}
         />
         <button 
           class="btn btn-add" 
-          on:click={addTask}
-          aria-label="Adicionar tarefa">
-          Adicionar
+          onclick={addTask}
+          aria-label={t('TASK_DORO.TASKS.ADD_ARIA')}>
+          {t('TASK_DORO.TASKS.ADD_BUTTON')}
         </button>
       </div>
     </section>
   
     <!-- Task List -->
-    <section class="task-list" role="list" aria-label="Lista de tarefas">
+    <section class="task-list" role="list" aria-label={t('TASK_DORO.TASKS.TASK_LIST_ARIA')}>
       {#each $tasks as task (task.id)}
         <div 
           class="task-card {task.id === $currentTask ? 'task-selected' : ''}"
@@ -173,8 +174,8 @@
               <input
                 type="checkbox"
                 checked={task.completed}
-                on:change={() => toggleTask(task.id)}
-                aria-label="Marcar tarefa como concluída"
+                onchange={() => toggleTask(task.id)}
+                aria-label={t('TASK_DORO.TASKS.COMPLETE_ARIA')}
               />
               <span class="checkmark"></span>
             </label>
@@ -183,22 +184,22 @@
                 {task.text}
               </span>
               <span class="pomodoro-count">
-                {task.pomodoros} pomodoros
+                {tf('TASK_DORO.TASKS.POMODOROS_COUNT', { count: task.pomodoros })}
               </span>
             </div>
           </div>
           <div class="task-actions">
             <button 
               class="btn btn-select" 
-              on:click={() => selectTask(task.id)}
-              aria-label="Selecionar tarefa">
-              Selecionar
+              onclick={() => selectTask(task.id)}
+              aria-label={t('TASK_DORO.TASKS.SELECT_ARIA')}>
+              {t('TASK_DORO.TASKS.SELECT')}
             </button>
             <button 
               class="btn btn-delete" 
-              on:click={() => deleteTask(task.id)}
-              aria-label="Deletar tarefa">
-              Deletar
+              onclick={() => deleteTask(task.id)}
+              aria-label={t('TASK_DORO.TASKS.DELETE_ARIA')}>
+              {t('TASK_DORO.TASKS.DELETE')}
             </button>
           </div>
         </div>

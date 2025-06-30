@@ -1,6 +1,7 @@
 <!-- App.svelte -->
 <script>
 	import { onMount } from 'svelte';
+	import { t } from '../../../lib/i18n/texts.js';
 
 	// Componentes
 	import Navbar from './components/navbar.svelte';
@@ -22,13 +23,13 @@
 
 	// Itens do menu principal
 	const menuItems = [
-		{ id: 'overview', label: 'Visão Geral', icon: 'trending-up' },
-		{ id: 'products', label: 'Produtos', icon: 'shopping-bag' },
-		{ id: 'orders', label: 'Pedidos', icon: 'package' },
-		{ id: 'shipments', label: 'Envios', icon: 'truck' },
-		{ id: 'designs', label: 'Estampas', icon: 'image' },
-		{ id: 'customers', label: 'Clientes', icon: 'users' },
-		{ id: 'finance', label: 'Financeiro', icon: 'dollar-sign' }
+		{ id: 'overview', label: t('ADMIN.SIDEBAR.OVERVIEW'), icon: 'trending-up' },
+		{ id: 'products', label: t('ADMIN.SIDEBAR.PRODUCTS'), icon: 'shopping-bag' },
+		{ id: 'orders', label: t('ADMIN.SIDEBAR.ORDERS'), icon: 'package' },
+		{ id: 'shipments', label: t('ADMIN.SIDEBAR.SHIPMENTS'), icon: 'truck' },
+		{ id: 'designs', label: t('ADMIN.SIDEBAR.DESIGNS'), icon: 'image' },
+		{ id: 'customers', label: t('ADMIN.SIDEBAR.CUSTOMERS'), icon: 'users' },
+		{ id: 'finance', label: t('ADMIN.SIDEBAR.FINANCE'), icon: 'dollar-sign' }
 	];
 </script>
 
@@ -50,8 +51,8 @@
 				<ProductsTab />
 			{:else}
 				<div class="overflow-hidden bg-white p-6 shadow sm:rounded-lg">
-					<h1 class="text-2xl font-semibold text-gray-900">Conteúdo em Desenvolvimento</h1>
-					<p class="mt-4 text-gray-500">Esta seção está em desenvolvimento.</p>
+					<h1 class="text-2xl font-semibold text-gray-900">{t('ADMIN.COMMON.CONTENT_DEVELOPMENT')}</h1>
+					<p class="mt-4 text-gray-500">{t('ADMIN.COMMON.CONTENT_DEVELOPMENT_TEXT')}</p>
 				</div>
 			{/if}
 		</div>

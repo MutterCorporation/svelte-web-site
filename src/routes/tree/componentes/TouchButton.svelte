@@ -1,4 +1,6 @@
 <script>
+    import { t } from '../../../lib/i18n/texts.js';
+    
     /** @type {{openModal: any}} */
     let { openModal } = $props();
 
@@ -8,7 +10,7 @@
 </script>
 
 <button class="touch-button" onclick={handleClick}>
-    Touch me
+    {t('TREE.ACTIONS.TOUCH_ME')}
 </button>
 
 <style>

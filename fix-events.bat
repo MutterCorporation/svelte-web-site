@@ -1,0 +1,6 @@
+@echo off
+echo Corrigindo todos os event handlers para Svelte 5...
+wsl -e bash -c "cd /home/maikoncarvalho/Projetos/svelte-web-site && chmod +x fix-events.sh && ./fix-events.sh"
+echo.
+echo Pressione qualquer tecla para continuar...
+pause >nul 

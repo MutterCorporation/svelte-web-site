@@ -1,5 +1,7 @@
 <!-- components/Sidebar.svelte -->
 <script>
+	import { t } from '../../../../lib/i18n/texts.js';
+	
 	// Props
 	export let activeTab = 'overview';
 	/**
@@ -50,7 +52,7 @@
 					d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"
 				></path>
 			</svg>
-			<span class="text-xl font-bold text-white">FitStorePro</span>
+			<span class="text-xl font-bold text-white">{t('ADMIN.SIDEBAR.BRAND_NAME')}</span>
 		</div>
 
 		<ul class="mt-6">
@@ -80,7 +82,7 @@
 
 		<div class="mt-10 px-4">
 			<div class="rounded-lg bg-indigo-700 p-4">
-				<h5 class="mb-2 text-sm font-medium text-white">Progresso da Loja</h5>
+				<h5 class="mb-2 text-sm font-medium text-white">{t('ADMIN.SIDEBAR.PROGRESS_TITLE')}</h5>
 				<div class="mt-1">
 					<div class="relative pt-1">
 						<div class="flex h-2 overflow-hidden rounded bg-indigo-300 text-xs">
@@ -90,9 +92,9 @@
 							></div>
 						</div>
 					</div>
-					<p class="mt-2 text-xs text-indigo-100">75% completo</p>
+					<p class="mt-2 text-xs text-indigo-100">{t('ADMIN.SIDEBAR.PROGRESS_COMPLETE')}</p>
 					<a href="#" class="mt-2 inline-block text-xs text-white hover:text-indigo-200">
-						Ver mais detalhes
+						{t('ADMIN.SIDEBAR.VIEW_DETAILS')}
 					</a>
 				</div>
 			</div>
@@ -109,8 +111,8 @@
 				</div>
 			</div>
 			<div class="ml-3">
-				<p class="text-sm font-medium text-white">Admin</p>
-				<a href="#" class="text-xs text-indigo-300 hover:text-white">Ver perfil</a>
+				<p class="text-sm font-medium text-white">{t('ADMIN.SIDEBAR.ADMIN_USER')}</p>
+				<a href="#" class="text-xs text-indigo-300 hover:text-white">{t('ADMIN.SIDEBAR.VIEW_PROFILE')}</a>
 			</div>
 			<!-- svelte-ignore a11y_consider_explicit_label -->
 			<button class="ml-auto text-indigo-300 hover:text-white">
