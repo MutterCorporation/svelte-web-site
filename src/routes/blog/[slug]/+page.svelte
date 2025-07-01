@@ -22,6 +22,8 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
+	import CommentSystem from '../../../components/CommentSystem.svelte';
+	import ViewCounter from '../../../components/ViewCounter.svelte';
 
 	let blogName = "CyberBlog";
 	let slug = $state('');
@@ -73,27 +75,41 @@
 </script>
 
 <div class="cyberpunk-container">
-	<!-- Grid de fundo animado -->
+	<!-- Partículas melhoradas -->
+	<div class="cyber-particles"></div>
 	<div class="cyber-grid"></div>
 
 	{#if loading}
 		<div class="loading-container">
-			<div class="cyber-spinner"></div>
+			<div class="cyber-spinner-wrapper">
+				<div class="cyber-spinner"></div>
+				<div class="spinner-ring"></div>
+			</div>
 			<p class="neon-text">Carregando dados...</p>
 		</div>
 	{:else if error}
 		<div class="error-container" in:fly="{{ y: 50, duration: 800 }}">
+			<div class="error-glow"></div>
 			<h1 class="error-title glitch" data-text="Erro">{errorMessage}</h1>
 			<a href="/blog" class="cyber-button">
-				<span class="button-text">Voltar para o blog</span>
+				<span class="button-content">
+					<span class="button-text">← Voltar para o blog</span>
+				</span>
 				<span class="button-glitch"></span>
 			</a>
 		</div>
 	{:else}
 		<main class="post-container" in:fly="{{ y: 50, duration: 800 }}">
 			<article class="cyber-card post-content">
+				<div class="card-border-glow"></div>
+				
 				<header class="post-header">
 					<h1 class="cyber-title post-title">{title}</h1>
+					
+					<div class="post-meta">
+						<ViewCounter postId={slug} />
+						<div class="post-divider"></div>
+					</div>
 					
 					{#if img}
 						<div class="card-image post-image-wrapper">
@@ -103,7 +119,8 @@
 								class="post-image"
 								loading="lazy"
 							/>
-							<div class="image-glitch"></div>
+							<div class="image-overlay"></div>
+							<div class="image-scan-line"></div>
 						</div>
 					{/if}
 				</header>
@@ -113,12 +130,18 @@
 				</div>
 				
 				<footer class="post-footer">
+					<div class="footer-divider"></div>
 					<a href="/blog" class="cyber-button">
-						<span class="button-text">← Voltar para blog</span>
+						<span class="button-content">
+							<span class="button-text">← Voltar para blog</span>
+						</span>
 						<span class="button-glitch"></span>
 					</a>
 				</footer>
 			</article>
+
+			<!-- Sistema de Comentários -->
+			<CommentSystem postId={slug} />
 		</main>
 	{/if}
 </div>
@@ -140,6 +163,22 @@
 		background: linear-gradient(45deg, #0a0a2e, #1a1a3a);
 	}
 
+	/* Partículas de fundo */
+	.cyber-particles {
+		position: fixed;
+		inset: 0;
+		background-image: 
+			radial-gradient(1px 1px at 20px 30px, #ff00ea, transparent),
+			radial-gradient(1px 1px at 40px 70px, #00f6ff, transparent),
+			radial-gradient(1px 1px at 90px 40px, #ff00ea, transparent),
+			radial-gradient(1px 1px at 130px 80px, #00f6ff, transparent);
+		background-repeat: repeat;
+		background-size: 150px 150px;
+		opacity: 0.3;
+		animation: particle-float 20s linear infinite;
+		z-index: 0;
+	}
+
 	/* Grid de Fundo */
 	.cyber-grid {
 		position: fixed;
@@ -154,7 +193,7 @@
 
 	/* Post Container */
 	.post-container {
-		max-width: 800px;
+		max-width: 900px;
 		margin: 2rem auto;
 		position: relative;
 		z-index: 1;
@@ -428,5 +467,51 @@
 		.cyber-title {
 			font-size: 1.5rem;
 		}
+	}
+
+	.post-meta {
+		display: flex;
+		align-items: center;
+		gap: 1rem;
+		margin-bottom: 2rem;
+		padding-bottom: 1rem;
+		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+	}
+
+	.post-divider {
+		flex: 1;
+		height: 1px;
+		background: linear-gradient(90deg, transparent, #00f6ff, transparent);
+	}
+
+	.footer-divider {
+		width: 100%;
+		height: 2px;
+		background: linear-gradient(90deg, transparent, #ff00ea, #00f6ff, transparent);
+		margin-bottom: 2rem;
+		opacity: 0.6;
+	}
+
+	.error-container {
+		position: relative;
+		text-align: center;
+		padding: 4rem 2rem;
+		background: 
+			linear-gradient(145deg, rgba(255, 0, 0, 0.1), rgba(255, 0, 0, 0.05)),
+			rgba(20, 0, 0, 0.8);
+		backdrop-filter: blur(15px);
+		border-radius: 16px;
+		max-width: 600px;
+		margin: 4rem auto;
+		border: 1px solid rgba(255, 0, 0, 0.3);
+		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+	}
+
+	.error-glow {
+		position: absolute;
+		inset: -20px;
+		background: radial-gradient(circle, rgba(255, 0, 0, 0.3) 0%, transparent 70%);
+		filter: blur(20px);
+		z-index: -1;
 	}
 </style>
