@@ -149,3 +149,19 @@ export const RATE_LIMIT_CONFIG = {
   WINDOW_SIZE: 60000, // 1 minuto
   BLOCK_DURATION: 300000 // 5 minutos
 };
+
+// Tenant codes disponíveis
+export const TENANT_CODES = {
+  MUTTERCORP: 'muttercorp',
+  DEFAULT: 'muttercorp'
+};
+
+// Configurações específicas por tenant
+export const TENANT_CONFIG = {
+  [TENANT_CODES.MUTTERCORP]: {
+    name: 'MutterCorp',
+    blogName: 'CyberBlog',
+    domain: 'muttercorp.com.br',
+    features: ['blog', 'auth', 'projects', 'leads', 'finance']
+  }
+};

@@ -7,6 +7,7 @@
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import ViewCounter from '../../components/ViewCounter.svelte';
+	import { getBlogService } from '../../services/index.js';
 
 	/**
 	 * @type {any[]}
@@ -27,9 +28,11 @@
 
 	async function fetchPosts() {
 		try {
-			const response = await fetch('https://dev.muttercorp.com.br/blog/');
-			const data = await response.json();
-			
+			// Usar o BlogService com tenant muttercorp
+			const blogService = getBlogService();
+			const response = await blogService.fetchBlogPosts({}, 'muttercorp');
+			const data = Array.isArray(response) ? response : (/** @type {any} */(response).data || []);
+
 			// Mapeamento dos dados recebidos para o formato esperado pelos componentes
 			posts = data.map((/** @type {{ titulo: any; img: any; preview: any; created_at: string | number | Date; id: { toString: () => any; }; text: any; }} */ post) => ({
 				title: post.titulo || 'Sem título', // Use titulo do API e garanta que existe
@@ -39,7 +42,7 @@
 				slug: post.id.toString(), // Cria um slug a partir do ID
 				text: post.text || '' // Mantém o texto completo
 			}));
-			
+
 			console.log('Posts processados:', posts);
 		} catch (error) {
 			console.error('Erro ao carregar posts:', error);
@@ -113,7 +116,7 @@
 								<div class="card-info">
 									<span class="cyber-date">{post.date}</span>
 								</div>
-								<a href={`/blog/${post.slug}`} class="cyber-button">
+								<a href={`/blog/muttercorp/${post.slug}`} class="cyber-button">
 									<span class="button-content">
 										<span class="button-text">Ler mais</span>
 										<span class="button-arrow">→</span>

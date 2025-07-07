@@ -15,6 +15,21 @@ class BlogService extends BaseService {
       getSessionMutterCorp: () => Promise.resolve(getAuthToken() || '')
     };
     super(authConfig);
+
+    // Tenant code padrão para o blog
+    this.defaultTenantCode = config.tenantCode || 'muttercorp';
+  }
+
+  /**
+   * Builds blog endpoint with tenant code
+   * @param {string} endpoint - The endpoint path
+   * @param {string} tenantCode - Tenant code (defaults to muttercorp)
+   * @returns {string} Full endpoint path with tenant
+   */
+  buildBlogEndpoint(endpoint, tenantCode = this.defaultTenantCode) {
+    // Remove leading slash if present
+    const cleanEndpoint = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+    return `/blog/${tenantCode}/${cleanEndpoint}`;
   }
 
   /**
@@ -67,14 +82,16 @@ class BlogService extends BaseService {
   /**
    * Submits a blog post
    * @param {FormData} formData - Blog post form data
+   * @param {string} tenantCode - Tenant code (defaults to muttercorp)
    * @returns {Promise<Object>} API response
    */
-  async submitBlogPost(formData) {
+  async submitBlogPost(formData, tenantCode = this.defaultTenantCode) {
     this.validateRequiredParams({ formData }, ['formData']);
 
     try {
       // Para FormData, fazemos requisição direta pois não podemos usar JSON
-      const response = await fetch(`${this.baseUrl}/blog`, {
+      const endpoint = this.buildBlogEndpoint('', tenantCode);
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: HTTP_METHODS.POST,
         headers: {
           'Authorization': `Bearer ${getAuthToken()}`
@@ -97,9 +114,10 @@ class BlogService extends BaseService {
    * Submits a tweet post
    * @param {string} tweetText - Tweet content
    * @param {Object} options - Additional options for the tweet
+   * @param {string} tenantCode - Tenant code (defaults to muttercorp)
    * @returns {Promise<Object>} API response
    */
-  async submitTweetPost(tweetText, options = {}) {
+  async submitTweetPost(tweetText, options = {}, tenantCode = this.defaultTenantCode) {
     this.validateRequiredParams({ tweetText }, ['tweetText']);
 
     const payload = {
@@ -112,7 +130,8 @@ class BlogService extends BaseService {
       }
     };
 
-    return this.makeServiceRequest('/blog/twitter', {
+    const endpoint = this.buildBlogEndpoint('twitter', tenantCode);
+    return this.makeServiceRequest(endpoint, {
       method: HTTP_METHODS.POST,
       body: payload,
       headers: {
@@ -124,33 +143,39 @@ class BlogService extends BaseService {
   /**
    * Fetches a blog post by slug
    * @param {string} slug - Blog post slug
+   * @param {string} tenantCode - Tenant code (defaults to muttercorp)
    * @returns {Promise<Object>} Blog post data
    */
-  async fetchPostData(slug) {
+  async fetchPostData(slug, tenantCode = this.defaultTenantCode) {
     this.validateRequiredParams({ slug }, ['slug']);
-    return this.makeServiceRequest(`/blog/${slug}`);
+    const endpoint = this.buildBlogEndpoint(slug, tenantCode);
+    return this.makeServiceRequest(endpoint);
   }
 
   /**
    * Fetches all blog posts
    * @param {Object} params - Query parameters (page, limit, etc.)
+   * @param {string} tenantCode - Tenant code (defaults to muttercorp)
    * @returns {Promise<Object>} Blog posts data
    */
-  async fetchBlogPosts(params = {}) {
+  async fetchBlogPosts(params = {}, tenantCode = this.defaultTenantCode) {
     const sanitizedParams = this.sanitizeParams(params);
     const queryString = new URLSearchParams(sanitizedParams).toString();
-    const endpoint = `/blog${queryString ? `?${queryString}` : ''}`;
-    return this.makeServiceRequest(endpoint);
+    const endpoint = this.buildBlogEndpoint('', tenantCode);
+    const fullEndpoint = `${endpoint}${queryString ? `?${queryString}` : ''}`;
+    return this.makeServiceRequest(fullEndpoint);
   }
 
   /**
    * Deletes a blog post
    * @param {string} postId - Blog post ID
+   * @param {string} tenantCode - Tenant code (defaults to muttercorp)
    * @returns {Promise<Object>} API response
    */
-  async deleteBlogPost(postId) {
+  async deleteBlogPost(postId, tenantCode = this.defaultTenantCode) {
     this.validateRequiredParams({ postId }, ['postId']);
-    return this.makeServiceRequest(`/blog/${postId}`, {
+    const endpoint = this.buildBlogEndpoint(postId, tenantCode);
+    return this.makeServiceRequest(endpoint, {
       method: HTTP_METHODS.DELETE
     });
   }
@@ -159,14 +184,16 @@ class BlogService extends BaseService {
    * Updates a blog post
    * @param {string} postId - Blog post ID
    * @param {FormData} formData - Updated blog post data
+   * @param {string} tenantCode - Tenant code (defaults to muttercorp)
    * @returns {Promise<Object>} API response
    */
-  async updateBlogPost(postId, formData) {
+  async updateBlogPost(postId, formData, tenantCode = this.defaultTenantCode) {
     this.validateRequiredParams({ postId, formData }, ['postId', 'formData']);
 
     try {
       // Para FormData, fazemos requisição direta pois não podemos usar JSON
-      const response = await fetch(`${this.baseUrl}/blog/${postId}`, {
+      const endpoint = this.buildBlogEndpoint(postId, tenantCode);
+      const response = await fetch(`${this.baseUrl}${endpoint}`, {
         method: HTTP_METHODS.PUT,
         headers: {
           'Authorization': `Bearer ${getAuthToken()}`

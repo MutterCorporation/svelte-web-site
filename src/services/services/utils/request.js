@@ -8,6 +8,7 @@ import fetch from 'cross-fetch';
  * @returns {Promise<any>} Resposta da requisição
  */
 export async function makeRequest(url, options = {}, retryConfig = {}) {
+  // @ts-ignore
   const { retries = 3, retryDelay = 1000 } = retryConfig;
   let lastError;
 
@@ -43,6 +44,7 @@ export async function makeRequest(url, options = {}, retryConfig = {}) {
       
       // Se for um erro de rede ou timeout, continua tentando
       // Para outros erros (como 4xx), não faz sentido tentar novamente
+      // @ts-ignore
       if (!(error instanceof TypeError) && error.status && error.status >= 400 && error.status < 500) {
         throw error;
       }

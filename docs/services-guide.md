@@ -25,22 +25,22 @@ import { HTTP_METHODS } from './services/constants.js';
 import { getAuthToken } from './api.js';
 
 class MyService extends BaseService {
-  constructor(config = {}) {
-    const authConfig = {
-      ...config,
-      getCookieCorp: () => Promise.resolve(getAuthToken() || ''),
-      getSessionMutterCorp: () => Promise.resolve(getAuthToken() || '')
-    };
-    super(authConfig);
-  }
+	constructor(config = {}) {
+		const authConfig = {
+			...config,
+			getCookieCorp: () => Promise.resolve(getAuthToken() || ''),
+			getSessionMutterCorp: () => Promise.resolve(getAuthToken() || '')
+		};
+		super(authConfig);
+	}
 
-  async myMethod(params) {
-    this.validateRequiredParams(params, ['requiredField']);
-    return this.makeServiceRequest('/endpoint', {
-      method: HTTP_METHODS.POST,
-      body: params
-    });
-  }
+	async myMethod(params) {
+		this.validateRequiredParams(params, ['requiredField']);
+		return this.makeServiceRequest('/endpoint', {
+			method: HTTP_METHODS.POST,
+			body: params
+		});
+	}
 }
 ```
 
@@ -52,10 +52,10 @@ Cada service implementa o padrão singleton para garantir uma única instância:
 let serviceInstance = null;
 
 export function getMyService(config = {}) {
-  if (!serviceInstance) {
-    serviceInstance = new MyService(config);
-  }
-  return serviceInstance;
+	if (!serviceInstance) {
+		serviceInstance = new MyService(config);
+	}
+	return serviceInstance;
 }
 ```
 
@@ -68,6 +68,57 @@ Todos os services mantêm compatibilidade com as funções existentes:
 const service = getMyService();
 
 export const myFunction = (params) => service.myMethod(params);
+```
+
+## Multi-Tenancy e Tenant Codes
+
+O sistema suporta múltiplos tenants (inquilinos), permitindo que diferentes organizações tenham seus próprios blogs e configurações isoladas.
+
+### Tenant Codes Disponíveis
+
+```javascript
+import { TENANT_CODES, TENANT_CONFIG } from './services/services/constants.js';
+
+// Tenant codes disponíveis
+console.log(TENANT_CODES.MUTTERCORP); // 'muttercorp'
+console.log(TENANT_CODES.DEFAULT); // 'muttercorp'
+
+// Configuração do tenant
+console.log(TENANT_CONFIG.muttercorp);
+// {
+//   name: 'MutterCorp',
+//   blogName: 'CyberBlog',
+//   domain: 'muttercorp.com.br',
+//   features: ['blog', 'auth', 'projects', 'leads', 'finance']
+// }
+```
+
+### Rotas Multi-Tenant
+
+O sistema implementa rotas específicas por tenant:
+
+- **Blog por tenant**: `/blog/[tenantCode]` - Lista posts do tenant
+- **Post por tenant**: `/blog/[tenantCode]/[slug]` - Post específico do tenant
+- **Exemplo**: `/blog/muttercorp` - Blog da MutterCorp
+
+### Services com Tenant Support
+
+Todos os services de blog agora suportam tenant codes:
+
+```javascript
+import { getBlogService } from './services/index.js';
+
+// Service com tenant específico
+const blogService = getBlogService({ tenantCode: 'muttercorp' });
+
+// Buscar posts do tenant
+const posts = await blogService.fetchBlogPosts({}, 'muttercorp');
+
+// Buscar post específico do tenant
+const post = await blogService.fetchPostData('post-slug', 'muttercorp');
+
+// Submeter post para tenant específico
+await blogService.submitBlogPost(formData, 'muttercorp');
 ```
 
 ## Services Disponíveis
@@ -91,23 +142,43 @@ await logout();
 
 ### BlogService
 
-Gerencia posts do blog e integrações externas:
+Gerencia posts do blog e integrações externas com suporte completo a multi-tenancy:
 
 ```javascript
 import { getBlogService } from './services/index.js';
 
 const blogService = getBlogService();
 
-// Buscar posts
+// Buscar posts (tenant padrão: muttercorp)
 const posts = await blogService.fetchBlogPosts({ page: 1, limit: 10 });
 
-// Criar post
-const newPost = await blogService.submitBlogPost({
-  title: 'Título',
-  content: 'Conteúdo',
-  tags: ['tag1', 'tag2']
-});
+// Buscar posts de tenant específico
+const mutterCorpPosts = await blogService.fetchBlogPosts({ page: 1 }, 'muttercorp');
+
+// Buscar post específico por slug e tenant
+const post = await blogService.fetchPostData('meu-post', 'muttercorp');
+
+// Criar post para tenant específico
+const newPost = await blogService.submitBlogPost(formData, 'muttercorp');
+
+// Atualizar post
+await blogService.updateBlogPost('post-id', formData, 'muttercorp');
+
+// Deletar post
+await blogService.deleteBlogPost('post-id', 'muttercorp');
+
+// Submeter tweet (integração Twitter)
+await blogService.submitTweetPost('Texto do tweet', {}, 'muttercorp');
 ```
+
+#### Métodos Disponíveis
+
+- `fetchBlogPosts(params, tenantCode)` - Lista posts do blog
+- `fetchPostData(slug, tenantCode)` - Busca post específico
+- `submitBlogPost(formData, tenantCode)` - Cria novo post
+- `updateBlogPost(postId, formData, tenantCode)` - Atualiza post
+- `deleteBlogPost(postId, tenantCode)` - Remove post
+- `submitTweetPost(text, options, tenantCode)` - Publica tweet
 
 ### ProjectsService
 
@@ -123,8 +194,8 @@ const projects = await projectsService.fetchProjects();
 
 // Criar projeto
 const project = await projectsService.createProject({
-  name: 'Novo Projeto',
-  description: 'Descrição do projeto'
+	name: 'Novo Projeto',
+	description: 'Descrição do projeto'
 });
 ```
 
@@ -139,9 +210,9 @@ const leadsService = getLeadsService();
 
 // Criar lead
 const lead = await leadsService.createLead({
-  name: 'Nome do Lead',
-  email: 'email@exemplo.com',
-  phone: '(11) 99999-9999'
+	name: 'Nome do Lead',
+	email: 'email@exemplo.com',
+	phone: '(11) 99999-9999'
 });
 
 // Converter lead para cliente
@@ -159,15 +230,15 @@ const financeService = getFinanceService();
 
 // Buscar transações
 const transactions = await financeService.fetchTransactions({
-  startDate: '2024-01-01',
-  endDate: '2024-12-31'
+	startDate: '2024-01-01',
+	endDate: '2024-12-31'
 });
 
 // Criar transação
 const transaction = await financeService.createTransaction({
-  amount: 1000,
-  type: 'income',
-  category: 'sales'
+	amount: 1000,
+	type: 'income',
+	category: 'sales'
 });
 ```
 
@@ -197,9 +268,9 @@ Os services suportam diferentes ambientes:
 import { ENVIRONMENTS } from './services/constants.js';
 
 const service = getMyService({
-  environment: ENVIRONMENTS.PRODUCTION,
-  timeout: 10000,
-  retries: 3
+	environment: ENVIRONMENTS.PRODUCTION,
+	timeout: 10000,
+	retries: 3
 });
 ```
 
@@ -209,13 +280,13 @@ Todos os services usam tratamento de erro padronizado:
 
 ```javascript
 try {
-  const result = await service.myMethod(params);
+	const result = await service.myMethod(params);
 } catch (error) {
-  if (error.name === 'MutterCorpApiError') {
-    console.error('API Error:', error.message, error.statusCode);
-  } else {
-    console.error('Unexpected error:', error);
-  }
+	if (error.name === 'MutterCorpApiError') {
+		console.error('API Error:', error.message, error.statusCode);
+	} else {
+		console.error('Unexpected error:', error);
+	}
 }
 ```
 

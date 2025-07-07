@@ -1,6 +1,12 @@
 // Main services index - Centralized export for all services
 // This file provides a single entry point for all services in the application
 
+import { getAuthService } from './auth.js';
+import { getBlogInteractionsService } from './blog-interactions.js';
+import { getBlogService } from './blog.js';
+import { getLeadsService } from './leads.js';
+import { getProjectsService } from './projects.js';
+
 // Core service infrastructure
 export { MutterCorpService } from './services/MutterCorpService.js';
 export { BaseService } from './services/index.js';
@@ -88,6 +94,8 @@ export {
   bulkUpdateLeads
 } from './leads.js';
 
+// Finance service - TODO: Implement when needed
+// export { FinanceService, getFinanceService } from './finance.js';
 
 // Legacy API utilities (for backward compatibility)
 export {
@@ -115,8 +123,7 @@ export const Services = {
   projects: (config) => getProjectsService(config),
   // @ts-ignore
   leads: (config) => getLeadsService(config),
-  // @ts-ignore
-  finance: (config) => getFinanceService(config),
+  // finance: (config) => getFinanceService(config), // TODO: Implement when needed
   
   // Get all services at once
   all: (config = {}) => ({
@@ -130,15 +137,23 @@ export const Services = {
     projects: getProjectsService(config),
     // @ts-ignore
     leads: getLeadsService(config),
-    // @ts-ignore
-    finance: getFinanceService(config)
+    // finance: getFinanceService(config) // TODO: Implement when needed
   })
 };
 
 /**
  * Default service instances (singletons)
+ * Lazy initialization to avoid circular dependency issues
  */
-export const DefaultServices = Services.all();
+export const DefaultServices = {
+  get auth() { return getAuthService(); },
+  get blog() { return getBlogService(); },
+  get blogInteractions() { return getBlogInteractionsService(); },
+  get projects() { return getProjectsService(); },
+  get leads() { return getLeadsService(); },
+  // get finance() { return getFinanceService(); } // TODO: Implement when needed
+};
 
 // Export default for convenience
 export default Services;
+
