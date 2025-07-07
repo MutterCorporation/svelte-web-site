@@ -1,273 +1,205 @@
-// Leads service
-import { getAuthHeaders } from './api.js';
-
-const LEADS_BASE_URL = 'https://dev.muttercorp.com.br';
+// @ts-nocheck
+// Leads service using MutterCorpService
+import { BaseService } from './services/index.js';
+import { HTTP_METHODS } from './services/constants.js';
+import { getAuthToken } from './api.js';
 
 /**
- * Creates a new lead
- * @param {Object} leadData - Lead information
- * @returns {Promise<Object>} Created lead
+ * Service para gerenciar leads usando MutterCorpService
  */
-export async function createLead(leadData) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(leadData)
+class LeadsService extends BaseService {
+  constructor(config = {}) {
+    const authConfig = {
+      ...config,
+      getCookieCorp: () => Promise.resolve(getAuthToken() || ''),
+      getSessionMutterCorp: () => Promise.resolve(getAuthToken() || '')
+    };
+    super(authConfig);
+  }
+
+  /**
+   * Creates a new lead
+   * @param {Object} leadData - Lead information
+   * @returns {Promise<Object>} Created lead
+   */
+  async createLead(leadData) {
+    this.validateRequiredParams({ leadData }, ['leadData']);
+
+    return this.makeServiceRequest('/leads', {
+      method: HTTP_METHODS.POST,
+      body: leadData
     });
-    
-    if (!response.ok) {
-      throw new Error('Failed to create lead');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error creating lead:', error);
-    throw new Error('Failed to create lead');
+  }
+
+  /**
+   * Fetches all leads with optional filtering
+   * @param {Object} filters - Filter parameters
+   * @returns {Promise<Array>} Array of leads
+   */
+  async fetchLeads(filters = {}) {
+    const sanitizedFilters = this.sanitizeParams(filters);
+    // @ts-ignore
+    const queryString = new URLSearchParams(sanitizedFilters).toString();
+    const endpoint = `/leads${queryString ? `?${queryString}` : ''}`;
+    // @ts-ignore
+    return this.makeServiceRequest(endpoint);
+  }
+
+  /**
+   * Fetches a specific lead by ID
+   * @param {string} leadId - Lead ID
+   * @returns {Promise<Object>} Lead details
+   */
+  async fetchLeadById(leadId) {
+    this.validateRequiredParams({ leadId }, ['leadId']);
+    return this.makeServiceRequest(`/leads/${leadId}`);
+  }
+
+  /**
+   * Updates an existing lead
+   * @param {string} leadId - Lead ID
+   * @param {Object} leadData - Updated lead data
+   * @returns {Promise<Object>} Updated lead
+   */
+  async updateLead(leadId, leadData) {
+    this.validateRequiredParams({ leadId, leadData }, ['leadId', 'leadData']);
+
+    return this.makeServiceRequest(`/leads/${leadId}`, {
+      method: HTTP_METHODS.PUT,
+      body: leadData
+    });
+  }
+
+  /**
+   * Deletes a lead
+   * @param {string} leadId - Lead ID
+   * @returns {Promise<Object>} API response
+   */
+  async deleteLead(leadId) {
+    this.validateRequiredParams({ leadId }, ['leadId']);
+
+    return this.makeServiceRequest(`/leads/${leadId}`, {
+      method: HTTP_METHODS.DELETE
+    });
+  }
+
+  /**
+   * Updates lead status
+   * @param {string} leadId - Lead ID
+   * @param {string} status - New status
+   * @returns {Promise<Object>} Updated lead
+   */
+  async updateLeadStatus(leadId, status) {
+    this.validateRequiredParams({ leadId, status }, ['leadId', 'status']);
+
+    return this.makeServiceRequest(`/leads/${leadId}/status`, {
+      method: HTTP_METHODS.PATCH,
+      body: { status }
+    });
+  }
+
+  /**
+   * Assigns a lead to a user
+   * @param {string} leadId - Lead ID
+   * @param {string} userId - User ID to assign to
+   * @returns {Promise<Object>} Updated lead
+   */
+  async assignLead(leadId, userId) {
+    this.validateRequiredParams({ leadId, userId }, ['leadId', 'userId']);
+
+    return this.makeServiceRequest(`/leads/${leadId}/assign`, {
+      method: HTTP_METHODS.PATCH,
+      body: { userId }
+    });
+  }
+
+  /**
+   * Adds a note to a lead
+   * @param {string} leadId - Lead ID
+   * @param {string} note - Note content
+   * @returns {Promise<Object>} Updated lead
+   */
+  async addLeadNote(leadId, note) {
+    this.validateRequiredParams({ leadId, note }, ['leadId', 'note']);
+
+    return this.makeServiceRequest(`/leads/${leadId}/notes`, {
+      method: HTTP_METHODS.POST,
+      body: { note }
+    });
+  }
+
+  /**
+   * Fetches lead statistics
+   * @param {Object} filters - Filter parameters for statistics
+   * @returns {Promise<Object>} Lead statistics
+   */
+  async fetchLeadStats(filters = {}) {
+    const sanitizedFilters = this.sanitizeParams(filters);
+    const queryString = new URLSearchParams(sanitizedFilters).toString();
+    const endpoint = `/leads/stats${queryString ? `?${queryString}` : ''}`;
+    return this.makeServiceRequest(endpoint);
+  }
+
+  /**
+   * Converts a lead to a customer
+   * @param {string} leadId - Lead ID
+   * @param {Object} customerData - Customer conversion data
+   * @returns {Promise<Object>} Conversion result
+   */
+  async convertLeadToCustomer(leadId, customerData = {}) {
+    this.validateRequiredParams({ leadId }, ['leadId']);
+
+    return this.makeServiceRequest(`/leads/${leadId}/convert`, {
+      method: HTTP_METHODS.POST,
+      body: customerData
+    });
+  }
+
+  /**
+   * Bulk updates multiple leads
+   * @param {Array} leadIds - Array of lead IDs
+   * @param {Object} updateData - Data to update
+   * @returns {Promise<Object>} Bulk update result
+   */
+  async bulkUpdateLeads(leadIds, updateData) {
+    this.validateRequiredParams({ leadIds, updateData }, ['leadIds', 'updateData']);
+
+    return this.makeServiceRequest('/leads/bulk-update', {
+      method: HTTP_METHODS.PATCH,
+      body: { leadIds, updateData }
+    });
   }
 }
 
-/**
- * Fetches all leads with optional filtering
- * @param {Object} filters - Filter parameters
- * @returns {Promise<Array>} Array of leads
- */
-export async function fetchLeads(filters = {}) {
-  try {
-    const queryString = new URLSearchParams(filters).toString();
-    const url = `${LEADS_BASE_URL}/leads${queryString ? `?${queryString}` : ''}`;
-    
-    const response = await fetch(url, {
-      headers: getAuthHeaders()
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch leads');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching leads:', error);
-    throw new Error('Failed to fetch leads');
-  }
-}
+// Instância singleton do LeadsService
+let leadsServiceInstance = null;
 
 /**
- * Fetches a specific lead by ID
- * @param {string} leadId - Lead ID
- * @returns {Promise<Object>} Lead details
+ * Cria ou retorna a instância singleton do LeadsService
+ * @param {Object} config - Configurações do service
+ * @returns {LeadsService} Instância do LeadsService
  */
-export async function fetchLeadById(leadId) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads/${leadId}`, {
-      headers: getAuthHeaders()
-    });
-    
-    if (!response.ok) {
-      throw new Error('Lead not found');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching lead:', error);
-    throw new Error('Failed to fetch lead');
+export function getLeadsService(config = {}) {
+  if (!leadsServiceInstance) {
+    leadsServiceInstance = new LeadsService(config);
   }
+  return leadsServiceInstance;
 }
 
-/**
- * Updates an existing lead
- * @param {string} leadId - Lead ID
- * @param {Object} leadData - Updated lead data
- * @returns {Promise<Object>} Updated lead
- */
-export async function updateLead(leadId, leadData) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads/${leadId}`, {
-      method: 'PUT',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(leadData)
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to update lead');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating lead:', error);
-    throw new Error('Failed to update lead');
-  }
-}
+// Exporta funções de conveniência para compatibilidade
+const leadsService = getLeadsService();
 
-/**
- * Deletes a lead
- * @param {string} leadId - Lead ID
- * @returns {Promise<Object>} API response
- */
-export async function deleteLead(leadId) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads/${leadId}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders()
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to delete lead');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error deleting lead:', error);
-    throw new Error('Failed to delete lead');
-  }
-}
+export const createLead = (leadData) => leadsService.createLead(leadData);
+export const fetchLeads = (filters) => leadsService.fetchLeads(filters);
+export const fetchLeadById = (leadId) => leadsService.fetchLeadById(leadId);
+export const updateLead = (leadId, leadData) => leadsService.updateLead(leadId, leadData);
+export const deleteLead = (leadId) => leadsService.deleteLead(leadId);
+export const updateLeadStatus = (leadId, status) => leadsService.updateLeadStatus(leadId, status);
+export const assignLead = (leadId, userId) => leadsService.assignLead(leadId, userId);
+export const addLeadNote = (leadId, note) => leadsService.addLeadNote(leadId, note);
+export const fetchLeadStats = (filters) => leadsService.fetchLeadStats(filters);
+export const convertLeadToCustomer = (leadId, customerData) => leadsService.convertLeadToCustomer(leadId, customerData);
+export const bulkUpdateLeads = (leadIds, updateData) => leadsService.bulkUpdateLeads(leadIds, updateData);
 
-/**
- * Updates lead status
- * @param {string} leadId - Lead ID
- * @param {string} status - New status
- * @returns {Promise<Object>} Updated lead
- */
-export async function updateLeadStatus(leadId, status) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads/${leadId}/status`, {
-      method: 'PATCH',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ status })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to update lead status');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating lead status:', error);
-    throw new Error('Failed to update lead status');
-  }
-}
-
-/**
- * Assigns a lead to a user
- * @param {string} leadId - Lead ID
- * @param {string} userId - User ID to assign to
- * @returns {Promise<Object>} Updated lead
- */
-export async function assignLead(leadId, userId) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads/${leadId}/assign`, {
-      method: 'PATCH',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ userId })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to assign lead');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error assigning lead:', error);
-    throw new Error('Failed to assign lead');
-  }
-}
-
-/**
- * Adds a note to a lead
- * @param {string} leadId - Lead ID
- * @param {string} note - Note content
- * @returns {Promise<Object>} Updated lead
- */
-export async function addLeadNote(leadId, note) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads/${leadId}/notes`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ note })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to add note');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error adding lead note:', error);
-    throw new Error('Failed to add note');
-  }
-}
-
-/**
- * Fetches lead statistics
- * @param {Object} filters - Filter parameters for statistics
- * @returns {Promise<Object>} Lead statistics
- */
-export async function fetchLeadStats(filters = {}) {
-  try {
-    const queryString = new URLSearchParams(filters).toString();
-    const url = `${LEADS_BASE_URL}/leads/stats${queryString ? `?${queryString}` : ''}`;
-    
-    const response = await fetch(url, {
-      headers: getAuthHeaders()
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch lead statistics');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching lead stats:', error);
-    throw new Error('Failed to fetch lead statistics');
-  }
-}
-
-/**
- * Converts a lead to a customer
- * @param {string} leadId - Lead ID
- * @param {Object} customerData - Customer conversion data
- * @returns {Promise<Object>} Conversion result
- */
-export async function convertLeadToCustomer(leadId, customerData = {}) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads/${leadId}/convert`, {
-      method: 'POST',
-      headers: getAuthHeaders(),
-      body: JSON.stringify(customerData)
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to convert lead');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error converting lead:', error);
-    throw new Error('Failed to convert lead to customer');
-  }
-}
-
-/**
- * Bulk updates multiple leads
- * @param {Array} leadIds - Array of lead IDs
- * @param {Object} updateData - Data to update
- * @returns {Promise<Object>} Bulk update result
- */
-export async function bulkUpdateLeads(leadIds, updateData) {
-  try {
-    const response = await fetch(`${LEADS_BASE_URL}/leads/bulk-update`, {
-      method: 'PATCH',
-      headers: getAuthHeaders(),
-      body: JSON.stringify({ leadIds, updateData })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to bulk update leads');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error bulk updating leads:', error);
-    throw new Error('Failed to bulk update leads');
-  }
-}
+// Exporta a classe para uso direto se necessário
+export { LeadsService };

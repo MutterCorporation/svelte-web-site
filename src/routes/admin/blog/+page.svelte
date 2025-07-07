@@ -29,57 +29,6 @@
 		{ id: 'highlight', name: 'Destaque' }
 	];
 
-	let trending = $state([]);
-	let loading = $state(false);
-    let error = $state(null);
-
-	async function fetchGoogleTrends() {
-	loading = true;
-	error = null;
-	try {
-		const res = await fetch('https://dev.muttercorp.com/trends/api/dailytrends?hl=pt-BR&tz=-180&geo=BR&ns=15');
-		let text = await res.text();
-		text = text.replace(")]}',", '');
-		
-		// {
-//   "default": {
-//     "trendingSearchesDays": [
-//       {
-//         "date": "2025-05-31",
-//         "trendingSearches": [
-//           {
-//             "title": {
-//               "query": "Exemplo Tendência 1",
-//               "exploreLink": "/trends/explore?q=Exemplo+Tendência+1"
-//             },
-//             "formattedTraffic": "100K+ buscas",
-//             "relatedQueries": [ ... ]
-//           },
-//           {
-//             "title": {
-//               "query": "Exemplo Tendência 2",
-//               "exploreLink": "/trends/explore?q=Exemplo+Tendência+2"
-//             },
-//             "formattedTraffic": "50K+ buscas",
-//             "relatedQueries": [ ... ]
-//           }
-//           // ... mais itens
-//         ]
-//       }
-// 	    ]
-	//   }
-	// }
-		
-		const data = JSON.parse(text);
-		trending = data.default.trendingSearchesDays[0].trendingSearches.map(item => item.title.query);
-	} catch (e) {
-		error = 'Erro ao buscar trending searches.';
-		console.error(e);
-	} finally {
-		loading = false;
-	}
-	}
-
 	// Função para converter Markdown para HTML
 	async function convertMarkdownToHtml(markdown) {
 		const response = await fetch('https://api.github.com/markdown', {
@@ -196,8 +145,6 @@
 		if (!isAuthenticated) {
 			window.location.href = '/login'; // Redireciona para login se não autenticado
 		}
-
-		await fetchGoogleTrends()
 	});
 </script>
 
@@ -206,22 +153,6 @@
 		<div class="loading-text">CARREGANDO...</div>
 	</div>
 {:else}
-	<div class="trending-section">
-  <h2 class="section-title">TENDÊNCIAS DO DIA</h2>
-  {#if loading}
-    <p>Carregando tendências...</p>
-  {:else if error}
-    <p class="error-message">{error}</p>
-  {:else if trending.length === 0}
-    <p>Nenhuma tendência encontrada.</p>
-  {:else}
-    <ul class="trending-list">
-      {#each trending as item}
-        <li class="trending-item">{item}</li>
-      {/each}
-    </ul>
-  {/if}
-</div>
 	<div class="brutalist-container">
 		<header class="brutalist-header">
 			<h1 class="glitch-text">BLOG ADMIN CONTROL</h1>
@@ -337,61 +268,6 @@
 
 <style>
 	/* Brutalist Reset & Base */
-	  .trending-section {
-    border: 3px solid #000;
-    padding: 20px;
-    background-color: #f0f0f0;
-    margin-bottom: 20px;
-  }
-  .section-title {
-    font-size: 24px;
-    text-transform: uppercase;
-    margin-bottom: 15px;
-    border-bottom: 3px solid #000;
-    padding-bottom: 10px;
-  }
-  .trending-list {
-    list-style-type: disc;
-    padding-left: 20px;
-    font-family: 'Courier New', monospace;
-    font-size: 16px;
-  }
-  .trending-item {
-    margin-bottom: 8px;
-  }
-  .error-message {
-    color: #ff3e00;
-    font-weight: bold;
-  }
-
-	@media (max-width: 600px) {
-	.brutalist-container {
-		margin: 10px;
-		padding: 10px;
-	}
-	.brutalist-header {
-		font-size: 24px;
-		padding: 10px;
-	}
-	.brutalist-input, .brutalist-textarea, .brutalist-select {
-		font-size: 14px;
-		padding: 10px;
-	}
-	.brutalist-button {
-		font-size: 14px;
-		padding: 10px;
-		width: 100%;
-		box-sizing: border-box;
-	}
-	.grid-container {
-		grid-template-columns: 1fr;
-	}
-	.preview-container {
-		max-height: 50vh;
-	}
-	}
-
-
 	:global(body) {
 		margin: 0;
 		padding: 0;

@@ -1,123 +1,111 @@
-// Serviço para gerenciar interações do blog (comentários e visualizações)
+// @ts-nocheck
+// Serviço para gerenciar interações do blog (comentários e visualizações) usando MutterCorpService
+import { BaseService } from './services/index.js';
+import { HTTP_METHODS } from './services/constants.js';
 import { getAuthToken } from './api.js';
 
-const API_BASE_URL = 'https://dev.muttercorp.com.br';
-
 /**
- * Incrementa o contador de visualizações de um post
- * @param {string} postId - ID do post
- * @returns {Promise<Object>} Resposta da API
+ * Service para gerenciar interações do blog usando MutterCorpService
  */
-export async function incrementPostView(postId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/blog/${postId}/view`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      }
+class BlogInteractionsService extends BaseService {
+  constructor(config = {}) {
+    const authConfig = {
+      ...config,
+      getCookieCorp: () => Promise.resolve(getAuthToken() || ''),
+      getSessionMutterCorp: () => Promise.resolve(getAuthToken() || '')
+    };
+    super(authConfig);
+  }
+
+  /**
+   * Incrementa o contador de visualizações de um post
+   * @param {string} postId - ID do post
+   * @returns {Promise<Object>} Resposta da API
+   */
+  async incrementPostView(postId) {
+    this.validateRequiredParams({ postId }, ['postId']);
+
+    return this.makeServiceRequest(`/blog/${postId}/view`, {
+      method: HTTP_METHODS.POST
     });
-    
-    if (!response.ok) {
-      throw new Error('Erro ao incrementar visualização');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Erro ao incrementar visualização:', error);
-    throw error;
   }
-}
 
-/**
- * Busca o número de visualizações de um post
- * @param {string} postId - ID do post
- * @returns {Promise<Object>} Dados de visualização
- */
-export async function getPostViews(postId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/blog/${postId}/views`);
-    
-    if (!response.ok) {
-      throw new Error('Erro ao buscar visualizações');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Erro ao buscar visualizações:', error);
-    throw error;
+  /**
+   * Busca o número de visualizações de um post
+   * @param {string} postId - ID do post
+   * @returns {Promise<Object>} Dados de visualização
+   */
+  async getPostViews(postId) {
+    this.validateRequiredParams({ postId }, ['postId']);
+    return this.makeServiceRequest(`/blog/${postId}/views`);
   }
-}
 
-/**
- * Busca comentários de um post
- * @param {string} postId - ID do post
- * @returns {Promise<Array>} Lista de comentários
- */
-export async function getPostComments(postId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/blog/${postId}/comments`);
-    
-    if (!response.ok) {
-      throw new Error('Erro ao buscar comentários');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Erro ao buscar comentários:', error);
-    throw error;
+  /**
+   * Busca comentários de um post
+   * @param {string} postId - ID do post
+   * @returns {Promise<Array>} Lista de comentários
+   */
+  async getPostComments(postId) {
+    this.validateRequiredParams({ postId }, ['postId']);
+    return this.makeServiceRequest(`/blog/${postId}/comments`);
   }
-}
 
-/**
- * Adiciona um comentário a um post
- * @param {string} postId - ID do post
- * @param {Object} commentData - Dados do comentário
- * @returns {Promise<Object>} Comentário criado
- */
-export async function addPostComment(postId, commentData) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/blog/${postId}/comments`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(commentData)
+  /**
+   * Adiciona um comentário a um post
+   * @param {string} postId - ID do post
+   * @param {Object} commentData - Dados do comentário
+   * @returns {Promise<Object>} Comentário criado
+   */
+  async addPostComment(postId, commentData) {
+    this.validateRequiredParams({ postId, commentData }, ['postId', 'commentData']);
+
+    return this.makeServiceRequest(`/blog/${postId}/comments`, {
+      method: HTTP_METHODS.POST,
+      body: commentData
     });
-    
-    if (!response.ok) {
-      throw new Error('Erro ao adicionar comentário');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Erro ao adicionar comentário:', error);
-    throw error;
+  }
+
+  /**
+   * Deleta um comentário (requer autenticação)
+   * @param {string} postId - ID do post
+   * @param {string} commentId - ID do comentário
+   * @returns {Promise<Object>} Resposta da API
+   */
+  async deletePostComment(postId, commentId) {
+    this.validateRequiredParams({ postId, commentId }, ['postId', 'commentId']);
+
+    return this.makeServiceRequest(`/blog/${postId}/comments/${commentId}`, {
+      method: HTTP_METHODS.DELETE
+    });
   }
 }
 
+// Instância singleton do BlogInteractionsService
 /**
- * Deleta um comentário (requer autenticação)
- * @param {string} postId - ID do post
- * @param {string} commentId - ID do comentário
- * @returns {Promise<Object>} Resposta da API
+ * @type {BlogInteractionsService | null}
  */
-export async function deletePostComment(postId, commentId) {
-  try {
-    const response = await fetch(`${API_BASE_URL}/blog/${postId}/comments/${commentId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${getAuthToken()}`
-      }
-    });
-    
-    if (!response.ok) {
-      throw new Error('Erro ao deletar comentário');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Erro ao deletar comentário:', error);
-    throw error;
+let blogInteractionsServiceInstance = null;
+
+/**
+ * Cria ou retorna a instância singleton do BlogInteractionsService
+ * @param {Object} config - Configurações do service
+ * @returns {BlogInteractionsService} Instância do BlogInteractionsService
+ */
+export function getBlogInteractionsService(config = {}) {
+  if (!blogInteractionsServiceInstance) {
+    blogInteractionsServiceInstance = new BlogInteractionsService(config);
   }
-} 
+  return blogInteractionsServiceInstance;
+}
+
+// Exporta funções de conveniência para compatibilidade
+const blogInteractionsService = getBlogInteractionsService();
+
+export const incrementPostView = (/** @type {string} */ postId) => blogInteractionsService.incrementPostView(postId);
+export const getPostViews = (/** @type {string} */ postId) => blogInteractionsService.getPostViews(postId);
+export const getPostComments = (/** @type {string} */ postId) => blogInteractionsService.getPostComments(postId);
+export const addPostComment = (/** @type {string} */ postId, /** @type {Object} */ commentData) => blogInteractionsService.addPostComment(postId, commentData);
+export const deletePostComment = (/** @type {string} */ postId, /** @type {string} */ commentId) => blogInteractionsService.deletePostComment(postId, commentId);
+
+// Exporta a classe para uso direto se necessário
+export { BlogInteractionsService };

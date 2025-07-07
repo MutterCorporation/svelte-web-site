@@ -42,6 +42,7 @@ export async function apiRequest(url, options = {}) {
   
   const headers = {
     'Content-Type': 'application/json',
+    // @ts-ignore
     ...options.headers
   };
 

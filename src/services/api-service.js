@@ -24,6 +24,9 @@ function getHeaders(includeAuth = true, contentType = 'application/json') {
 }
 
 // Generic fetch wrapper
+/**
+ * @param {string | URL | Request} url
+ */
 async function apiCall(url, options = {}) {
   try {
     const response = await fetch(url, options);
@@ -54,6 +57,10 @@ export async function validateToken() {
   }
 }
 
+/**
+ * @param {string} username
+ * @param {string} password
+ */
 export async function login(username, password) {
   const response = await apiCall(`${API_BASE_URL}/auth/login`, {
     method: 'POST',
@@ -70,9 +77,12 @@ export async function fetchGoogleTrends() {
   let text = await response.text();
   text = text.replace(")]}',", '');
   const data = JSON.parse(text);
-  return data.default.trendingSearchesDays[0].trendingSearches.map(item => item.title.query);
+  return data.default.trendingSearchesDays[0].trendingSearches.map((/** @type {{ title: { query: any; }; }} */ item) => item.title.query);
 }
 
+/**
+ * @param {any} markdown
+ */
 export async function convertMarkdownToHtml(markdown) {
   const response = await apiCall('https://api.github.com/markdown', {
     method: 'POST',
@@ -83,6 +93,9 @@ export async function convertMarkdownToHtml(markdown) {
   return await response.text();
 }
 
+/**
+ * @param {any} formData
+ */
 export async function submitBlogPost(formData) {
   const response = await apiCall(`${API_BASE_URL}/blog`, {
     method: 'POST',
@@ -93,6 +106,9 @@ export async function submitBlogPost(formData) {
   return await response.json();
 }
 
+/**
+ * @param {any} tweetText
+ */
 export async function submitTweetPost(tweetText, options = {}) {
   const payload = {
     text: tweetText,
@@ -113,6 +129,9 @@ export async function submitTweetPost(tweetText, options = {}) {
   return await response.json();
 }
 
+/**
+ * @param {any} slug
+ */
 export async function fetchPostData(slug) {
   const response = await apiCall(`${API_BASE_URL}/blog/${slug}`);
   return await response.json();
@@ -138,11 +157,17 @@ export async function fetchProjects(page = 1, pageSize = 10) {
   return await response.json();
 }
 
+/**
+ * @param {any} projectId
+ */
 export async function fetchProjectDetails(projectId) {
   const response = await apiCall(`${PROJECTS_BASE_URL}/projects/${projectId}`);
   return await response.json();
 }
 
+/**
+ * @param {{ projectId: any; estimatedValue: any; estimatedTime: any; }} proposal
+ */
 export async function submitProposal(proposal) {
   const response = await apiCall(`${PROJECTS_BASE_URL}/proposals`, {
     method: 'POST',
@@ -157,6 +182,9 @@ export async function submitProposal(proposal) {
   return await response.json();
 }
 
+/**
+ * @param {any} projectData
+ */
 export async function createProject(projectData) {
   const response = await apiCall(`${PROJECTS_BASE_URL}/projects`, {
     method: 'POST',
@@ -167,6 +195,10 @@ export async function createProject(projectData) {
   return await response.json();
 }
 
+/**
+ * @param {any} projectId
+ * @param {any} projectData
+ */
 export async function updateProject(projectId, projectData) {
   const response = await apiCall(`${PROJECTS_BASE_URL}/projects/${projectId}`, {
     method: 'PUT',
@@ -177,6 +209,9 @@ export async function updateProject(projectId, projectData) {
   return await response.json();
 }
 
+/**
+ * @param {any} projectId
+ */
 export async function deleteProject(projectId) {
   const response = await apiCall(`${PROJECTS_BASE_URL}/projects/${projectId}`, {
     method: 'DELETE',
@@ -187,6 +222,9 @@ export async function deleteProject(projectId) {
 }
 
 // ============= AI =============
+/**
+ * @param {string} prompt
+ */
 export async function generateAiText(prompt, options = {}) {
   const payload = {
     messages: [
@@ -196,7 +234,9 @@ export async function generateAiText(prompt, options = {}) {
       }
     ],
     do_sample: true,
+    // @ts-ignore
     max_tokens: options.maxTokens || 200,
+    // @ts-ignore
     temperature: options.temperature || 0.7,
     top_p: 0.95,
     model: "sabia-3"
@@ -213,6 +253,9 @@ export async function generateAiText(prompt, options = {}) {
 }
 
 // ============= LEADS =============
+/**
+ * @param {any} leadData
+ */
 export async function createLead(leadData) {
   const response = await apiCall(`${API_BASE_URL}/leads`, {
     method: 'POST',
@@ -234,6 +277,9 @@ export async function fetchLeads(filters = {}) {
   return await response.json();
 }
 
+/**
+ * @param {any} leadId
+ */
 export async function fetchLeadById(leadId) {
   const response = await apiCall(`${API_BASE_URL}/leads/${leadId}`, {
     headers: getHeaders()
@@ -242,6 +288,10 @@ export async function fetchLeadById(leadId) {
   return await response.json();
 }
 
+/**
+ * @param {any} leadId
+ * @param {any} leadData
+ */
 export async function updateLead(leadId, leadData) {
   const response = await apiCall(`${API_BASE_URL}/leads/${leadId}`, {
     method: 'PUT',
@@ -252,6 +302,9 @@ export async function updateLead(leadId, leadData) {
   return await response.json();
 }
 
+/**
+ * @param {any} leadId
+ */
 export async function deleteLead(leadId) {
   const response = await apiCall(`${API_BASE_URL}/leads/${leadId}`, {
     method: 'DELETE',
@@ -281,6 +334,9 @@ export async function fetchTransactions(filters = {}) {
   return await response.json();
 }
 
+/**
+ * @param {any} transactionData
+ */
 export async function createTransaction(transactionData) {
   const response = await apiCall(`${FINANCE_BASE_URL}/transactions`, {
     method: 'POST',
@@ -291,6 +347,10 @@ export async function createTransaction(transactionData) {
   return await response.json();
 }
 
+/**
+ * @param {any} transactionId
+ * @param {any} transactionData
+ */
 export async function updateTransaction(transactionId, transactionData) {
   const response = await apiCall(`${FINANCE_BASE_URL}/transactions/${transactionId}`, {
     method: 'PUT',
@@ -301,6 +361,9 @@ export async function updateTransaction(transactionId, transactionData) {
   return await response.json();
 }
 
+/**
+ * @param {any} transactionId
+ */
 export async function deleteTransaction(transactionId) {
   const response = await apiCall(`${FINANCE_BASE_URL}/transactions/${transactionId}`, {
     method: 'DELETE',
@@ -313,6 +376,9 @@ export async function deleteTransaction(transactionId) {
 // ============= ADDITIONAL FUNCTIONS =============
 
 // More Blog functions
+/**
+ * @param {any} postId
+ */
 export async function deleteBlogPost(postId) {
   const response = await apiCall(`${API_BASE_URL}/blog/${postId}`, {
     method: 'DELETE',
@@ -322,6 +388,10 @@ export async function deleteBlogPost(postId) {
   return await response.json();
 }
 
+/**
+ * @param {any} postId
+ * @param {any} formData
+ */
 export async function updateBlogPost(postId, formData) {
   const response = await apiCall(`${API_BASE_URL}/blog/${postId}`, {
     method: 'PUT',
@@ -333,11 +403,18 @@ export async function updateBlogPost(postId, formData) {
 }
 
 // More Projects functions
+/**
+ * @param {any} projectId
+ */
 export async function fetchProjectProposals(projectId) {
   const response = await apiCall(`${PROJECTS_BASE_URL}/projects/${projectId}/proposals`);
   return await response.json();
 }
 
+/**
+ * @param {any} proposalId
+ * @param {any} proposalData
+ */
 export async function updateProposal(proposalId, proposalData) {
   const response = await apiCall(`${PROJECTS_BASE_URL}/proposals/${proposalId}`, {
     method: 'PUT',
@@ -348,6 +425,9 @@ export async function updateProposal(proposalId, proposalData) {
   return await response.json();
 }
 
+/**
+ * @param {any} proposalId
+ */
 export async function deleteProposal(proposalId) {
   const response = await apiCall(`${PROJECTS_BASE_URL}/proposals/${proposalId}`, {
     method: 'DELETE',
@@ -358,6 +438,10 @@ export async function deleteProposal(proposalId) {
 }
 
 // More Leads functions
+/**
+ * @param {any} leadId
+ * @param {any} status
+ */
 export async function updateLeadStatus(leadId, status) {
   const response = await apiCall(`${API_BASE_URL}/leads/${leadId}/status`, {
     method: 'PATCH',
@@ -368,6 +452,10 @@ export async function updateLeadStatus(leadId, status) {
   return await response.json();
 }
 
+/**
+ * @param {any} leadId
+ * @param {any} userId
+ */
 export async function assignLead(leadId, userId) {
   const response = await apiCall(`${API_BASE_URL}/leads/${leadId}/assign`, {
     method: 'PATCH',
@@ -378,6 +466,10 @@ export async function assignLead(leadId, userId) {
   return await response.json();
 }
 
+/**
+ * @param {any} leadId
+ * @param {any} note
+ */
 export async function addLeadNote(leadId, note) {
   const response = await apiCall(`${API_BASE_URL}/leads/${leadId}/notes`, {
     method: 'POST',
@@ -408,6 +500,9 @@ export async function fetchCategories() {
   return await response.json();
 }
 
+/**
+ * @param {any} categoryData
+ */
 export async function createCategory(categoryData) {
   const response = await apiCall(`${FINANCE_BASE_URL}/categories`, {
     method: 'POST',
@@ -437,6 +532,9 @@ export async function fetchBudget() {
   return await response.json();
 }
 
+/**
+ * @param {any} budgetData
+ */
 export async function updateBudget(budgetData) {
   const response = await apiCall(`${FINANCE_BASE_URL}/budget`, {
     method: 'PUT',
@@ -448,6 +546,9 @@ export async function updateBudget(budgetData) {
 }
 
 // More AI functions
+/**
+ * @param {{ title: any; description: any; budget: any; deadline: any; }} projectData
+ */
 export async function generateProposalText(projectData, customPrompt = '') {
   const basePrompt = `
     Gere uma proposta profissional para o seguinte projeto:
@@ -468,6 +569,9 @@ export async function generateProposalText(projectData, customPrompt = '') {
   });
 }
 
+/**
+ * @param {any} topic
+ */
 export async function generateBlogContent(topic, options = {}) {
   const prompt = `
     Crie um artigo de blog sobre: ${topic}

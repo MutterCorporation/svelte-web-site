@@ -1,83 +1,107 @@
-// Blog service
-import { apiRequest, getAuthHeaders, getAuthToken } from './api.js';
+// @ts-nocheck
+// Blog service using MutterCorpService
+import { BaseService } from './services/index.js';
+import { HTTP_METHODS } from './services/constants.js';
+import { getAuthToken } from './api.js';
 
 /**
- * Fetches Google Trends data
- * @returns {Promise<Array>} Array of trending search queries
+ * Service para gerenciar blog usando MutterCorpService
  */
-export async function fetchGoogleTrends() {
-  try {
-    const res = await fetch('https://dev.muttercorp.com/trends/api/dailytrends?hl=pt-BR&tz=-180&geo=BR&ns=15');
-    let text = await res.text();
-    text = text.replace(")]}',", '');
-    const data = JSON.parse(text);
-    return data.default.trendingSearchesDays[0].trendingSearches.map(item => item.title.query);
-  } catch (error) {
-    console.error('Error fetching Google Trends:', error);
-    throw new Error('Failed to fetch Google Trends');
+class BlogService extends BaseService {
+  constructor(config = {}) {
+    const authConfig = {
+      ...config,
+      getCookieCorp: () => Promise.resolve(getAuthToken() || ''),
+      getSessionMutterCorp: () => Promise.resolve(getAuthToken() || '')
+    };
+    super(authConfig);
   }
-}
 
-/**
- * Converts markdown text to HTML using GitHub API
- * @param {string} markdown - Markdown text to convert
- * @returns {Promise<string>} HTML content
- */
-export async function convertMarkdownToHtml(markdown) {
-  try {
-    const response = await fetch('https://api.github.com/markdown', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ text: markdown, mode: 'gfm' })
-    });
-    
-    if (!response.ok) {
-      throw new Error('Failed to convert markdown');
+  /**
+   * Fetches Google Trends data
+   * @returns {Promise<Array>} Array of trending search queries
+   */
+  async fetchGoogleTrends() {
+    try {
+      // Esta é uma API externa, não usamos o MutterCorpService
+      const res = await fetch('https://dev.muttercorp.com/trends/api/dailytrends?hl=pt-BR&tz=-180&geo=BR&ns=15');
+      let text = await res.text();
+      text = text.replace(")]}',", '');
+      const data = JSON.parse(text);
+      return data.default.trendingSearchesDays[0].trendingSearches.map(item => item.title.query);
+    } catch (error) {
+      console.error('Error fetching Google Trends:', error);
+      throw new Error('Failed to fetch Google Trends');
     }
-    
-    return await response.text();
-  } catch (error) {
-    console.error('Error converting markdown:', error);
-    throw new Error('Failed to convert markdown to HTML');
   }
-}
 
-/**
- * Submits a blog post
- * @param {FormData} formData - Blog post form data
- * @returns {Promise<Object>} API response
- */
-export async function submitBlogPost(formData) {
-  try {
-    const response = await fetch('https://dev.muttercorp.com.br/blog', {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`
-      },
-      body: formData
-    });
-    
-    if (!response.ok) {
+  /**
+   * Converts markdown text to HTML using GitHub API
+   * @param {string} markdown - Markdown text to convert
+   * @returns {Promise<string>} HTML content
+   */
+  async convertMarkdownToHtml(markdown) {
+    this.validateRequiredParams({ markdown }, ['markdown']);
+
+    try {
+      // Esta é uma API externa, não usamos o MutterCorpService
+      const response = await fetch('https://api.github.com/markdown', {
+        method: HTTP_METHODS.POST,
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: markdown, mode: 'gfm' })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to convert markdown');
+      }
+
+      return await response.text();
+    } catch (error) {
+      console.error('Error converting markdown:', error);
+      throw new Error('Failed to convert markdown to HTML');
+    }
+  }
+
+  /**
+   * Submits a blog post
+   * @param {FormData} formData - Blog post form data
+   * @returns {Promise<Object>} API response
+   */
+  async submitBlogPost(formData) {
+    this.validateRequiredParams({ formData }, ['formData']);
+
+    try {
+      // Para FormData, fazemos requisição direta pois não podemos usar JSON
+      const response = await fetch(`${this.baseUrl}/blog`, {
+        method: HTTP_METHODS.POST,
+        headers: {
+          'Authorization': `Bearer ${getAuthToken()}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to submit blog post');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error submitting blog post:', error);
       throw new Error('Failed to submit blog post');
     }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error submitting blog post:', error);
-    throw new Error('Failed to submit blog post');
   }
-}
 
-/**
- * Submits a tweet post
- * @param {string} tweetText - Tweet content
- * @param {Object} options - Additional options for the tweet
- * @returns {Promise<Object>} API response
- */
-export async function submitTweetPost(tweetText, options = {}) {
-  try {
+  /**
+   * Submits a tweet post
+   * @param {string} tweetText - Tweet content
+   * @param {Object} options - Additional options for the tweet
+   * @returns {Promise<Object>} API response
+   */
+  async submitTweetPost(tweetText, options = {}) {
+    this.validateRequiredParams({ tweetText }, ['tweetText']);
+
     const payload = {
       text: tweetText,
       options: {
@@ -88,116 +112,106 @@ export async function submitTweetPost(tweetText, options = {}) {
       }
     };
 
-    const response = await fetch('https://dev.muttercorp.com.br/blog/twitter', {
-      method: 'POST',
+    return this.makeServiceRequest('/blog/twitter', {
+      method: HTTP_METHODS.POST,
+      body: payload,
       headers: {
-        'accept': '*/*',
-        'Authorization': `Bearer ${getAuthToken()}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(payload)
+        'accept': '*/*'
+      }
     });
-    
-    if (!response.ok) {
-      throw new Error('Failed to submit tweet');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error submitting tweet:', error);
-    throw new Error('Failed to submit tweet');
   }
-}
 
-/**
- * Fetches a blog post by slug
- * @param {string} slug - Blog post slug
- * @returns {Promise<Object>} Blog post data
- */
-export async function fetchPostData(slug) {
-  try {
-    const response = await fetch(`https://dev.muttercorp.com.br/blog/${slug}`);
-    
-    if (!response.ok) {
-      throw new Error('Post not found');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching post data:', error);
-    throw new Error('Failed to fetch post data');
+  /**
+   * Fetches a blog post by slug
+   * @param {string} slug - Blog post slug
+   * @returns {Promise<Object>} Blog post data
+   */
+  async fetchPostData(slug) {
+    this.validateRequiredParams({ slug }, ['slug']);
+    return this.makeServiceRequest(`/blog/${slug}`);
   }
-}
 
-/**
- * Fetches all blog posts
- * @param {Object} params - Query parameters (page, limit, etc.)
- * @returns {Promise<Object>} Blog posts data
- */
-export async function fetchBlogPosts(params = {}) {
-  try {
-    const queryString = new URLSearchParams(params).toString();
-    const url = `https://dev.muttercorp.com.br/blog${queryString ? `?${queryString}` : ''}`;
-    
-    const response = await fetch(url);
-    
-    if (!response.ok) {
-      throw new Error('Failed to fetch blog posts');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching blog posts:', error);
-    throw new Error('Failed to fetch blog posts');
+  /**
+   * Fetches all blog posts
+   * @param {Object} params - Query parameters (page, limit, etc.)
+   * @returns {Promise<Object>} Blog posts data
+   */
+  async fetchBlogPosts(params = {}) {
+    const sanitizedParams = this.sanitizeParams(params);
+    const queryString = new URLSearchParams(sanitizedParams).toString();
+    const endpoint = `/blog${queryString ? `?${queryString}` : ''}`;
+    return this.makeServiceRequest(endpoint);
   }
-}
 
-/**
- * Deletes a blog post
- * @param {string} postId - Blog post ID
- * @returns {Promise<Object>} API response
- */
-export async function deleteBlogPost(postId) {
-  try {
-    const response = await fetch(`https://dev.muttercorp.com.br/blog/${postId}`, {
-      method: 'DELETE',
-      headers: getAuthHeaders()
+  /**
+   * Deletes a blog post
+   * @param {string} postId - Blog post ID
+   * @returns {Promise<Object>} API response
+   */
+  async deleteBlogPost(postId) {
+    this.validateRequiredParams({ postId }, ['postId']);
+    return this.makeServiceRequest(`/blog/${postId}`, {
+      method: HTTP_METHODS.DELETE
     });
-    
-    if (!response.ok) {
-      throw new Error('Failed to delete blog post');
-    }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error deleting blog post:', error);
-    throw new Error('Failed to delete blog post');
   }
-}
 
-/**
- * Updates a blog post
- * @param {string} postId - Blog post ID
- * @param {FormData} formData - Updated blog post data
- * @returns {Promise<Object>} API response
- */
-export async function updateBlogPost(postId, formData) {
-  try {
-    const response = await fetch(`https://dev.muttercorp.com.br/blog/${postId}`, {
-      method: 'PUT',
-      headers: {
-        Authorization: `Bearer ${getAuthToken()}`
-      },
-      body: formData
-    });
-    
-    if (!response.ok) {
+  /**
+   * Updates a blog post
+   * @param {string} postId - Blog post ID
+   * @param {FormData} formData - Updated blog post data
+   * @returns {Promise<Object>} API response
+   */
+  async updateBlogPost(postId, formData) {
+    this.validateRequiredParams({ postId, formData }, ['postId', 'formData']);
+
+    try {
+      // Para FormData, fazemos requisição direta pois não podemos usar JSON
+      const response = await fetch(`${this.baseUrl}/blog/${postId}`, {
+        method: HTTP_METHODS.PUT,
+        headers: {
+          'Authorization': `Bearer ${getAuthToken()}`
+        },
+        body: formData
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update blog post');
+      }
+
+      return await response.json();
+    } catch (error) {
+      console.error('Error updating blog post:', error);
       throw new Error('Failed to update blog post');
     }
-    
-    return await response.json();
-  } catch (error) {
-    console.error('Error updating blog post:', error);
-    throw new Error('Failed to update blog post');
   }
 }
+
+// Instância singleton do BlogService
+let blogServiceInstance = null;
+
+/**
+ * Cria ou retorna a instância singleton do BlogService
+ * @param {Object} config - Configurações do service
+ * @returns {BlogService} Instância do BlogService
+ */
+export function getBlogService(config = {}) {
+  if (!blogServiceInstance) {
+    blogServiceInstance = new BlogService(config);
+  }
+  return blogServiceInstance;
+}
+
+// Exporta funções de conveniência para compatibilidade
+const blogService = getBlogService();
+
+export const fetchGoogleTrends = () => blogService.fetchGoogleTrends();
+export const convertMarkdownToHtml = (markdown) => blogService.convertMarkdownToHtml(markdown);
+export const submitBlogPost = (formData) => blogService.submitBlogPost(formData);
+export const submitTweetPost = (tweetText, options) => blogService.submitTweetPost(tweetText, options);
+export const fetchPostData = (slug) => blogService.fetchPostData(slug);
+export const fetchBlogPosts = (params) => blogService.fetchBlogPosts(params);
+export const deleteBlogPost = (postId) => blogService.deleteBlogPost(postId);
+export const updateBlogPost = (postId, formData) => blogService.updateBlogPost(postId, formData);
+
+// Exporta a classe para uso direto se necessário
+export { BlogService };
