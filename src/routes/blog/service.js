@@ -50,9 +50,9 @@ export async function fetchSinglePost(tenantCode, slug) {
  */
 export async function incrementPostViews(tenantCode, slug) {
     try {
-        await fetch(`${API_BASE}/blog/posts/${tenantCode}/${slug}/views`, {
-            method: 'POST'
-        });
+        // await fetch(`${API_BASE}/blog/posts/${tenantCode}/${slug}/views`, {
+        //     method: 'POST'
+        // });
     } catch (error) {
         console.error('Erro ao incrementar visualiza��es:', error);
     }
