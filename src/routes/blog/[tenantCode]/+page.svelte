@@ -6,7 +6,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
-	import ViewCounter from '../../../components/ViewCounter.svelte';
+	// import ViewCounter from '../../../components/ViewCounter.svelte';
 	import { fetchBlogPost } from '../service.js';
 	import { TENANT_CONFIG } from '../../../services/services/constants.js';
 
@@ -155,7 +155,7 @@
 	</div>
 
 	<!-- View Counter -->
-	<ViewCounter />
+	<!-- <ViewCounter /> -->
 </main>
 
 <style>

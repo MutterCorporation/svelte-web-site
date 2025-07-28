@@ -6,7 +6,7 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
-	import ViewCounter from '../../components/ViewCounter.svelte';
+	// import ViewCounter from '../../components/ViewCounter.svelte';
 	import { fetchBlogPost  } from './service';
 
 	/**
@@ -114,7 +114,7 @@
 							<h2 class="cyber-title">{post.title}</h2>
 							<p class="cyber-text">{post.excerpt}</p>
 							<div class="card-meta">
-								<ViewCounter postId={post.slug} />
+								<!-- <ViewCounter postId={post.slug} /> -->
 							</div>
 							<div class="card-footer">
 								<div class="card-info">
