@@ -8,7 +8,7 @@
 	import { fly, fade } from 'svelte/transition';
 	import ViewCounter from '../../../../components/ViewCounter.svelte';
 	import CommentSystem from '../../../../components/CommentSystem.svelte';
-	import { getBlogService } from '../../../../services/index.js';
+	import { fetchSinglePost, incrementPostViews } from '../../service.js';
 	import { TENANT_CONFIG } from '../../../../services/services/constants.js';
 
 	let { data } = $props();
@@ -27,9 +27,7 @@
 	
 	async function fetchPost() {
 		try {
-			// Usar o BlogService com tenant específico
-			const blogService = getBlogService();
-			const response = await blogService.fetchPostData(slug, tenantCode);
+			const response = await fetchSinglePost(tenantCode, slug);
 			
 			if (response) {
 				post = {
@@ -40,6 +38,9 @@
 					id: response.id,
 					preview: response.preview || ''
 				};
+				
+				// Incrementar visualizações
+				incrementPostViews(tenantCode, slug);
 			} else {
 				error = 'Post não encontrado';
 			}

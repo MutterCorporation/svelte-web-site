@@ -7,7 +7,7 @@
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import ViewCounter from '../../../components/ViewCounter.svelte';
-	import { getBlogService } from '../../../services/index.js';
+	import { fetchBlogPost } from '../service.js';
 	import { TENANT_CONFIG } from '../../../services/services/constants.js';
 
 	let { data } = $props();
@@ -24,10 +24,11 @@
 	
 	async function fetchPosts() {
 		try {
-			// Usar o BlogService com tenant específico
-			const blogService = getBlogService();
-			const response = await blogService.fetchBlogPosts({}, tenantCode);
-			const data = Array.isArray(response) ? response : (/** @type {any} */(response).data || []);
+			const response = await fetchBlogPost(tenantCode);
+
+			
+			const data = Array.isArray(response) ? response : 
+			(/** @type {any} */(response).data || []);
 			
 			// Mapeamento dos dados recebidos para o formato esperado pelos componentes
 			posts = data.map((/** @type {{ titulo: any; img: any; preview: any; created_at: string | number | Date; id: { toString: () => any; }; text: any; }} */ post) => ({

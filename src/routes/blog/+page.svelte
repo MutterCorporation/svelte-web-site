@@ -7,14 +7,15 @@
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import ViewCounter from '../../components/ViewCounter.svelte';
-	import { getBlogService } from '../../services/index.js';
+	import { fetchBlogPost  } from './service';
 
+	/**
 	/**
 	 * @type {any[]}
 	 */
 	let posts = [];
 	let loading = true;
-	
+	let tenantCode = 'muttercorp'
 	// Exemplo do formato de dados esperado conforme comentário
 	// {
 	//     "id": 2,
@@ -29,8 +30,11 @@
 	async function fetchPosts() {
 		try {
 			// Usar o BlogService com tenant muttercorp
-			const blogService = getBlogService();
-			const response = await blogService.fetchBlogPosts({}, 'muttercorp');
+			// const blogService = getBlogService();
+			// const response = await blogService.fetchBlogPosts({}, 'muttercorp');
+			const response = await fetchBlogPost(tenantCode)
+		
+		
 			const data = Array.isArray(response) ? response : (/** @type {any} */(response).data || []);
 
 			// Mapeamento dos dados recebidos para o formato esperado pelos componentes
