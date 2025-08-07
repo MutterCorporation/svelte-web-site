@@ -30,7 +30,8 @@ export async function fetchBlogPost(tenantCode) {
  */
 export async function fetchSinglePost(tenantCode, slug) {
     try {
-        const response = await fetch(`${API_BASE}/blog/${tenantCode}/${slug}`);
+        console.log(tenantCode)
+        const response = await fetch(`${API_BASE}/blog/${"muttercorp"}/${slug}`);
         
         if (!response.ok) {
             throw new Error(`HTTP Error: ${response.status}`);

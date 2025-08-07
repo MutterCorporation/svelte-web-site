@@ -6,18 +6,17 @@
 <script>
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
-	import ViewCounter from '../../../../components/ViewCounter.svelte';
+	// import ViewCounter from '../../../../components/ViewCounter.svelte';
 	import CommentSystem from '../../../../components/CommentSystem.svelte';
-	import { fetchSinglePost, incrementPostViews } from '../../service.js';
+	import { fetchSinglePost } from '../../service.js';
 	import { TENANT_CONFIG } from '../../../../services/services/constants.js';
 
-	let { data } = $props();
+	export let data;
 	let tenantCode = data.tenantCode;
 	let slug = data.slug;
 	
 	// Configuração do tenant
-	let tenantConfig = $derived(TENANT_CONFIG[tenantCode]);
-	
+	let tenantConfig = TENANT_CONFIG[tenantCode];
 	/**
 	 * @type {any}
 	 */
@@ -40,7 +39,7 @@
 				};
 				
 				// Incrementar visualizações
-				incrementPostViews(tenantCode, slug);
+				// incrementPostViews(tenantCode, slug);
 			} else {
 				error = 'Post não encontrado';
 			}
@@ -146,13 +145,13 @@
 
 			<!-- Comments -->
 			<div in:fly={{ y: 50, duration: 500, delay: 800 }}>
-				<CommentSystem postId={post.id} />
+				<!-- <CommentSystem postId={post.id} /> -->
 			</div>
 		</article>
 	{/if}
 
 	<!-- View Counter -->
-	<ViewCounter />
+	<!-- <ViewCounter /> -->
 </main>
 
 <style>
