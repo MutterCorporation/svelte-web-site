@@ -1,109 +1,88 @@
-# MutterCorp - Soluções Empresariais em Tecnologia e IA
+# MutterCorp Web Platform
 
-## Sobre a MutterCorp
+A high-performance, modern web platform for MutterCorp, showcasing enterprise technology solutions, AI-driven products, and specialized services. This project is built with Svelte to deliver a fast, responsive, and engaging user experience.
 
-A MutterCorp é uma empresa especializada em soluções tecnológicas empresariais, com foco em Machine Learning, Inteligência Artificial e desenvolvimento de aplicações inovadoras.
+## 🚀 Key Features
 
-## Nossas Aplicações
+- **Modern UI/UX:** Sleek, responsive design with smooth animations and gradient aesthetics.
+- **Product Showcase:** Detailed presentation of core products like CryptoStomp, BillyAgent, and Job Hunter.
+- **Service Portfolio:** Highlights specialized services including Machine Learning, Omnichat, and CRM solutions.
+- **Performance Optimized:** Leveraging Svelte's reactivity for a lightning-fast interface.
+- **SEO Ready:** Structured metadata and semantic HTML for better search engine visibility.
 
-### 🚀 Produtos Principais
+## 🛠️ Technology Stack
 
-- **CryptoStomp** - Análise avançada de criptomoedas com IA e ML
-- **Sexpomodoro** - Timer Pomodoro com posições do Kamasutra
-- **BillyAgent** - Agente de atendimento WhatsApp com IA
-- **Job Hunter** - Plataforma de busca de empregos tech
-- **Finance Table** - Gestão financeira simplificada
-- **TAB** - Aplicativo para transtorno afetivo bipolar
-- **WorkPower** - Aplicativo para personal trainers
-- **Jihad (VTES)** - Jogo de TCG em Godot
+- **Frontend:** Svelte, TypeScript/JavaScript
+- **Styling:** CSS3 with modern features (Flexbox, Grid, Animations)
+- **Build Tool:** Vite (for SvelteKit)
+- **Hosting:** Ready for Vercel, Netlify, or any static host
 
-### 🛠️ Serviços Especializados
+## 📦 Getting Started
 
-- **Machine Learning & IA** - Soluções inteligentes para automação
-- **Omnichat Whitelabel** - Plataforma de atendimento multicanal
-- **CRM Empresarial** - Gestão completa de relacionamento com clientes
-- **Sites para Influencers** - Criação de sites profissionais e infoprodutos
-- **Gateway de Pagamentos** - Soluções completas de pagamento online
-- **Automação de Marketing** - Ferramentas para marketing digital
+### Prerequisites
 
-## Tecnologias Utilizadas
+- Node.js (v18 or higher)
+- npm or yarn
 
-- **Machine Learning** - IA e ML para automação
-- **React/Next.js** - Frontend moderno
-- **Node.js** - Backend escalável
-- **Python** - Data Science & ML
-- **Svelte** - Frontend performático
-- **Godot** - Desenvolvimento de jogos
-- **Docker** - Containerização
-- **AWS/Azure** - Cloud computing
+### Installation & Development
 
-## Melhorias Implementadas
+bash
+# Clone the repository
+git clone https://github.com/your-username/mutter-corp-web-platform.git
+cd mutter-corp-web-platform
 
-### Design e UX
-- ✅ Interface moderna com gradientes e animações
-- ✅ Layout responsivo para todos os dispositivos
-- ✅ Animações suaves com Svelte transitions
-- ✅ Categorização visual dos produtos
-- ✅ Seção de casos de sucesso
-- ✅ Estatísticas da empresa
-
-### Conteúdo e Informações
-- ✅ Adição de todos os produtos mencionados
-- ✅ Seção de tecnologias utilizadas
-- ✅ Serviços especializados em ML/IA
-- ✅ Gateway de pagamentos
-- ✅ Sites para influencers
-- ✅ Automação de marketing
-- ✅ Seção "Por que escolher a MutterCorp"
-
-### SEO e Performance
-- ✅ Meta tags otimizadas
-- ✅ Keywords atualizadas
-- ✅ Estrutura semântica melhorada
-- ✅ Links internos organizados
-
-## Como Executar
-
-```bash
-# Instalar dependências
+# Install dependencies
 npm install
 
-# Executar em modo desenvolvimento
+# Run the development server
 npm run dev
 
-# Build para produção
+# Build for production
 npm run build
 
-# Preview da build
+# Preview the production build
 npm run preview
-```
 
-## Estrutura do Projeto
 
-```
+Open your browser and navigate to `http://localhost:5173` (or the port indicated in your terminal).
+
+## 📂 Project Structure
+
+
 src/
-├── components/          # Componentes reutilizáveis
-├── routes/             # Páginas da aplicação
-│   ├── +page.svelte    # Página principal (atualizada)
-│   ├── cryptostomp/    # Aplicação CryptoStomp
-│   ├── job-hunter/     # Aplicação Job Hunter
+├── components/          # Reusable UI components
+├── routes/              # Application pages and routing
+│   ├── +page.svelte    # Main landing page
+│   ├── cryptostomp/    # CryptoStomp application page
+│   ├── job-hunter/     # Job Hunter application page
 │   └── ...
-├── lib/                # Utilitários e stores
-└── services/           # Serviços de API
-```
+├── lib/                 # Utilities, stores, and helpers
+└── services/            # API integration services
 
-## Próximos Passos
 
-- [ ] Implementar páginas individuais para cada aplicação
-- [ ] Criar sistema de autenticação
-- [ ] Implementar dashboard administrativo
-- [ ] Adicionar testes automatizados
-- [ ] Otimizar performance e SEO
+## 🚀 Deployments & Roadmap
 
-## Contato
+### Current State
+✅ Modern interface with animations and gradients
+✅ Responsive layout for all devices
+✅ Comprehensive product and service catalog
+✅ Optimized SEO and metadata
 
-Para mais informações sobre nossos serviços, entre em contato através do formulário em nosso site ou envie um e-mail para contato@muttercorp.com.br.
+### Next Steps
+- [ ] Create dedicated pages for each product
+- [ ] Implement authentication system
+- [ ] Develop administrative dashboard
+- [ ] Add automated testing (unit/integration)
+- [ ] Optimize performance and Lighthouse scores
+
+## 🤝 Contributing
+
+Contributions are welcome! Please fork the repository and create a pull request for any improvements.
+
+## 📄 License
+
+This project is proprietary software owned by MutterCorp.
 
 ---
 
-**MutterCorp** - Transformando negócios através da tecnologia e IA
+*Powered by Svelte & MutterCorp Innovation*
