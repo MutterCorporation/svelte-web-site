@@ -71,7 +71,7 @@ function applyTheme(theme) {
   // Atualiza meta tag para mobile
   const metaTheme = document.querySelector('meta[name="theme-color"]');
   if (metaTheme) {
-    metaTheme.content = theme === 'dark' ? '#000000' : '#ffffff';
+    metaTheme.content = theme === 'dark' ? '#0c1210' : '#eef3ef';
   }
 }
 

@@ -60,10 +60,8 @@
   }
 
   .logo-text {
-    background: var(--gradient-primary);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: var(--site-fg);
+    font-family: 'Syne', sans-serif;
     font-weight: 700;
   }
 </style> 

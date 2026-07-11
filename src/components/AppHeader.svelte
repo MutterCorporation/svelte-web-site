@@ -84,16 +84,15 @@
     left: 0;
     right: 0;
     z-index: 1000;
-    background: var(--bg-overlay);
-    backdrop-filter: blur(20px);
+    background: var(--site-header-bg);
+    backdrop-filter: blur(18px);
     border-bottom: 1px solid transparent;
-    transition: all var(--transition-cubic);
+    transition: all 0.3s ease;
   }
 
   .app-header.scrolled {
-    background: var(--bg-surface-elevated);
-    border-bottom-color: var(--border-color);
-    box-shadow: var(--shadow-md);
+    background: var(--site-header-bg-scrolled);
+    border-bottom-color: var(--site-line);
   }
 
   /* Container */
@@ -144,13 +143,13 @@
     border: none;
     cursor: pointer;
     padding: var(--spacing-sm);
-    color: var(--text-primary);
+    color: var(--site-fg);
     border-radius: var(--radius-md);
     transition: all var(--transition-fast);
   }
 
   .mobile-menu-toggle:hover {
-    background: var(--bg-surface-hover);
+    background: var(--site-surface);
   }
 
   /* Hamburger Animation */

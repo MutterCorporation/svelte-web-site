@@ -1,2176 +1,742 @@
 <script>
-	import { fly, fade, scale } from 'svelte/transition';
 	import { onMount } from 'svelte';
-	import { goto } from '$app/navigation';
-	import { quintOut, elasticOut } from 'svelte/easing';
+	import { fade, fly, scale } from 'svelte/transition';
+	import { quintOut, cubicOut } from 'svelte/easing';
 
-	// Estados do slider
-	let currentSlide = $state(0);
-	let isAutoPlaying = $state(true);
-	/** @type {any} */
-	let autoPlayInterval;
-	
-	// Elementos para animações 3D
-	/** @type {HTMLCanvasElement} */
-	let rocketCanvas;
-	/** @type {HTMLCanvasElement} */
-	let particlesCanvas;
-	/** @type {any} */
-	let animationFrame;
+	let mounted = $state(false);
+	let servicesVisible = $state(false);
+	let productsVisible = $state(false);
+	let experienceVisible = $state(false);
+	let contactVisible = $state(false);
 
-	// Form states
-	let formData = $state({
-		name: '',
-		email: '',
-		company: '',
-		message: '',
-		service: ''
-	});
-	let isSubmitting = $state(false);
-	let submitMessage = $state('');
+	/** @type {HTMLElement | undefined} */
+	let servicesSection = $state();
+	/** @type {HTMLElement | undefined} */
+	let productsSection = $state();
+	/** @type {HTMLElement | undefined} */
+	let experienceSection = $state();
+	/** @type {HTMLElement | undefined} */
+	let contactSection = $state();
 
-	// Slides da apresentação - TEXTOS MELHORADOS
-	const slides = [
-		// Slide 1 - Welcome
+	const whatsappUrl =
+		'https://wa.me/5511915009625?text=' +
+		encodeURIComponent(
+			'Olá! Quero tirar uma ideia do papel / resolver uma demanda de software. Podemos conversar sobre orçamento?'
+		);
+
+	const services = [
 		{
-			type: 'hero',
-			title: 'MutterCorp',
-			subtitle: 'Inovação & Tecnologia Avançada',
-			description: 'Transformamos ideias em realidade digital com IA, Machine Learning e soluções empresariais de alta performance que revolucionam negócios',
-			background: 'from-blue-900 via-purple-900 to-black',
-			icon: '🚀'
+			title: 'Software do zero',
+			text: 'Transforme uma ideia em produto digital: sites, sistemas, APIs e painéis feitos sob medida para gerar resultado no seu negócio.'
 		},
-		// Slide 2 - Sobre a empresa  
 		{
-			type: 'about',
-			title: 'Software House de Elite',
-			subtitle: 'Da visão à execução perfeita',
-			description: 'Desenvolvemos ecossistemas digitais completos, plataformas SaaS escaláveis, aplicações inteligentes e arquiteturas robustas para empresas que lideram mercados.',
-			background: 'from-gray-900 via-blue-900 to-purple-900',
-			icon: '💡'
+			title: 'MVP que convence',
+			text: 'Valide rápido com um protótipo real — ideal para investidores, clientes piloto, editais e licitações públicas.'
 		},
-		// Slide 3 - Apps - DESCRIÇÕES MELHORADAS
 		{
-			type: 'apps',
-			title: 'Produtos Revolucionários',
-			subtitle: 'Inovação que gera resultados',
-			apps: [
-				{
-					title: 'CryptoStomp',
-					description: 'Plataforma de trading inteligente com IA avançada para maximizar lucros em crypto',
-					icon: '📈',
-					color: 'from-blue-500 to-cyan-500',
-					link: '/solucoes/cryptostomp'
-				},
-				{
-					title: 'FinanceTable Pro',
-					description: 'Dashboard financeiro com bots de IA para análise preditiva e automação de investimentos',
-					icon: '💰',
-					color: 'from-yellow-500 to-orange-500',
-					link: '/finance-table'
-				},
-				{
-					title: 'SexPomodoro',
-					description: 'Timer gamificado para casais com sistema de recompensas e intimidade conectada',
-					icon: '❤️',
-					color: 'from-pink-500 to-red-500',
-					link: 'https://sexpomodoro.com.br'
-				},
-				{
-					title: 'WorkPower AI',
-					description: 'Suite de produtividade empresarial com automação inteligente e analytics em tempo real',
-					icon: '⚡',
-					color: 'from-purple-500 to-indigo-500',
-					link: 'https://workpower.app.br'
-				},
-				{
-					title: 'BillyAgent Pro',
-					description: 'Assistente virtual WhatsApp com IA conversacional e integração empresarial completa',
-					icon: '🤖',
-					color: 'from-green-500 to-emerald-500',
-					link: '/solucoes/omnichat'
-				},
-				{
-					title: 'TaskDoro Elite',
-					description: 'Pomodoro avançado com tracking de produtividade e insights comportamentais',
-					icon: '⏰',
-					color: 'from-orange-500 to-red-500',
-					link: '/task-doro'
-				}
-			],
-			background: 'from-purple-900 via-pink-900 to-red-900',
-			icon: '🎯'
+			title: 'Demanda sob controle',
+			text: 'Precisa de uma feature, integração ou correção urgente? Escopo fechado, prazo combinado e entrega sem enrolação.'
 		},
-		// Slide 4 - Serviços - DESCRIÇÕES PREMIUM
 		{
-			type: 'services',
-			title: 'Soluções Enterprise Premium',
-			subtitle: 'Tecnologia que transforma mercados',
-			services: [
-				{
-					title: 'AI & Machine Learning',
-					description: 'Modelos preditivos, automação inteligente, visão computacional e processamento de linguagem natural',
-					icon: '🧠',
-					link: '/solucoes/machine-learning'
-				},
-				{
-					title: 'CRM Empresarial Avançado',
-					description: 'Gestão completa de relacionamento com automação de vendas e analytics preditivos',
-					icon: '🎯',
-					link: '/solucoes/crm'
-				},
-				{
-					title: 'Gateway de Pagamentos',
-					description: 'Infraestrutura financeira robusta com compliance internacional e segurança bancária',
-					icon: '💳',
-					link: '/solucoes/gateway-pagamentos'
-				},
-				{
-					title: 'Cyber Security & Pentest',
-					description: 'Auditoria de segurança, testes de penetração e proteção contra ameaças avançadas',
-					icon: '🛡️',
-					link: '/solucoes/pentest'
-				},
-				{
-					title: 'OmniChat Enterprise',
-					description: 'Plataforma omnichannel com IA conversacional e integração CRM completa',
-					icon: '💬',
-					link: '/solucoes/omnichat'
-				},
-				{
-					title: 'Marketing Automation',
-					description: 'Campanhas inteligentes, lead nurturing automatizado e ROI otimizado',
-					icon: '📧',
-					link: '/solucoes/automacao-marketing'
-				},
-				{
-					title: 'Web Intelligence',
-					description: 'Extração e análise de dados em larga escala com IA para insights de mercado',
-					icon: '🕷️',
-					link: '/solucoes/web-scraping'
-				},
-				{
-					title: 'Game Development',
-					description: 'Jogos imersivos, gamificação empresarial e experiências interativas premium',
-					icon: '🎮',
-					link: '/solucoes/jogos-digitais'
-				}
-			],
-			background: 'from-emerald-900 via-blue-900 to-purple-900',
-			icon: '🔧'
+			title: 'IA que trabalha por você',
+			text: 'Assistentes inteligentes, RAG e dashboards que entendem o seu contexto e aceleram decisões do dia a dia.'
+		}
+	];
+
+	const products = [
+		{
+			name: 'EmotiveCare',
+			url: 'https://emotivecare.com.br',
+			tag: 'Saúde emocional · IA',
+			summary:
+				'O segundo cérebro emocional: IA que realmente entende o histórico de cada pessoa e acompanha a evolução do bem-estar — inclusive com profissionais de saúde.',
+			points: ['IA com contexto real', 'Painel para terapeutas', 'Jornada contínua'],
+			accent: 'emotive'
 		},
-		// Slide 5 - Blockchain - DESCRIÇÃO MAIS TÉCNICA
 		{
-			type: 'blockchain',
-			title: 'Blockchain & Web3 Solutions',
-			subtitle: 'Descentralização e economia digital',
-			description: 'Arquiteturas blockchain escaláveis, contratos inteligentes auditados, DApps enterprise, NFT marketplaces, DeFi protocols e infraestrutura Web3 completa.',
-			technologies: [
-				{ name: 'Ethereum & L2', icon: '⚡' },
-				{ name: 'Solidity Expert', icon: '📜' },
-				{ name: 'Web3 & DeFi', icon: '🌐' },
-				{ name: 'IPFS Storage', icon: '🗄️' },
-				{ name: 'NFT Platforms', icon: '🎨' },
-				{ name: 'DeFi Protocols', icon: '💰' },
-				{ name: 'DAO Governance', icon: '🏛️' },
-				{ name: 'Polygon & BSC', icon: '🔺' }
-			],
-			background: 'from-yellow-900 via-orange-900 to-red-900',
-			icon: '⛓️'
+			name: 'Jyhhad',
+			url: 'https://jyhhad.muttercorp.com.br',
+			tag: 'Jogos · VTES',
+			summary:
+				'Methuselah Online: a experiência completa de Vampire: The Eternal Struggle — monte decks, entre no lobby ou treine contra a IA.',
+			points: ['Multiplayer ao vivo', 'Decks por clã', 'Partidas vs IA'],
+			accent: 'jyhhad'
+		}
+	];
+
+	const experiences = [
+		{
+			name: 'Abbiamo',
+			url: 'https://abbiamolog.com/',
+			tag: 'Logística · E-commerce · Atual',
+			report:
+				'Experiência mais recente: atuação na infraestrutura logística pós-compra para o e-commerce brasileiro — orquestração de entregas, cotação inteligente e integração com centenas de transportadoras para transformar SAC em retenção e operação em escala.'
 		},
-		// Slide 6 - Tecnologias - STACK ATUALIZADO
 		{
-			type: 'tech',
-			title: 'Stack Tecnológico Avançado',
-			subtitle: 'Ferramentas de última geração',
-			technologies: [
-				{ name: 'TensorFlow & PyTorch', icon: '🧠' },
-				{ name: 'Power BI & Tableau', icon: '📊' },
-				{ name: 'React & Next.js 14', icon: '⚛️' },
-				{ name: 'Node.js & Deno', icon: '🟢' },
-				{ name: 'Python & FastAPI', icon: '🐍' },
-				{ name: 'Svelte & SvelteKit', icon: '🎯' },
-				{ name: 'Docker & K8s', icon: '🐳' },
-				{ name: 'AWS & Azure & GCP', icon: '☁️' },
-				{ name: 'Unreal & Unity', icon: '🎮' },
-				{ name: 'Solidity & Rust', icon: '⛓️' }
-			],
-			background: 'from-indigo-900 via-purple-900 to-pink-900',
-			icon: '⚡'
+			name: 'Smart Sky',
+			url: 'https://smartsky.com.br',
+			tag: 'Infraestrutura de dados · Geoespacial',
+			report:
+				'Ajudei a transformar captura de realidade e dados de campo em produtos digitais e dashboards acionáveis. Atuação forte na concepção de MVPs para o setor público, incluindo processos de licitação.'
 		},
-		// ... resto dos slides mantidos com as mesmas melhorias
-		// Slide 7 - Parceiros (mantido igual)
 		{
-			type: 'partners',
-			title: 'Parceiros & Empresas Atendidas',
-			subtitle: 'Confiança que constrói sucesso',
-			description: 'Orgulhosamente atendemos empresas líderes em seus setores, construindo soluções que transformam negócios e geram resultados exponenciais.',
-			background: 'from-slate-900 via-purple-900 to-indigo-900',
-			icon: '🤝',
-			partners: [
-				{
-					name: 'Naren Inc',
-					sector: 'AI Technology',
-					description: 'Aceleração empresarial com IA generativa, automações inteligentes e chatbots de última geração',
-					logo: '🤖',
-					category: 'tech',
-					website: 'https://www.naren.solutions/'
-				},
-				{
-					name: 'Grupo PLL',
-					sector: 'Mobile Technology',
-					description: 'Maior BPO mobile da América Latina, liderando em reparo e manutenção de dispositivos',
-					logo: '📱',
-					category: 'mobile',
-					website: 'https://www.grupopll.com.br/'
-				},
-				{
-					name: 'GroupLink One',
-					sector: 'IoT & Smart Cities',
-					description: 'Soluções AIoT revolucionárias para telemetria urbana, smart grids e cidades inteligentes',
-					logo: '🌐',
-					category: 'iot',
-					website: 'https://www.grouplinkone.com/'
-				},
-				{
-					name: 'Asimov Tech',
-					sector: 'Product Innovation',
-					description: 'Product Studio especializado em 18+ produtos SaaS distribuídos em 6 verticais de mercado',
-					logo: '🚀',
-					category: 'saas',
-					website: 'https://asimovtech.systems/'
-				},
-				{
-					name: 'Nagano Tour',
-					sector: 'Travel Technology',
-					description: 'Plataforma digital inovadora para experiências de turismo personalizadas e sustentáveis',
-					logo: '✈️',
-					category: 'tourism',
-					website: 'https://naganotour.com.br/'
-				}
-			],
-			stats: [
-				{ number: '5+', label: 'Parceiros Estratégicos' },
-				{ number: '100%', label: 'Projetos Entregues' },
-				{ number: '24/7', label: 'Suporte Técnico' },
-				{ number: '98%', label: 'Satisfação Cliente' }
-			]
+			name: 'Group Link One',
+			url: 'https://grouplinkone.com/',
+			tag: 'AIoT · Telemetria de utilities',
+			report:
+				'Contribuí em soluções AIoT de telemetria para água, gás e energia — conectando dispositivos, protocolo e dados em tempo real para concessionárias e condomínios operarem com mais precisão.'
 		},
-		// Slide 8 - Founders - DESCRIÇÃO MELHORADA
 		{
-			type: 'founders',
-			title: 'Liderança Visionária',
-			subtitle: 'Maikon Weber - Chief Technology Officer',
-			description: 'Desenvolvedor full-stack sênior, especialista em arquiteturas escaláveis, IA/ML, blockchain e sistemas distribuídos. Liderando a revolução digital empresarial.',
-			background: 'from-gray-900 via-gray-800 to-black',
-			icon: '👨‍💻',
-			founder: {
-				name: 'Maikon Weber',
-				title: 'Founder & CTO',
-				description: 'Arquiteto de software com 8+ anos construindo ecossistemas digitais de alta performance, especialista em IA, blockchain e infraestrutura cloud-native.',
-				image: 'https://avatars.githubusercontent.com/u/45263705?v=4',
-				skills: ['AI/ML Architecture', 'Blockchain Expert', 'Cloud Native', 'DevOps Master', 'UI/UX Design', 'IoT Systems', 'AIoT Solutions']
-			}
+			name: 'Grupo PLL',
+			url: 'https://grupopll.com.br',
+			tag: 'BPO · Telecom e pós-venda',
+			report:
+				'Experiência em sistemas de operação em escala: pós-venda mobile, gestão de prestadores e fluxos críticos para fabricantes e seguradoras — onde cada minuto e cada OS importam.'
 		}
 	];
 
 	onMount(() => {
-		startAutoPlay();
-		initializeAnimations();
-		
-		// Detecta slides com muito conteúdo e ajusta o layout
-		const adjustSliderHeight = () => {
-			const sliderContainer = document.querySelector('.slider-container');
-			const slideContent = document.querySelector('.slide-content');
-			
-			if (slideContent && sliderContainer) {
-				const contentHeight = slideContent.scrollHeight;
-				const viewportHeight = window.innerHeight;
-				
-				if (contentHeight > viewportHeight * 0.8) {
-					sliderContainer.classList.add('has-long-content');
-				} else {
-					sliderContainer.classList.remove('has-long-content');
-				}
-			}
-		};
-		
-		// Ajusta altura quando muda de slide
-		$: {
-			setTimeout(adjustSliderHeight, 100);
-		}
-		
-		// Navegação por teclado
-		const handleKeydown = (e) => {
-			if (e.key === 'ArrowRight' || e.key === ' ') {
-				e.preventDefault();
-				nextSlide();
-			} else if (e.key === 'ArrowLeft') {
-				e.preventDefault();
-				prevSlide();
-			} else if (e.key === 'Escape') {
-				toggleAutoPlay();
-			}
-		};
+		mounted = true;
 
-		window.addEventListener('keydown', handleKeydown);
-		window.addEventListener('resize', adjustSliderHeight);
-		
-		return () => {
-			stopAutoPlay();
-			stopAnimations();
-			window.removeEventListener('keydown', handleKeydown);
-			window.removeEventListener('resize', adjustSliderHeight);
-		};
+		const observer = new IntersectionObserver(
+			(entries) => {
+				for (const entry of entries) {
+					if (!entry.isIntersecting) continue;
+					if (entry.target === servicesSection) servicesVisible = true;
+					if (entry.target === productsSection) productsVisible = true;
+					if (entry.target === experienceSection) experienceVisible = true;
+					if (entry.target === contactSection) contactVisible = true;
+				}
+			},
+			{ threshold: 0.15 }
+		);
+
+		if (servicesSection) observer.observe(servicesSection);
+		if (productsSection) observer.observe(productsSection);
+		if (experienceSection) observer.observe(experienceSection);
+		if (contactSection) observer.observe(contactSection);
+
+		return () => observer.disconnect();
 	});
-
-	function initializeAnimations() {
-		// Inicializar canvas do foguete
-		if (rocketCanvas) {
-			animateRocket();
-		}
-		
-		// Inicializar partículas
-		if (particlesCanvas) {
-			animateParticles();
-		}
-	}
-
-	function stopAnimations() {
-		if (animationFrame) {
-			cancelAnimationFrame(animationFrame);
-		}
-	}
-
-	function animateRocket() {
-		if (!rocketCanvas) return;
-		
-		const ctx = rocketCanvas.getContext('2d');
-		if (!ctx) return;
-		
-		rocketCanvas.width = 300;
-		rocketCanvas.height = window.innerHeight * 0.8;
-		
-		let time = 0;
-		let rocketY = (window.innerHeight * 0.8) + 100;
-		let completed = false;
-		let velocity = 8;
-		let acceleration = 0.15;
-		
-		const trail = [];
-		
-		function draw() {
-			ctx.clearRect(0, 0, rocketCanvas.width, rocketCanvas.height);
-			
-			if (completed) return;
-			
-			velocity += acceleration;
-			rocketY -= velocity;
-			
-			if (rocketY < -200) {
-				completed = true;
-				return;
-			}
-			
-			const x = 150 + Math.sin(time * 0.03) * 30 + Math.cos(time * 0.02) * 15;
-			const rotation = Math.sin(time * 0.04) * 0.2;
-			
-			trail.push({
-				x: x,
-				y: rocketY + 30,
-				opacity: 1,
-				size: 15
-			});
-			
-			if (trail.length > 20) {
-				trail.shift();
-			}
-			
-			// Efeitos visuais melhorados
-			trail.forEach((point, index) => {
-				const alpha = (point.opacity * (index / trail.length)) * 0.8;
-				const size = point.size * (index / trail.length);
-				
-				ctx.fillStyle = `rgba(255, ${100 + index * 8}, 0, ${alpha})`;
-				ctx.beginPath();
-				ctx.arc(point.x, point.y, size, 0, Math.PI * 2);
-				ctx.fill();
-				
-				ctx.fillStyle = `rgba(255, 255, 0, ${alpha * 0.6})`;
-				ctx.beginPath();
-				ctx.arc(point.x, point.y, size * 0.6, 0, Math.PI * 2);
-				ctx.fill();
-				
-				point.opacity -= 0.05;
-			});
-			
-			// Efeito de brilho melhorado
-			const glowSize = 80 + Math.sin(time * 0.1) * 20;
-			const gradient = ctx.createRadialGradient(x, rocketY, 0, x, rocketY, glowSize);
-			gradient.addColorStop(0, 'rgba(255, 255, 255, 0.3)');
-			gradient.addColorStop(0.3, 'rgba(0, 150, 255, 0.2)');
-			gradient.addColorStop(1, 'rgba(0, 150, 255, 0)');
-			
-			ctx.fillStyle = gradient;
-			ctx.beginPath();
-			ctx.arc(x, rocketY, glowSize, 0, Math.PI * 2);
-			ctx.fill();
-			
-			// Foguete com sombra aprimorada
-			ctx.save();
-			ctx.translate(x, rocketY);
-			ctx.rotate(rotation);
-			
-			ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
-			ctx.shadowBlur = 10;
-			ctx.shadowOffsetX = 3;
-			ctx.shadowOffsetY = 3;
-			
-			ctx.font = 'bold 80px serif';
-			ctx.textAlign = 'center';
-			ctx.textBaseline = 'middle';
-			ctx.fillText('🚀', 0, 0);
-			
-			ctx.restore();
-			
-			// Efeitos de propulsão mais intensos
-			const propulsionIntensity = 0.7 + Math.sin(time * 0.3) * 0.3;
-			
-			ctx.fillStyle = `rgba(255, 69, 0, ${propulsionIntensity})`;
-			ctx.beginPath();
-			ctx.arc(x, rocketY + 50, 12 + Math.sin(time * 0.2) * 8, 0, Math.PI * 2);
-			ctx.fill();
-			
-			ctx.fillStyle = `rgba(255, 200, 0, ${propulsionIntensity * 0.8})`;
-			ctx.beginPath();
-			ctx.arc(x - 8, rocketY + 60, 8 + Math.sin(time * 0.25) * 6, 0, Math.PI * 2);
-			ctx.fill();
-			
-			ctx.fillStyle = `rgba(255, 255, 255, ${propulsionIntensity * 0.6})`;
-			ctx.beginPath();
-			ctx.arc(x + 8, rocketY + 60, 6 + Math.sin(time * 0.18) * 4, 0, Math.PI * 2);
-			ctx.fill();
-			
-			// Partículas de combustão
-			for (let i = 0; i < 8; i++) {
-				const particleX = x + (Math.random() - 0.5) * 30;
-				const particleY = rocketY + 70 + Math.random() * 40;
-				const particleSize = Math.random() * 4 + 2;
-				const particleOpacity = Math.random() * 0.7 + 0.3;
-				
-				ctx.fillStyle = `rgba(255, ${150 + Math.random() * 105}, 0, ${particleOpacity})`;
-				ctx.beginPath();
-				ctx.arc(particleX, particleY, particleSize, 0, Math.PI * 2);
-				ctx.fill();
-			}
-			
-			time++;
-			animationFrame = requestAnimationFrame(draw);
-		}
-		
-		draw();
-	}
-
-	function animateParticles() {
-		if (!particlesCanvas) return;
-		
-		const ctx = particlesCanvas.getContext('2d');
-		if (!ctx) return;
-		
-		particlesCanvas.width = window.innerWidth;
-		particlesCanvas.height = window.innerHeight * 0.8;
-		
-		const particles = [];
-		const starsParticles = [];
-		
-		// Criar partículas flutuantes
-		for (let i = 0; i < 80; i++) {
-			particles.push({
-				x: Math.random() * particlesCanvas.width,
-				y: Math.random() * particlesCanvas.height,
-				size: Math.random() * 3 + 1,
-				speedX: (Math.random() - 0.5) * 2,
-				speedY: (Math.random() - 0.5) * 2,
-				opacity: Math.random() * 0.5 + 0.2,
-				pulseSpeed: Math.random() * 0.05 + 0.02
-			});
-		}
-		
-		// Criar estrelas de fundo
-		for (let i = 0; i < 150; i++) {
-			starsParticles.push({
-				x: Math.random() * particlesCanvas.width,
-				y: Math.random() * particlesCanvas.height,
-				size: Math.random() * 2 + 0.5,
-				twinkleSpeed: Math.random() * 0.03 + 0.01,
-				opacity: Math.random() * 0.8 + 0.2,
-				baseOpacity: Math.random() * 0.4 + 0.1
-			});
-		}
-		
-		let time = 0;
-		
-		function drawParticles() {
-			ctx.clearRect(0, 0, particlesCanvas.width, particlesCanvas.height);
-			
-			starsParticles.forEach(star => {
-				star.opacity = star.baseOpacity + Math.sin(time * star.twinkleSpeed) * 0.3;
-				
-				ctx.fillStyle = `rgba(255, 255, 255, ${star.opacity})`;
-				ctx.beginPath();
-				ctx.arc(star.x, star.y, star.size, 0, Math.PI * 2);
-				ctx.fill();
-				
-				if (Math.random() < 0.005) {
-					ctx.fillStyle = `rgba(255, 255, 255, 0.8)`;
-					ctx.beginPath();
-					ctx.arc(star.x, star.y, star.size * 2, 0, Math.PI * 2);
-					ctx.fill();
-				}
-			});
-			
-			particles.forEach(particle => {
-				particle.opacity = 0.3 + Math.sin(time * particle.pulseSpeed) * 0.2;
-				
-				const gradient = ctx.createRadialGradient(
-					particle.x, particle.y, 0,
-					particle.x, particle.y, particle.size * 3
-				);
-				gradient.addColorStop(0, `rgba(100, 200, 255, ${particle.opacity})`);
-				gradient.addColorStop(0.5, `rgba(150, 150, 255, ${particle.opacity * 0.5})`);
-				gradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
-				
-				ctx.fillStyle = gradient;
-				ctx.beginPath();
-				ctx.arc(particle.x, particle.y, particle.size * 3, 0, Math.PI * 2);
-				ctx.fill();
-				
-				ctx.fillStyle = `rgba(255, 255, 255, ${particle.opacity * 0.8})`;
-				ctx.beginPath();
-				ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-				ctx.fill();
-				
-				particle.x += particle.speedX;
-				particle.y += particle.speedY;
-				
-				particle.y += Math.sin(time * 0.01 + particle.x * 0.001) * 0.5;
-				
-				if (particle.x < -50 || particle.x > particlesCanvas.width + 50) {
-					particle.x = Math.random() * particlesCanvas.width;
-				}
-				if (particle.y < -50 || particle.y > particlesCanvas.height + 50) {
-					particle.y = Math.random() * particlesCanvas.height;
-				}
-			});
-			
-			if (Math.random() < 0.003) {
-				const meteor = {
-					x: Math.random() * particlesCanvas.width,
-					y: -50,
-					trail: []
-				};
-				
-				for (let i = 0; i < 15; i++) {
-					const trailX = meteor.x + i * 2;
-					const trailY = meteor.y - i * 3;
-					const alpha = (15 - i) / 15;
-					
-					ctx.fillStyle = `rgba(255, 200, 100, ${alpha * 0.6})`;
-					ctx.beginPath();
-					ctx.arc(trailX, trailY, (15 - i) * 0.3, 0, Math.PI * 2);
-					ctx.fill();
-				}
-			}
-			
-			time++;
-			animationFrame = requestAnimationFrame(drawParticles);
-		}
-		
-		drawParticles();
-	}
-
-	function startAutoPlay() {
-		stopAutoPlay();
-		autoPlayInterval = setInterval(() => {
-			nextSlide();
-		}, 12000);
-	}
-
-	function stopAutoPlay() {
-		if (autoPlayInterval) {
-			clearInterval(autoPlayInterval);
-		}
-	}
-
-	function toggleAutoPlay() {
-		if (isAutoPlaying) {
-			stopAutoPlay();
-			isAutoPlaying = false;
-		} else {
-			startAutoPlay();
-			isAutoPlaying = true;
-		}
-	}
-
-	function nextSlide() {
-		if (currentSlide < slides.length - 1) {
-			currentSlide++;
-		} else {
-			currentSlide = 0;
-		}
-	}
-
-	function prevSlide() {
-		if (currentSlide > 0) {
-			currentSlide--;
-		}
-	}
-
-	function goToSlide(index) {
-		currentSlide = index;
-	}
-
-	function handleSlideClick(event) {
-		if (event.target.closest('.clickable-link') || event.target.closest('.contact-form')) {
-			return;
-		}
-		
-		nextSlide();
-	}
-
-	function navigateToLink(link, event) {
-		event.stopPropagation();
-		if (link.startsWith('http') || link.startsWith('mailto:')) {
-			window.open(link, '_blank');
-		} else {
-			goto(link);
-		}
-	}
-
-	function navigateToPartner(partner, event) {
-		event.stopPropagation();
-		if (partner.website) {
-			window.open(partner.website, '_blank');
-		}
-	}
-
-	async function handleFormSubmit() {
-		if (!formData.name || !formData.email || !formData.message) {
-			submitMessage = 'Por favor, preencha todos os campos obrigatórios.';
-			return;
-		}
-
-		isSubmitting = true;
-		submitMessage = '';
-
-		try {
-			const response = await fetch('https://dev.muttercorp.com.br/touch', {
-				method: 'POST',
-				headers: {
-					'Content-Type': 'application/json'
-				},
-				body: JSON.stringify({
-					name: formData.name,
-					email: formData.email,
-					company: formData.company,
-					message: formData.message,
-					service: formData.service
-				})
-			});
-
-			if (response.ok) {
-				submitMessage = 'Mensagem enviada com sucesso! Entraremos em contato em breve.';
-				formData = {
-					name: '',
-					email: '',
-					company: '',
-					message: '',
-					service: ''
-				};
-			} else {
-				submitMessage = 'Erro ao enviar mensagem. Tente novamente.';
-			}
-		} catch (error) {
-			console.error('Erro ao enviar a mensagem:', error);
-			submitMessage = 'Erro de rede. Verifique sua conexão e tente novamente.';
-		} finally {
-			isSubmitting = false;
-		}
-	}
-
-	const currentSlideData = $derived(slides[currentSlide]);
 </script>
 
 <svelte:head>
-	<title>MutterCorp - Soluções Empresariais em Tecnologia e IA</title>
+	<title>MutterCorp — Software que gera resultado</title>
 	<meta
 		name="description"
-		content="Transforme seu negócio com nossas soluções em ML, IA, CRM e desenvolvimento de aplicações"
+		content="Tire sua ideia do papel com a MutterCorp. Software sob medida, MVPs e demandas com prazo e orçamento claros. Experiência atual na Abbiamo."
 	/>
-	<meta name="author" content="MutterCorp" />
-	
-	<!-- Fontes modernas e elegantes -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Playfair+Display:wght@400;500;600;700;800;900&family=DM+Sans:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
-	
-	<!-- D3.js e Three.js -->
-	<script src="https://d3js.org/d3.v7.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </svelte:head>
 
-<!-- Slider Container -->
-<div class="slider-container" onclick={handleSlideClick}>
-	<!-- Background -->
-	<div class="slide-background bg-gradient-to-br {currentSlideData.background}"></div>
-	
-	<!-- Canvas para efeitos 3D -->
-	<canvas bind:this={particlesCanvas} class="particles-canvas"></canvas>
-	
-	<!-- Canvas do foguete voador (apenas no primeiro slide) -->
-	{#if currentSlide === 0}
-		<canvas bind:this={rocketCanvas} class="rocket-canvas"></canvas>
-	{/if}
-	
-	<!-- Slide Content -->
-	<div class="slide-content">
-		{#key currentSlide}
-			<div class="slide-inner" in:fly={{ y: 50, duration: 800, easing: quintOut }} out:fade={{ duration: 400 }}>
-				
-				<!-- Hero Slide -->
-				{#if currentSlideData.type === 'hero'}
-					<div class="hero-slide">
-						<div class="hero-icon" in:scale={{ duration: 1000, easing: elasticOut }}>{currentSlideData.icon}</div>
-						<h1 class="hero-title" in:fly={{ y: 30, duration: 1000, delay: 200 }}>{currentSlideData.title}</h1>
-						<h2 class="hero-subtitle" in:fly={{ y: 30, duration: 1000, delay: 400 }}>{currentSlideData.subtitle}</h2>
-						<p class="hero-description" in:fly={{ y: 30, duration: 1000, delay: 600 }}>{currentSlideData.description}</p>
-					</div>
-				{/if}
+<div class="page">
+	<div class="atmosphere" aria-hidden="true">
+		<div class="orb orb-a"></div>
+		<div class="orb orb-b"></div>
+		<div class="grid-fade"></div>
+	</div>
 
-				<!-- About Slide -->
-				{#if currentSlideData.type === 'about'}
-					<div class="about-slide">
-						<div class="slide-icon" in:scale={{ duration: 800, easing: elasticOut }}>{currentSlideData.icon}</div>
-						<h1 class="slide-title" in:fly={{ y: 30, duration: 800, delay: 200 }}>{currentSlideData.title}</h1>
-						<h2 class="slide-subtitle" in:fly={{ y: 30, duration: 800, delay: 400 }}>{currentSlideData.subtitle}</h2>
-						<p class="slide-description" in:fly={{ y: 30, duration: 800, delay: 600 }}>{currentSlideData.description}</p>
-					</div>
-				{/if}
-
-				<!-- Apps Slide -->
-				{#if currentSlideData.type === 'apps'}
-					<div class="apps-slide">
-						<div class="slide-header">
-							<div class="slide-icon" in:scale={{ duration: 800, easing: elasticOut }}>{currentSlideData.icon}</div>
-							<h1 class="slide-title" in:fly={{ y: 30, duration: 800, delay: 200 }}>{currentSlideData.title}</h1>
-							<h2 class="slide-subtitle" in:fly={{ y: 30, duration: 800, delay: 400 }}>{currentSlideData.subtitle}</h2>
-						</div>
-						<div class="apps-grid">
-							{#each currentSlideData.apps as app, i}
-								<div 
-									class="app-card clickable-link enhanced-card" 
-									in:fly={{ y: 30, duration: 600, delay: i * 100, easing: quintOut }}
-									onclick={(e) => navigateToLink(app.link, e)}
-								>
-									<div class="app-icon app-icon-enhanced">{app.icon}</div>
-									<h3 class="app-title">{app.title}</h3>
-									<p class="app-description">{app.description}</p>
-									<div class="app-gradient bg-gradient-to-br {app.color}"></div>
-									<div class="card-glow"></div>
-								</div>
-							{/each}
-						</div>
-					</div>
-				{/if}
-
-				<!-- Services Slide -->
-				{#if currentSlideData.type === 'services'}
-					<div class="services-slide">
-						<div class="slide-header">
-							<div class="slide-icon" in:scale={{ duration: 800, easing: elasticOut }}>{currentSlideData.icon}</div>
-							<h1 class="slide-title" in:fly={{ y: 30, duration: 800, delay: 200 }}>{currentSlideData.title}</h1>
-							<h2 class="slide-subtitle" in:fly={{ y: 30, duration: 800, delay: 400 }}>{currentSlideData.subtitle}</h2>
-						</div>
-						<div class="services-grid">
-							{#each currentSlideData.services as service, i}
-								<div 
-									class="service-card clickable-link enhanced-card" 
-									in:fly={{ y: 30, duration: 600, delay: i * 80, easing: quintOut }}
-									onclick={(e) => navigateToLink(service.link, e)}
-								>
-									<div class="service-icon service-icon-enhanced">{service.icon}</div>
-									<h3 class="service-title">{service.title}</h3>
-									<p class="service-description">{service.description}</p>
-									<div class="service-arrow">→</div>
-									<div class="card-glow"></div>
-								</div>
-							{/each}
-						</div>
-					</div>
-				{/if}
-
-				<!-- Blockchain Slide -->
-				{#if currentSlideData.type === 'blockchain'}
-					<div class="blockchain-slide">
-						<div class="slide-header">
-							<div class="slide-icon" in:scale={{ duration: 800, easing: elasticOut }}>{currentSlideData.icon}</div>
-							<h1 class="slide-title" in:fly={{ y: 30, duration: 800, delay: 200 }}>{currentSlideData.title}</h1>
-							<h2 class="slide-subtitle" in:fly={{ y: 30, duration: 800, delay: 400 }}>{currentSlideData.subtitle}</h2>
-							<p class="slide-description" in:fly={{ y: 30, duration: 800, delay: 600 }}>{currentSlideData.description}</p>
-						</div>
-						<div class="blockchain-grid">
-							{#each currentSlideData.technologies as tech, i}
-								<div class="blockchain-item enhanced-card" in:fly={{ scale: 0.8, duration: 600, delay: i * 80, easing: quintOut }}>
-									<div class="blockchain-icon blockchain-icon-enhanced">{tech.icon}</div>
-									<span class="blockchain-name">{tech.name}</span>
-									<div class="card-glow"></div>
-								</div>
-							{/each}
-						</div>
-					</div>
-				{/if}
-
-				<!-- Tech Slide -->
-				{#if currentSlideData.type === 'tech'}
-					<div class="tech-slide">
-						<div class="slide-header">
-							<div class="slide-icon" in:scale={{ duration: 800, easing: elasticOut }}>{currentSlideData.icon}</div>
-							<h1 class="slide-title" in:fly={{ y: 30, duration: 800, delay: 200 }}>{currentSlideData.title}</h1>
-							<h2 class="slide-subtitle" in:fly={{ y: 30, duration: 800, delay: 400 }}>{currentSlideData.subtitle}</h2>
-						</div>
-						<div class="tech-grid">
-							{#each currentSlideData.technologies as tech, i}
-								<div class="tech-item enhanced-card" in:fly={{ scale: 0.8, duration: 600, delay: i * 50, easing: quintOut }}>
-									<div class="tech-icon tech-icon-enhanced">{tech.icon}</div>
-									<span class="tech-name">{tech.name}</span>
-									<div class="card-glow"></div>
-								</div>
-							{/each}
-						</div>
-					</div>
-				{/if}
-
-				<!-- Partners Slide -->
-				{#if currentSlideData.type === 'partners'}
-					<div class="partners-slide">
-						<div class="slide-header">
-							<div class="slide-icon" in:scale={{ duration: 800, easing: elasticOut }}>{currentSlideData.icon}</div>
-							<h1 class="slide-title" in:fly={{ y: 30, duration: 800, delay: 200 }}>{currentSlideData.title}</h1>
-							<h2 class="slide-subtitle" in:fly={{ y: 30, duration: 800, delay: 400 }}>{currentSlideData.subtitle}</h2>
-							<p class="slide-description" in:fly={{ y: 30, duration: 800, delay: 600 }}>{currentSlideData.description}</p>
-						</div>
-						
-						<!-- Statistics -->
-						<div class="partners-stats">
-							{#each currentSlideData.stats as stat, i}
-								<div class="stat-item enhanced-card" in:fly={{ y: 20, duration: 600, delay: i * 100, easing: quintOut }}>
-									<div class="stat-number">{stat.number}</div>
-									<div class="stat-label">{stat.label}</div>
-									<div class="card-glow"></div>
-								</div>
-							{/each}
-						</div>
-						
-						<!-- Partners Grid -->
-						<div class="partners-grid">
-							{#each currentSlideData.partners as partner, i}
-								<div 
-									class="partner-card clickable-link enhanced-card" 
-									in:fly={{ y: 30, duration: 600, delay: i * 80, easing: quintOut }}
-									onclick={(e) => navigateToPartner(partner, e)}
-								>
-									<div class="partner-logo partner-logo-enhanced">{partner.logo}</div>
-									<div class="partner-info">
-										<h3 class="partner-name">{partner.name}</h3>
-										<div class="partner-sector">{partner.sector}</div>
-										<p class="partner-description">{partner.description}</p>
-									</div>
-									<div class="partner-category {partner.category}"></div>
-									<div class="card-glow"></div>
-								</div>
-							{/each}
-						</div>
-					</div>
-				{/if}
-
-				<!-- Founders Slide -->
-				{#if currentSlideData.type === 'founders'}
-					<div class="founders-slide">
-						<div class="founder-content">
-							<div class="founder-info">
-								<div class="founder-avatar" in:scale={{ duration: 1000, easing: elasticOut }}>
-									<img src={currentSlideData.founder.image} alt={currentSlideData.founder.name} />
-									<div class="avatar-glow"></div>
-								</div>
-								<div class="founder-details">
-									<h1 class="founder-name" in:fly={{ y: 30, duration: 800, delay: 200 }}>{currentSlideData.founder.name}</h1>
-									<h2 class="founder-title" in:fly={{ y: 30, duration: 800, delay: 400 }}>{currentSlideData.founder.title}</h2>
-									<p class="founder-description" in:fly={{ y: 30, duration: 800, delay: 600 }}>{currentSlideData.founder.description}</p>
-									<div class="founder-skills" in:fly={{ y: 30, duration: 800, delay: 800 }}>
-										{#each currentSlideData.founder.skills as skill, i}
-											<span class="skill-tag" in:scale={{ duration: 400, delay: i * 100 }}>{skill}</span>
-										{/each}
-									</div>
-									<a href="/tree" class="founder-link clickable-link" in:fly={{ y: 30, duration: 800, delay: 1000 }}>Ver Portfolio Completo →</a>
-								</div>
-							</div>
-							
-							<!-- Contact Form -->
-							<div class="contact-form clickable-link enhanced-card" in:fly={{ x: 50, duration: 800, delay: 400 }}>
-								<h3>Entre em Contato</h3>
-								<form onsubmit={(e) => { e.preventDefault(); handleFormSubmit(); }}>
-									<div class="form-row">
-										<input 
-											type="text" 
-											placeholder="Nome *"
-											bind:value={formData.name}
-											required
-										/>
-										<input 
-											type="email" 
-											placeholder="Email *"
-											bind:value={formData.email}
-											required
-										/>
-									</div>
-									<div class="form-row">
-										<input 
-											type="text" 
-											placeholder="Empresa (opcional)"
-											bind:value={formData.company}
-										/>
-										<select bind:value={formData.service}>
-											<option value="">Selecione um serviço</option>
-											<option value="ml-ia">Machine Learning & IA</option>
-											<option value="blockchain">Blockchain & Smart Contracts</option>
-											<option value="web-development">Desenvolvimento Web</option>
-											<option value="mobile-app">App Mobile</option>
-											<option value="crm">CRM Empresarial</option>
-											<option value="automation">Automação</option>
-											<option value="other">Outro</option>
-										</select>
-									</div>
-									<textarea 
-										placeholder="Descreva seu projeto *"
-										bind:value={formData.message}
-										rows="4"
-										required
-									></textarea>
-									<button type="submit" disabled={isSubmitting} class="form-submit-btn">
-										{isSubmitting ? 'Enviando...' : 'Enviar Mensagem'}
-									</button>
-									{#if submitMessage}
-										<div class="submit-message" class:success={submitMessage.includes('sucesso')} class:error={!submitMessage.includes('sucesso')}>
-											{submitMessage}
-										</div>
-									{/if}
-								</form>
-								<div class="card-glow"></div>
-							</div>
-						</div>
-					</div>
-				{/if}
-
+	{#if mounted}
+		<section class="hero">
+			<div class="hero-inner">
+				<p class="brand" in:fly={{ y: 28, duration: 700, easing: quintOut }}>MutterCorp</p>
+				<h1 in:fly={{ y: 36, duration: 800, delay: 80, easing: quintOut }}>
+					Sua ideia merece virar software de verdade
+				</h1>
+				<p class="lede" in:fly={{ y: 28, duration: 750, delay: 160, easing: quintOut }}>
+					Desenvolvimento sob medida para quem precisa de resultado: produto no ar, MVP que
+					convence e demandas resolvidas com clareza.
+				</p>
+				<div class="cta-row" in:fly={{ y: 24, duration: 700, delay: 240, easing: quintOut }}>
+					<a href={whatsappUrl} class="cta-primary" target="_blank" rel="noopener noreferrer"
+						>Quero um orçamento</a
+					>
+					<a href="#servicos" class="cta-ghost">Ver como funciona</a>
+				</div>
 			</div>
-		{/key}
-	</div>
+		</section>
+	{/if}
 
-	<!-- Navigation -->
-	<div class="slide-navigation">
-		<!-- Progress Bar -->
-		<div class="progress-bar">
-			<div 
-				class="progress-fill" 
-				style="width: {((currentSlide + 1) / slides.length) * 100}%"
-			></div>
-		</div>
-		
-		<!-- Slide Indicators -->
-		<div class="slide-indicators">
-			{#each slides as _, i}
-				<button 
-					class="indicator {i === currentSlide ? 'active' : ''}"
-					onclick={() => goToSlide(i)}
-					aria-label="Ir para slide {i + 1}"
+	<section id="servicos" class="section services" bind:this={servicesSection}>
+		{#if servicesVisible}
+			<header class="section-head" in:fade={{ duration: 500 }}>
+				<p class="eyebrow">Serviços</p>
+				<h2>Do briefing à entrega — sem surpresa no meio do caminho</h2>
+				<p class="section-copy">
+					Seja um sistema completo ou uma demanda pontual, o processo é o mesmo: entender o
+					problema, definir o que importa e entregar o que gera valor — no prazo combinado.
+				</p>
+			</header>
+
+			<div class="service-grid">
+				{#each services as service, i}
+					<article
+						class="service-card"
+						in:fly={{ y: 36, duration: 600, delay: 70 + i * 90, easing: cubicOut }}
+					>
+						<h3>{service.title}</h3>
+						<p>{service.text}</p>
+					</article>
+				{/each}
+			</div>
+
+			<p class="offer-note" in:fade={{ duration: 450, delay: 280 }}>
+				Você conta o desafio. Eu devolvo uma proposta objetiva: o que será feito, em quanto tempo e
+				quanto investe. Simples assim.
+			</p>
+
+			<div class="cta-row offer-cta" in:fly={{ y: 20, duration: 500, delay: 320, easing: quintOut }}>
+				<a href={whatsappUrl} class="cta-primary" target="_blank" rel="noopener noreferrer">
+					Falar no WhatsApp agora
+				</a>
+				<a
+					href="mailto:muttercorp@gmail.com?subject=Quero%20orçamento%20-%20MutterCorp"
+					class="cta-ghost"
 				>
-					<span class="indicator-dot"></span>
-				</button>
-			{/each}
-		</div>
+					Preferir e-mail
+				</a>
+			</div>
+		{/if}
+	</section>
 
-		<!-- Controls -->
-		<div class="slide-controls">
-			<button class="control-btn" onclick={prevSlide} aria-label="Slide anterior">
-				<span>←</span>
-			</button>
-			<button class="control-btn play-pause" onclick={toggleAutoPlay} aria-label="Play/Pause">
-				<span>{isAutoPlaying ? '⏸️' : '▶️'}</span>
-			</button>
-			<button class="control-btn" onclick={nextSlide} aria-label="Próximo slide">
-				<span>→</span>
-			</button>
-		</div>
-	</div>
+	<section id="produtos" class="section products" bind:this={productsSection}>
+		{#if productsVisible}
+			<header class="section-head" in:fade={{ duration: 500 }}>
+				<p class="eyebrow">Produtos</p>
+				<h2>Prova no ar — produtos que já existem e funcionam</h2>
+				<p class="section-copy">
+					Não é só portfólio em PDF. São produtos vivos que você pode abrir, testar e sentir o
+					nível de entrega.
+				</p>
+			</header>
 
-	<!-- Click hint -->
-	<div class="click-hint">
-		<span>Clique para avançar ou use as setas ←→</span>
-	</div>
+			<div class="product-grid">
+				{#each products as product, i}
+					<article
+						class="product-card product-{product.accent}"
+						in:fly={{ y: 40, duration: 650, delay: 80 + i * 100, easing: cubicOut }}
+					>
+						<span class="tag">{product.tag}</span>
+						<h3>{product.name}</h3>
+						<p class="summary">{product.summary}</p>
+						<ul class="chip-row">
+							{#each product.points as point, j}
+								<li in:scale={{ start: 0.9, duration: 350, delay: 220 + i * 80 + j * 50 }}>
+									{point}
+								</li>
+							{/each}
+						</ul>
+						<a
+							href={product.url}
+							class="product-link"
+							target="_blank"
+							rel="noopener noreferrer"
+						>
+							Conhecer {product.name}
+							<span aria-hidden="true">→</span>
+						</a>
+					</article>
+				{/each}
+			</div>
+		{/if}
+	</section>
+
+	<section id="experiencias" class="section experiences" bind:this={experienceSection}>
+		{#if experienceVisible}
+			<header class="section-head" in:fade={{ duration: 500 }}>
+				<p class="eyebrow">Experiências</p>
+				<h2>Quem já confiou — e o que isso significa para você</h2>
+				<p class="section-copy">
+					Passagens por empresas reais, com problemas reais. Essa bagagem vira vantagem no seu
+					projeto: menos tentativa e erro, mais entrega certeira.
+				</p>
+			</header>
+
+			<div class="experience-list">
+				{#each experiences as exp, i}
+					<article
+						class="experience-item"
+						in:fly={{ y: 32, duration: 600, delay: 90 + i * 110, easing: cubicOut }}
+					>
+						<div class="experience-top">
+							<div>
+								<span class="tag">{exp.tag}</span>
+								<h3>{exp.name}</h3>
+							</div>
+							<a href={exp.url} target="_blank" rel="noopener noreferrer" class="exp-link">
+								Visitar
+								<span aria-hidden="true">↗</span>
+							</a>
+						</div>
+						<p class="report">{exp.report}</p>
+					</article>
+				{/each}
+			</div>
+		{/if}
+	</section>
+
+	<section id="contato" class="section contact" bind:this={contactSection}>
+		{#if contactVisible}
+			<div class="contact-panel" in:fly={{ y: 36, duration: 700, easing: quintOut }}>
+				<p class="eyebrow">Contato</p>
+				<h2>Vamos tirar isso do papel?</h2>
+				<p class="section-copy">
+					Mande uma mensagem com o que você precisa. Em pouco tempo você recebe um retorno claro
+					sobre viabilidade, prazo e investimento — sem compromisso.
+				</p>
+
+				<div class="contact-actions" in:fade={{ duration: 450, delay: 150 }}>
+					<a href={whatsappUrl} class="cta-primary" target="_blank" rel="noopener noreferrer">
+						WhatsApp — (11) 91500-9625
+					</a>
+					<a href="mailto:muttercorp@gmail.com" class="cta-ghost">muttercorp@gmail.com</a>
+				</div>
+
+				<div class="socials" in:fade={{ duration: 450, delay: 250 }}>
+					<a href="https://github.com/maikonweber" target="_blank" rel="noopener noreferrer"
+						>GitHub</a
+					>
+					<a
+						href="https://www.linkedin.com/in/maikonwebercorp/"
+						target="_blank"
+						rel="noopener noreferrer">LinkedIn</a
+					>
+					<a href="https://x.com/MaikonWeber1" target="_blank" rel="noopener noreferrer">X</a>
+				</div>
+			</div>
+		{/if}
+	</section>
 </div>
 
 <style>
-	/* === FONTES MODERNAS E HIERARQUIA TIPOGRÁFICA === */
-	:root {
-		--font-primary: 'DM Sans', 'Inter', system-ui, sans-serif;
-		--font-display: 'Playfair Display', Georgia, serif;
-		--font-mono: 'JetBrains Mono', 'Fira Code', monospace;
-		
-		/* Escalas tipográficas responsivas */
-		--text-xs: clamp(0.75rem, 0.7rem + 0.25vw, 0.875rem);
-		--text-sm: clamp(0.875rem, 0.8rem + 0.375vw, 1rem);
-		--text-base: clamp(1rem, 0.95rem + 0.5vw, 1.125rem);
-		--text-lg: clamp(1.125rem, 1.05rem + 0.75vw, 1.5rem);
-		--text-xl: clamp(1.25rem, 1.1rem + 1vw, 1.875rem);
-		--text-2xl: clamp(1.5rem, 1.3rem + 1.5vw, 2.25rem);
-		--text-3xl: clamp(1.875rem, 1.6rem + 2vw, 3rem);
-		--text-4xl: clamp(2.25rem, 1.9rem + 3vw, 4rem);
-		--text-5xl: clamp(3rem, 2.5rem + 4vw, 6rem);
-	}
-
-	/* Container principal - altura dinâmica melhorada */
-	.slider-container {
+	.page {
+		--ink: var(--site-bg);
+		--paper: var(--site-fg);
+		--muted: var(--site-muted);
+		--accent: var(--site-accent);
+		--accent-soft: var(--site-accent-soft);
+		--emotive: #2a7a6a;
+		--jyhhad: #8b3a4a;
+		--surface: var(--site-surface);
+		--line: var(--site-line);
 		position: relative;
-		width: 100vw;
-		min-height: calc(100vh - 80px);
-		padding-bottom: 120px; /* Espaço para footer */
-		overflow-x: hidden;
-		overflow-y: auto;
-		cursor: pointer;
-		user-select: none;
-		font-family: var(--font-primary);
-		background: radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.95) 100%);
-		
-		/* Smooth scrolling melhorado */
-		scroll-behavior: smooth;
-		-webkit-overflow-scrolling: touch;
+		isolation: isolate;
+		overflow: clip;
+		background: var(--ink);
+		color: var(--paper);
+		font-family: 'Manrope', system-ui, sans-serif;
+		min-height: 100%;
+		transition:
+			background 0.3s ease,
+			color 0.3s ease;
 	}
 
-	/* Canvas layers - ajustados para mobile */
-	.particles-canvas,
-	.rocket-canvas {
-		position: absolute;
-		top: 0;
-		left: 0;
+	.atmosphere {
 		pointer-events: none;
-		z-index: 1;
-		opacity: 0.8;
-	}
-
-	.rocket-canvas {
-		z-index: 3;
-		top: 0;
-		left: 5%;
-		width: 300px;
-		height: calc(100vh - 80px);
-	}
-
-	/* Background do slide */
-	.slide-background {
 		position: absolute;
 		inset: 0;
-		transition: all 1s ease-in-out;
-		background-attachment: fixed;
-	}
-
-	/* Conteúdo do slide - responsivo melhorado */
-	.slide-content {
-		position: relative;
-		z-index: 2;
-		min-height: calc(100vh - 80px);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding: clamp(1rem, 3vw, 2rem);
-		padding-bottom: clamp(2rem, 5vw, 4rem);
-	}
-
-	.slide-inner {
-		text-align: center;
-		color: white;
-		max-width: 1200px;
-		width: 100%;
-		min-height: auto;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		gap: clamp(1rem, 3vw, 2rem);
-	}
-
-	/* === HERO SLIDE - TIPOGRAFIA PREMIUM === */
-	.hero-slide {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: clamp(1.5rem, 4vw, 2.5rem);
-	}
-
-	.hero-icon {
-		font-size: clamp(4rem, 12vw, 8rem);
-		animation: float 3s ease-in-out infinite, pulse 2s ease-in-out infinite alternate;
-		filter: drop-shadow(0 0 30px rgba(255, 255, 255, 0.3));
-	}
-
-	.hero-title {
-		font-family: var(--font-display);
-		font-size: var(--text-5xl);
-		font-weight: 900;
-		margin: 0;
-		background: linear-gradient(45deg, #ffffff, #00d4ff, #ff006e, #8338ec, #ffbe0b);
-		background-size: 400% 400%;
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		letter-spacing: -0.02em;
-		animation: gradientShift 4s ease-in-out infinite, textGlow 2s ease-in-out infinite alternate;
-		text-shadow: 0 0 30px rgba(255, 255, 255, 0.3);
-		line-height: 0.9;
-	}
-
-	.hero-subtitle {
-		font-family: var(--font-primary);
-		font-size: var(--text-2xl);
-		font-weight: 600;
-		margin: 0;
-		color: rgba(255, 255, 255, 0.9);
-		letter-spacing: 0.025em;
-	}
-
-	.hero-description {
-		font-family: var(--font-primary);
-		font-size: var(--text-lg);
-		color: rgba(255, 255, 255, 0.8);
-		max-width: 700px;
-		line-height: 1.6;
-		margin: 0;
-		font-weight: 400;
-	}
-
-	/* === SLIDES GERAIS - TIPOGRAFIA MELHORADA === */
-	.slide-icon {
-		font-size: clamp(2.5rem, 8vw, 4rem);
-		margin-bottom: clamp(0.5rem, 2vw, 1rem);
-		animation: bounce 2s ease-in-out infinite;
-		filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.2));
-	}
-
-	.slide-title {
-		font-family: var(--font-display);
-		font-size: var(--text-4xl);
-		font-weight: 800;
-		margin: 0 0 clamp(0.5rem, 2vw, 1rem) 0;
-		color: white;
-		line-height: 1.1;
-		letter-spacing: -0.01em;
-	}
-
-	.slide-subtitle {
-		font-family: var(--font-primary);
-		font-size: var(--text-xl);
-		font-weight: 500;
-		margin: 0 0 clamp(1rem, 3vw, 2rem) 0;
-		color: rgba(255, 255, 255, 0.9);
-		letter-spacing: 0.01em;
-	}
-
-	.slide-description {
-		font-family: var(--font-primary);
-		font-size: var(--text-base);
-		color: rgba(255, 255, 255, 0.8);
-		max-width: 800px;
-		margin: 0 auto clamp(1rem, 3vw, 2rem);
-		line-height: 1.6;
-		font-weight: 400;
-	}
-
-	.slide-header {
-		margin-bottom: clamp(2rem, 5vw, 3rem);
-	}
-
-	/* === ENHANCED CARDS - SISTEMA DE DESIGN MELHORADO === */
-	.enhanced-card {
-		position: relative;
-		overflow: hidden;
-		backdrop-filter: blur(20px);
-		transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	.enhanced-card::before {
-		content: '';
-		position: absolute;
-		top: 0;
-		left: -100%;
-		width: 100%;
-		height: 100%;
-		background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
-		transition: left 0.6s;
-	}
-
-	.enhanced-card:hover::before {
-		left: 100%;
-	}
-
-	.card-glow {
-		position: absolute;
-		inset: -2px;
-		background: linear-gradient(45deg, #60a5fa, #a78bfa, #f472b6, #fbbf24);
-		border-radius: inherit;
-		opacity: 0;
-		transition: opacity 0.3s ease;
 		z-index: -1;
-		filter: blur(8px);
+		overflow: hidden;
 	}
 
-	.enhanced-card:hover .card-glow {
-		opacity: 0.3;
-	}
-
-	/* === APPS GRID - LAYOUT RESPONSIVO PREMIUM === */
-	.apps-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
-		gap: clamp(1rem, 3vw, 2rem);
-		max-width: 1000px;
-		margin: 0 auto;
-	}
-
-	.app-card {
-		background: rgba(255, 255, 255, 0.05);
-		padding: clamp(1.5rem, 4vw, 2rem);
-		border-radius: 1.5rem;
-		position: relative;
-		cursor: pointer;
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-		min-height: 200px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-
-	.app-card:hover {
-		transform: translateY(-10px) scale(1.02);
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
-		border-color: rgba(255, 255, 255, 0.3);
-		background: rgba(255, 255, 255, 0.08);
-	}
-
-	.app-gradient {
+	.orb {
 		position: absolute;
-		top: 0;
-		left: 0;
-		right: 0;
-		height: 4px;
-		opacity: 0;
-		transition: opacity 0.3s ease;
+		border-radius: 50%;
+		filter: blur(80px);
+		opacity: 0.45;
+		animation: drift 18s ease-in-out infinite alternate;
 	}
 
-	.app-card:hover .app-gradient {
-		opacity: 1;
+	.orb-a {
+		width: min(70vw, 520px);
+		height: min(70vw, 520px);
+		top: -12%;
+		left: -8%;
+		background: radial-gradient(circle, var(--site-orb-a) 0%, transparent 70%);
 	}
 
-	.app-icon-enhanced {
-		font-size: clamp(2rem, 6vw, 3rem);
-		margin-bottom: clamp(0.75rem, 2vw, 1rem);
-		animation: float 3s ease-in-out infinite;
-		filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
+	.orb-b {
+		width: min(60vw, 440px);
+		height: min(60vw, 440px);
+		top: 18%;
+		right: -10%;
+		background: radial-gradient(circle, var(--site-orb-b) 0%, transparent 70%);
+		animation-delay: -6s;
 	}
 
-	.app-title {
-		font-family: var(--font-primary);
-		font-size: var(--text-lg);
-		font-weight: 700;
-		margin: 0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0;
-		color: white;
-		line-height: 1.2;
+	.grid-fade {
+		position: absolute;
+		inset: 0;
+		background-image:
+			linear-gradient(var(--site-grid) 1px, transparent 1px),
+			linear-gradient(90deg, var(--site-grid) 1px, transparent 1px);
+		background-size: 64px 64px;
+		mask-image: radial-gradient(ellipse 80% 60% at 50% 20%, black 20%, transparent 75%);
 	}
 
-	.app-description {
-		font-family: var(--font-primary);
-		font-size: var(--text-sm);
-		color: rgba(255, 255, 255, 0.8);
-		margin: 0;
-		line-height: 1.5;
-		font-weight: 400;
-		flex: 1;
+	@keyframes drift {
+		from {
+			transform: translate(0, 0) scale(1);
+		}
+		to {
+			transform: translate(24px, 36px) scale(1.08);
+		}
 	}
 
-	/* === SERVICES GRID - LAYOUT PREMIUM === */
-	.services-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
-		gap: clamp(1rem, 3vw, 2rem);
+	.hero {
+		min-height: calc(100vh - 70px);
+		display: flex;
+		align-items: center;
+		padding: 4rem 1.5rem 5rem;
+	}
+
+	.hero-inner {
+		max-width: 720px;
+		margin: 0 auto;
+		width: 100%;
+	}
+
+	.brand {
+		font-family: 'Syne', sans-serif;
+		font-size: clamp(2.75rem, 9vw, 5.5rem);
+		font-weight: 800;
+		letter-spacing: -0.04em;
+		line-height: 0.95;
+		margin: 0 0 1.75rem;
+	}
+
+	.hero h1 {
+		font-family: 'Syne', sans-serif;
+		font-size: clamp(1.35rem, 3.2vw, 1.85rem);
+		font-weight: 600;
+		letter-spacing: -0.02em;
+		line-height: 1.25;
+		margin: 0 0 1rem;
+		max-width: 22ch;
+	}
+
+	.lede {
+		margin: 0 0 2rem;
+		max-width: 40ch;
+		font-size: 1.05rem;
+		line-height: 1.65;
+		color: var(--muted);
+	}
+
+	.cta-row,
+	.contact-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.85rem;
+	}
+
+	.cta-primary,
+	.cta-ghost,
+	.product-link,
+	.exp-link {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.45rem;
+		text-decoration: none;
+		font-weight: 600;
+		font-size: 0.95rem;
+		border-radius: 0.35rem;
+		transition:
+			transform 0.25s ease,
+			background 0.25s ease,
+			color 0.25s ease,
+			border-color 0.25s ease;
+	}
+
+	.cta-primary {
+		background: var(--accent);
+		color: #fff8f3;
+		padding: 0.85rem 1.35rem;
+	}
+
+	.cta-primary:hover {
+		background: #a84a1c;
+		color: #fff;
+		transform: translateY(-2px);
+	}
+
+	.cta-ghost {
+		border: 1px solid var(--site-ghost-border);
+		color: var(--paper);
+		padding: 0.85rem 1.25rem;
+		background: transparent;
+	}
+
+	.cta-ghost:hover {
+		border-color: var(--site-line-strong);
+		color: var(--paper);
+		transform: translateY(-2px);
+	}
+
+	.section {
+		padding: 4.5rem 1.5rem;
 		max-width: 1100px;
 		margin: 0 auto;
 	}
 
+	.section-head {
+		margin-bottom: 2.25rem;
+		max-width: 38rem;
+	}
+
+	.eyebrow {
+		font-size: 0.75rem;
+		letter-spacing: 0.16em;
+		text-transform: uppercase;
+		color: var(--accent-soft);
+		margin: 0 0 0.75rem;
+		font-weight: 600;
+	}
+
+	.section-head h2,
+	.contact-panel h2 {
+		font-family: 'Syne', sans-serif;
+		font-size: clamp(1.55rem, 3.4vw, 2.15rem);
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		margin: 0 0 0.85rem;
+		line-height: 1.15;
+	}
+
+	.section-copy {
+		margin: 0;
+		color: var(--muted);
+		line-height: 1.65;
+	}
+
+	.service-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr));
+		gap: 1.15rem;
+		margin-bottom: 1.75rem;
+	}
+
 	.service-card {
-		background: rgba(255, 255, 255, 0.05);
-		padding: clamp(1.5rem, 4vw, 2rem);
-		border-radius: 1.5rem;
-		position: relative;
-		cursor: pointer;
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-		min-height: 180px;
-		display: flex;
-		flex-direction: column;
+		padding: 1.35rem 1.25rem;
+		border: 1px solid var(--line);
+		border-radius: 0.5rem;
+		background: var(--surface);
+		transition:
+			border-color 0.25s ease,
+			transform 0.25s ease,
+			background 0.25s ease;
 	}
 
 	.service-card:hover {
-		transform: translateY(-8px) scale(1.02);
-		box-shadow: 0 16px 48px rgba(0, 0, 0, 0.3);
-		border-color: rgba(255, 255, 255, 0.2);
-		background: rgba(255, 255, 255, 0.08);
-	}
-
-	.service-arrow {
-		position: absolute;
-		top: clamp(1rem, 3vw, 1.5rem);
-		right: clamp(1rem, 3vw, 1.5rem);
-		font-size: clamp(1.25rem, 3vw, 1.5rem);
-		opacity: 0;
-		transform: translateX(-10px);
-		transition: all 0.3s ease;
-		color: #60a5fa;
-	}
-
-	.service-card:hover .service-arrow {
-		opacity: 1;
-		transform: translateX(0);
-	}
-
-	.service-icon-enhanced {
-		font-size: clamp(2rem, 5vw, 2.5rem);
-		margin-bottom: clamp(0.75rem, 2vw, 1rem);
-		animation: float 3s ease-in-out infinite;
-		filter: drop-shadow(0 0 15px rgba(255, 255, 255, 0.2));
-	}
-
-	.service-title {
-		font-family: var(--font-primary);
-		font-size: var(--text-base);
-		font-weight: 700;
-		margin: 0 0 clamp(0.5rem, 1.5vw, 0.75rem) 0;
-		color: white;
-		line-height: 1.3;
-	}
-
-	.service-description {
-		font-family: var(--font-primary);
-		font-size: var(--text-sm);
-		color: rgba(255, 255, 255, 0.8);
-		margin: 0;
-		line-height: 1.5;
-		font-weight: 400;
-		flex: 1;
-	}
-
-	/* === TECH & BLOCKCHAIN GRIDS === */
-	.tech-grid, .blockchain-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(140px, 100%), 1fr));
-		gap: clamp(1rem, 3vw, 2rem);
-		max-width: 900px;
-		margin: 0 auto;
-	}
-
-	.tech-item, .blockchain-item {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: clamp(0.5rem, 1.5vw, 0.75rem);
-		background: rgba(255, 255, 255, 0.05);
-		padding: clamp(1rem, 3vw, 1.5rem);
-		border-radius: 1rem;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		transition: all 0.3s ease;
-		backdrop-filter: blur(10px);
-		min-height: 120px;
-		justify-content: center;
-	}
-
-	.tech-item:hover, .blockchain-item:hover {
-		transform: scale(1.05);
-		background: rgba(255, 255, 255, 0.1);
-		box-shadow: 0 8px 32px rgba(255, 193, 7, 0.3);
-	}
-
-	.tech-icon-enhanced, .blockchain-icon-enhanced {
-		font-size: clamp(1.75rem, 5vw, 2.5rem);
-		animation: float 3s ease-in-out infinite;
-		filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.2));
-	}
-
-	.tech-name, .blockchain-name {
-		font-family: var(--font-primary);
-		font-size: var(--text-xs);
-		font-weight: 600;
-		text-align: center;
-		color: #ffd700;
-		line-height: 1.3;
-	}
-
-	/* === PARTNERS SECTION - LAYOUT RESPONSIVO === */
-	.partners-slide {
-		max-width: 1200px;
-		margin: 0 auto;
-		padding: clamp(1rem, 3vw, 2rem) 0;
-	}
-
-	.partners-stats {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
-		gap: clamp(1rem, 3vw, 1.5rem);
-		margin: clamp(1.5rem, 4vw, 2rem) 0;
-		padding: clamp(1rem, 3vw, 1.5rem) 0;
-		border-top: 1px solid rgba(255, 255, 255, 0.1);
-		border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	.stat-item {
-		text-align: center;
-		background: rgba(255, 255, 255, 0.05);
-		padding: clamp(1rem, 3vw, 1.5rem);
-		border-radius: 1rem;
-		backdrop-filter: blur(10px);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		transition: all 0.3s ease;
-	}
-
-	.stat-item:hover {
-		transform: translateY(-5px);
-		background: rgba(255, 255, 255, 0.08);
-		box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
-	}
-
-	.stat-number {
-		font-family: var(--font-display);
-		font-size: var(--text-3xl);
-		font-weight: 800;
-		background: linear-gradient(45deg, #60a5fa, #a78bfa);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		margin-bottom: 0.5rem;
-		line-height: 1;
-	}
-
-	.stat-label {
-		font-family: var(--font-primary);
-		font-size: var(--text-xs);
-		color: rgba(255, 255, 255, 0.8);
-		font-weight: 500;
-		line-height: 1.3;
-	}
-
-	.partners-grid {
-		display: grid;
-		grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
-		gap: clamp(1rem, 3vw, 1.5rem);
-		margin-top: clamp(1.5rem, 4vw, 2rem);
-	}
-
-	.partner-card {
-		background: rgba(255, 255, 255, 0.05);
-		padding: clamp(1rem, 3vw, 1.5rem);
-		border-radius: 1.5rem;
-		backdrop-filter: blur(20px);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		position: relative;
-		overflow: hidden;
-		transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-		cursor: pointer;
-		min-height: 200px;
-		display: flex;
-		flex-direction: column;
-	}
-
-	.partner-card:hover {
-		transform: translateY(-8px) scale(1.02);
-		box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-		border-color: rgba(255, 255, 255, 0.2);
-		background: rgba(255, 255, 255, 0.08);
-	}
-
-	.partner-logo-enhanced {
-		font-size: clamp(2rem, 6vw, 2.5rem);
-		margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
-		text-align: center;
-		filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-		animation: float 3s ease-in-out infinite;
-	}
-
-	.partner-info {
-		text-align: center;
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-	}
-
-	.partner-name {
-		font-family: var(--font-primary);
-		font-size: var(--text-base);
-		font-weight: 700;
-		margin: 0 0 clamp(0.25rem, 1vw, 0.5rem) 0;
-		color: white;
-		line-height: 1.2;
-	}
-
-	.partner-sector {
-		font-family: var(--font-primary);
-		font-size: var(--text-xs);
-		font-weight: 600;
-		color: #60a5fa;
-		margin-bottom: clamp(0.5rem, 2vw, 0.75rem);
-		text-transform: uppercase;
-		letter-spacing: 0.5px;
-	}
-
-	.partner-description {
-		font-family: var(--font-primary);
-		font-size: var(--text-xs);
-		color: rgba(255, 255, 255, 0.7);
-		margin: 0;
-		line-height: 1.4;
-		font-weight: 400;
-	}
-
-	.partner-category {
-		position: absolute;
-		top: 0;
-		right: 0;
-		width: 4px;
-		height: 100%;
-		opacity: 0.8;
-		transition: opacity 0.3s ease;
-	}
-
-	.partner-card:hover .partner-category {
-		opacity: 1;
-	}
-
-	/* Category colors */
-	.partner-category.tech { background: linear-gradient(to bottom, #3b82f6, #1d4ed8); }
-	.partner-category.mobile { background: linear-gradient(to bottom, #10b981, #047857); }
-	.partner-category.iot { background: linear-gradient(to bottom, #8b5cf6, #7c3aed); }
-	.partner-category.saas { background: linear-gradient(to bottom, #f59e0b, #d97706); }
-	.partner-category.tourism { background: linear-gradient(to bottom, #06b6d4, #0891b2); }
-
-	/* === FOUNDERS SLIDE - LAYOUT RESPONSIVO === */
-	.founders-slide {
-		max-width: 1200px;
-		margin: 0 auto;
-	}
-
-	.founder-content {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: clamp(2rem, 6vw, 4rem);
-		align-items: start;
-	}
-
-	.founder-info {
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		text-align: center;
-	}
-
-	.founder-avatar {
-		position: relative;
-		width: clamp(150px, 20vw, 200px);
-		height: clamp(150px, 20vw, 200px);
-		margin-bottom: clamp(1.5rem, 4vw, 2rem);
-	}
-
-	.founder-avatar img {
-		width: 100%;
-		height: 100%;
-		border-radius: 50%;
-		object-fit: cover;
-		border: 4px solid rgba(255, 255, 255, 0.3);
-		box-shadow: 0 0 40px rgba(255, 255, 255, 0.2);
-	}
-
-	.avatar-glow {
-		position: absolute;
-		inset: -10px;
-		border-radius: 50%;
-		background: linear-gradient(45deg, #60a5fa, #a78bfa, #60a5fa);
-		opacity: 0.3;
-		animation: spin 3s linear infinite;
-		z-index: -1;
-	}
-
-	.founder-name {
-		font-family: var(--font-display);
-		font-size: var(--text-3xl);
-		font-weight: 800;
-		margin: 0 0 clamp(0.5rem, 2vw, 0.75rem) 0;
-		background: linear-gradient(45deg, #60a5fa, #a78bfa);
-		-webkit-background-clip: text;
-		-webkit-text-fill-color: transparent;
-		background-clip: text;
-		line-height: 1.1;
-	}
-
-	.founder-title {
-		font-family: var(--font-primary);
-		font-size: var(--text-lg);
-		color: rgba(255, 255, 255, 0.8);
-		margin: 0 0 clamp(1rem, 3vw, 1.5rem) 0;
-		font-weight: 600;
-	}
-
-	.founder-description {
-		font-family: var(--font-primary);
-		font-size: var(--text-base);
-		color: rgba(255, 255, 255, 0.7);
-		line-height: 1.6;
-		margin-bottom: clamp(1.5rem, 4vw, 2rem);
-		font-weight: 400;
-	}
-
-	.founder-skills {
-		display: flex;
-		flex-wrap: wrap;
-		gap: clamp(0.5rem, 1.5vw, 0.75rem);
-		justify-content: center;
-		margin-bottom: clamp(1.5rem, 4vw, 2rem);
-	}
-
-	.skill-tag {
-		background: rgba(96, 165, 250, 0.2);
-		color: #60a5fa;
-		padding: clamp(0.4rem, 1.5vw, 0.6rem) clamp(0.8rem, 2.5vw, 1.2rem);
-		border-radius: 2rem;
-		font-size: var(--text-xs);
-		font-weight: 600;
-		border: 1px solid rgba(96, 165, 250, 0.3);
-		font-family: var(--font-primary);
-		white-space: nowrap;
-		transition: all 0.3s ease;
-	}
-
-	.skill-tag:hover {
-		background: rgba(96, 165, 250, 0.3);
+		border-color: var(--site-line-strong);
+		background: var(--site-surface-hover);
 		transform: translateY(-2px);
 	}
 
-	.founder-link {
-		display: inline-flex;
-		align-items: center;
-		gap: 0.5rem;
-		color: #60a5fa;
+	.service-card h3 {
+		font-family: 'Syne', sans-serif;
+		font-size: 1.1rem;
+		font-weight: 700;
+		letter-spacing: -0.02em;
+		margin: 0 0 0.55rem;
+	}
+
+	.service-card p {
+		margin: 0;
+		color: var(--muted);
+		font-size: 0.92rem;
+		line-height: 1.55;
+	}
+
+	.offer-note {
+		margin: 0 0 1.5rem;
+		max-width: 40rem;
+		color: var(--muted);
+		line-height: 1.65;
+		font-size: 0.98rem;
+	}
+
+	.offer-cta {
+		margin-bottom: 0.5rem;
+	}
+
+	.product-grid {
+		display: grid;
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+		gap: 1.25rem;
+	}
+
+	.product-card {
+		display: flex;
+		flex-direction: column;
+		gap: 0.85rem;
+		padding: 1.5rem 1.4rem 1.35rem;
+		background: var(--surface);
+		border: 1px solid var(--line);
+		border-radius: 0.5rem;
+		min-height: 100%;
+		transition:
+			border-color 0.25s ease,
+			transform 0.25s ease,
+			background 0.25s ease;
+	}
+
+	.product-card:hover {
+		border-color: var(--site-line-strong);
+		transform: translateY(-3px);
+		background: var(--site-surface-hover);
+	}
+
+	.product-emotive {
+		border-top: 2px solid var(--emotive);
+	}
+
+	.product-jyhhad {
+		border-top: 2px solid var(--jyhhad);
+	}
+
+	.tag {
+		display: inline-block;
+		font-size: 0.72rem;
+		letter-spacing: 0.07em;
+		text-transform: uppercase;
+		color: var(--muted);
+		font-weight: 600;
+	}
+
+	.product-emotive .tag {
+		color: var(--site-emotive-tag);
+	}
+
+	.product-jyhhad .tag {
+		color: var(--site-jyhhad-tag);
+	}
+
+	.product-card h3,
+	.experience-item h3 {
+		font-family: 'Syne', sans-serif;
+		font-size: 1.45rem;
+		font-weight: 700;
+		letter-spacing: -0.03em;
+		margin: 0;
+	}
+
+	.summary,
+	.report {
+		margin: 0;
+		color: var(--muted);
+		line-height: 1.6;
+		font-size: 0.95rem;
+		flex: 1;
+	}
+
+	.chip-row {
+		list-style: none;
+		margin: 0;
+		padding: 0;
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.45rem;
+	}
+
+	.chip-row li {
+		font-size: 0.78rem;
+		font-weight: 600;
+		color: var(--paper);
+		padding: 0.3rem 0.55rem;
+		border: 1px solid var(--line);
+		border-radius: 0.25rem;
+		background: var(--site-chip-bg);
+	}
+
+	.product-link {
+		margin-top: 0.35rem;
+		color: var(--paper);
+		border-bottom: 1px solid var(--site-link-underline);
+		padding: 0.25rem 0;
+		border-radius: 0;
+		width: fit-content;
+	}
+
+	.product-link:hover {
+		color: var(--accent-soft);
+		border-color: var(--accent-soft);
+		transform: translateX(3px);
+	}
+
+	.experience-list {
+		display: flex;
+		flex-direction: column;
+		gap: 0;
+		border-top: 1px solid var(--line);
+	}
+
+	.experience-item {
+		padding: 1.65rem 0;
+		border-bottom: 1px solid var(--line);
+	}
+
+	.experience-top {
+		display: flex;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 1rem;
+		margin-bottom: 0.75rem;
+	}
+
+	.experience-top .tag {
+		margin-bottom: 0.4rem;
+	}
+
+	.exp-link {
+		flex-shrink: 0;
+		color: var(--muted);
+		font-size: 0.85rem;
+		padding: 0.35rem 0;
+		border-bottom: 1px solid transparent;
+	}
+
+	.exp-link:hover {
+		color: var(--accent-soft);
+		border-color: var(--accent-soft);
+	}
+
+	.contact {
+		padding-bottom: 6rem;
+	}
+
+	.contact-panel {
+		padding-top: 2rem;
+		border-top: 1px solid var(--line);
+		max-width: 40rem;
+	}
+
+	.contact-panel .section-copy {
+		margin-bottom: 1.75rem;
+	}
+
+	.socials {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 1.25rem;
+		margin-top: 1.75rem;
+	}
+
+	.socials a {
+		color: var(--paper);
 		text-decoration: none;
 		font-weight: 600;
-		font-size: var(--text-base);
-		transition: all 0.3s ease;
-		font-family: var(--font-primary);
+		border-bottom: 1px solid var(--site-link-underline);
+		padding-bottom: 0.15rem;
 	}
 
-	.founder-link:hover {
-		color: #a78bfa;
-		transform: translateX(5px);
+	.socials a:hover {
+		color: var(--accent-soft);
+		border-color: var(--accent-soft);
 	}
 
-	/* === CONTACT FORM - DESIGN PREMIUM === */
-	.contact-form {
-		background: rgba(255, 255, 255, 0.05);
-		padding: clamp(1.5rem, 4vw, 2rem);
-		border-radius: 1.5rem;
-		backdrop-filter: blur(20px);
-		border: 1px solid rgba(255, 255, 255, 0.1);
-		box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-		max-width: 500px;
-		margin: clamp(2rem, 5vw, 3rem) auto 0;
-	}
-
-	.contact-form h3 {
-		font-family: var(--font-primary);
-		font-size: var(--text-xl);
-		margin: 0 0 clamp(1rem, 3vw, 1.5rem) 0;
-		text-align: center;
-		color: white;
-		font-weight: 700;
-	}
-
-	.form-row {
-		display: grid;
-		grid-template-columns: 1fr;
-		gap: clamp(0.75rem, 2vw, 1rem);
-		margin-bottom: clamp(0.75rem, 2vw, 1rem);
-	}
-
-	.contact-form input,
-	.contact-form select,
-	.contact-form textarea {
-		background: rgba(255, 255, 255, 0.1);
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		border-radius: 0.5rem;
-		padding: clamp(0.6rem, 2vw, 0.75rem);
-		color: white;
-		font-size: var(--text-sm);
-		font-family: var(--font-primary);
-		transition: all 0.3s ease;
-		width: 100%;
-	}
-
-	.contact-form input::placeholder,
-	.contact-form textarea::placeholder {
-		color: rgba(255, 255, 255, 0.6);
-	}
-
-	.contact-form input:focus,
-	.contact-form select:focus,
-	.contact-form textarea:focus {
-		outline: none;
-		border-color: #60a5fa;
-		background: rgba(96, 165, 250, 0.1);
-		box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.2);
-	}
-
-	.contact-form select {
-		cursor: pointer;
-	}
-
-	.contact-form select option {
-		background: #1e1e1e;
-		color: white;
-	}
-
-	.contact-form textarea {
-		resize: vertical;
-		min-height: 100px;
-		margin-bottom: clamp(0.75rem, 2vw, 1rem);
-	}
-
-	.form-submit-btn {
-		width: 100%;
-		background: linear-gradient(45deg, #60a5fa, #a78bfa);
-		color: white;
-		border: none;
-		padding: clamp(0.75rem, 2.5vw, 1rem);
-		border-radius: 0.5rem;
-		font-size: var(--text-base);
-		font-weight: 600;
-		font-family: var(--font-primary);
-		cursor: pointer;
-		transition: all 0.3s ease;
-		box-shadow: 0 4px 15px rgba(96, 165, 250, 0.3);
-	}
-
-	.form-submit-btn:hover:not(:disabled) {
-		transform: translateY(-2px);
-		box-shadow: 0 6px 20px rgba(96, 165, 250, 0.4);
-	}
-
-	.form-submit-btn:disabled {
-		opacity: 0.6;
-		cursor: not-allowed;
-	}
-
-	.submit-message {
-		margin-top: clamp(0.75rem, 2vw, 1rem);
-		padding: clamp(0.5rem, 2vw, 0.75rem);
-		border-radius: 0.5rem;
-		font-size: var(--text-sm);
-		font-family: var(--font-primary);
-		text-align: center;
-		font-weight: 500;
-	}
-
-	.submit-message.success {
-		background: rgba(34, 197, 94, 0.2);
-		color: #22c55e;
-		border: 1px solid rgba(34, 197, 94, 0.3);
-	}
-
-	.submit-message.error {
-		background: rgba(239, 68, 68, 0.2);
-		color: #ef4444;
-		border: 1px solid rgba(239, 68, 68, 0.3);
-	}
-
-	/* === NAVIGATION - RESPONSIVO === */
-	.slide-navigation {
-		position: fixed;
-		bottom: clamp(1rem, 3vw, 2rem);
-		left: 50%;
-		transform: translateX(-50%);
-		z-index: 10;
-		display: flex;
-		flex-direction: column;
-		align-items: center;
-		gap: clamp(0.75rem, 2vw, 1rem);
-		background: rgba(0, 0, 0, 0.3);
-		backdrop-filter: blur(10px);
-		padding: clamp(0.75rem, 2vw, 1rem);
-		border-radius: 1rem;
-		border: 1px solid rgba(255, 255, 255, 0.1);
-	}
-
-	.progress-bar {
-		width: clamp(200px, 50vw, 300px);
-		height: 4px;
-		background: rgba(255, 255, 255, 0.2);
-		border-radius: 2px;
-		overflow: hidden;
-	}
-
-	.progress-fill {
-		height: 100%;
-		background: linear-gradient(90deg, #60a5fa, #a78bfa);
-		transition: width 0.3s ease;
-	}
-
-	.slide-indicators {
-		display: flex;
-		gap: clamp(0.4rem, 1vw, 0.5rem);
-		flex-wrap: wrap;
-		justify-content: center;
-	}
-
-	.indicator {
-		background: none;
-		border: none;
-		cursor: pointer;
-		padding: clamp(0.4rem, 1vw, 0.5rem);
-		transition: transform 0.2s ease;
-		border-radius: 50%;
-	}
-
-	.indicator:hover {
-		transform: scale(1.2);
-	}
-
-	.indicator-dot {
-		display: block;
-		width: clamp(6px, 1.5vw, 8px);
-		height: clamp(6px, 1.5vw, 8px);
-		border-radius: 50%;
-		background: rgba(255, 255, 255, 0.4);
-		transition: all 0.3s ease;
-	}
-
-	.indicator.active .indicator-dot {
-		background: #60a5fa;
-		transform: scale(1.5);
-	}
-
-	.slide-controls {
-		display: flex;
-		gap: clamp(0.75rem, 2vw, 1rem);
-	}
-
-	.control-btn {
-		background: rgba(255, 255, 255, 0.1);
-		border: 1px solid rgba(255, 255, 255, 0.2);
-		color: white;
-		padding: clamp(0.6rem, 1.5vw, 0.75rem);
-		border-radius: 50%;
-		cursor: pointer;
-		backdrop-filter: blur(10px);
-		transition: all 0.3s ease;
-		font-size: clamp(0.875rem, 2vw, 1rem);
-		width: clamp(40px, 10vw, 48px);
-		height: clamp(40px, 10vw, 48px);
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-
-	.control-btn:hover {
-		background: rgba(255, 255, 255, 0.2);
-		transform: scale(1.1);
-	}
-
-	.play-pause {
-		background: rgba(96, 165, 250, 0.2);
-		border-color: #60a5fa;
-	}
-
-	/* Click hint */
-	.click-hint {
-		position: fixed;
-		bottom: clamp(0.5rem, 2vw, 1rem);
-		right: clamp(1rem, 3vw, 2rem);
-		z-index: 10;
-		color: rgba(255, 255, 255, 0.6);
-		font-size: var(--text-xs);
-		font-family: var(--font-primary);
-		animation: fadeInOut 3s ease-in-out infinite;
-		background: rgba(0, 0, 0, 0.3);
-		padding: clamp(0.5rem, 1.5vw, 0.75rem);
-		border-radius: 0.5rem;
-		backdrop-filter: blur(10px);
-	}
-
-	/* === ANIMAÇÕES PREMIUM === */
-	@keyframes float {
-		0%, 100% { transform: translateY(0) rotate(0deg); }
-		25% { transform: translateY(-15px) rotate(2deg); }
-		50% { transform: translateY(-30px) rotate(0deg); }
-		75% { transform: translateY(-15px) rotate(-2deg); }
-	}
-
-	@keyframes bounce {
-		0%, 100% { transform: translateY(0) scale(1); }
-		50% { transform: translateY(-15px) scale(1.05); }
-	}
-
-	@keyframes pulse {
-		0%, 100% { opacity: 1; transform: scale(1); }
-		50% { opacity: 0.8; transform: scale(1.05); }
-	}
-
-	@keyframes fadeInOut {
-		0%, 70%, 100% { opacity: 0.6; }
-		35% { opacity: 1; }
-	}
-
-	@keyframes gradientShift {
-		0% { background-position: 0% 50%; }
-		50% { background-position: 100% 50%; }
-		100% { background-position: 0% 50%; }
-	}
-
-	@keyframes textGlow {
-		0% { 
-			text-shadow: 0 0 20px rgba(255, 255, 255, 0.2),
-						 0 0 40px rgba(0, 212, 255, 0.1),
-						 0 0 60px rgba(255, 0, 110, 0.05);
-		}
-		100% { 
-			text-shadow: 0 0 30px rgba(255, 255, 255, 0.4),
-						 0 0 60px rgba(0, 212, 255, 0.2),
-						 0 0 90px rgba(255, 0, 110, 0.1);
-		}
-	}
-
-	@keyframes spin {
-		0% { transform: rotate(0deg); }
-		100% { transform: rotate(360deg); }
-	}
-
-	/* === RESPONSIVIDADE COMPLETA === */
-	
-	/* Tablets em paisagem */
-	@media (max-width: 1024px) {
-		.rocket-canvas {
-			width: 250px;
-			left: 3%;
-		}
-		
-		.founder-content {
-			gap: clamp(2rem, 5vw, 3rem);
-		}
-	}
-
-	/* Tablets em retrato */
-	@media (max-width: 768px) {
-		.slider-container {
-			min-height: calc(100vh - 60px);
-			padding-bottom: 140px;
-		}
-
-		.slide-content {
-			min-height: calc(100vh - 60px);
-			padding: clamp(0.75rem, 2vw, 1rem);
-			padding-bottom: clamp(2rem, 5vw, 3rem);
-		}
-
-		.rocket-canvas {
-			display: none; /* Esconde no mobile para performance */
-		}
-
-		.particles-canvas {
-			opacity: 0.5; /* Reduz opacidade no mobile */
-		}
-
-		.apps-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.services-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.tech-grid, .blockchain-grid {
-			grid-template-columns: repeat(3, 1fr);
-		}
-
-		.partners-stats {
-			grid-template-columns: repeat(2, 1fr);
-		}
-
-		.partners-grid {
-			grid-template-columns: 1fr;
-		}
-
-		.founder-content {
-			grid-template-columns: 1fr;
-			text-align: center;
-		}
-
-		.form-row {
-			grid-template-columns: 1fr;
-		}
-
-		.slide-navigation {
-			bottom: clamp(0.75rem, 2vw, 1rem);
-			padding: clamp(0.5rem, 1.5vw, 0.75rem);
-		}
-	}
-
-	/* Smartphones */
-	@media (max-width: 480px) {
-		.slider-container {
-			min-height: calc(100vh - 60px);
-			padding-bottom: 160px;
-		}
-
-		.slide-content {
-			min-height: calc(100vh - 60px);
-			padding: 0.75rem;
-			padding-bottom: 2rem;
-		}
-
-		.slide-inner {
-			gap: 1rem;
-		}
-
-		.hero-icon {
-			font-size: clamp(3rem, 15vw, 5rem);
-		}
-
-		.slide-icon {
-			font-size: clamp(2rem, 10vw, 3rem);
-		}
-
-		.tech-grid, .blockchain-grid {
-			grid-template-columns: repeat(2, 1fr);
-		}
-
-		.partners-stats {
-			grid-template-columns: 1fr;
-		}
-
-		.slide-navigation {
-			scale: 0.9;
-		}
-
-		.click-hint {
-			display: none; /* Esconde no mobile */
-		}
-
-		/* Otimizações de performance para mobile */
-		.enhanced-card::before {
-			display: none;
-		}
-
-		.card-glow {
-			display: none;
-		}
-
-		/* Simplifica animações no mobile */
-		.app-icon-enhanced,
-		.service-icon-enhanced,
-		.tech-icon-enhanced,
-		.blockchain-icon-enhanced,
-		.partner-logo-enhanced {
+	@media (prefers-reduced-motion: reduce) {
+		.orb {
 			animation: none;
 		}
 	}
-
-	/* Smartphones pequenos */
-	@media (max-width: 375px) {
-		.slider-container {
-			padding-bottom: 180px;
-		}
-
-		.slide-content {
-			padding: 0.5rem;
-			padding-bottom: 1.5rem;
-		}
-
-		.slide-inner {
-			gap: 0.75rem;
-		}
-
-		.hero-title {
-			line-height: 0.85;
-		}
-
-		.founder-skills {
-			gap: 0.4rem;
-		}
-
-		.skill-tag {
-			font-size: 0.65rem;
-			padding: 0.3rem 0.6rem;
-		}
-	}
-
-	/* Accessibility e Reduced Motion */
-	@media (prefers-reduced-motion: reduce) {
-		*,
-		*::before,
-		*::after {
-			animation-duration: 0.01ms !important;
-			animation-iteration-count: 1 !important;
-			transition-duration: 0.01ms !important;
-			scroll-behavior: auto !important;
-		}
-
-		.enhanced-card::before,
-		.card-glow {
-			display: none;
-		}
-	}
-
-	/* High contrast mode */
-	@media (prefers-contrast: high) {
-		.slider-container {
-			background: #000;
-		}
-
-		.enhanced-card,
-		.app-card,
-		.service-card,
-		.tech-item,
-		.blockchain-item,
-		.partner-card,
-		.stat-item,
-		.contact-form {
-			border: 2px solid #fff;
-			background: rgba(255, 255, 255, 0.1);
-		}
-	}
-
-	/* Print styles */
-	@media print {
-		.slider-container {
-			background: white;
-			color: black;
-		}
-
-		.slide-navigation,
-		.click-hint,
-		.particles-canvas,
-		.rocket-canvas {
-			display: none;
-		}
-	}
-</style> 
+</style>
