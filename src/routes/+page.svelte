@@ -2,6 +2,7 @@
 	import { onMount } from 'svelte';
 	import { fade, fly, scale } from 'svelte/transition';
 	import { quintOut, cubicOut } from 'svelte/easing';
+	import { products } from '$lib/products.js';
 
 	let mounted = $state(false);
 	let servicesVisible = $state(false);
@@ -40,27 +41,6 @@
 		{
 			title: 'IA que trabalha por você',
 			text: 'Assistentes inteligentes, RAG e dashboards que entendem o seu contexto e aceleram decisões do dia a dia.'
-		}
-	];
-
-	const products = [
-		{
-			name: 'EmotiveCare',
-			url: 'https://emotivecare.com.br',
-			tag: 'Saúde emocional · IA',
-			summary:
-				'O segundo cérebro emocional: IA que realmente entende o histórico de cada pessoa e acompanha a evolução do bem-estar — inclusive com profissionais de saúde.',
-			points: ['IA com contexto real', 'Painel para terapeutas', 'Jornada contínua'],
-			accent: 'emotive'
-		},
-		{
-			name: 'Jyhhad',
-			url: 'https://jyhhad.muttercorp.com.br',
-			tag: 'Jogos · VTES',
-			summary:
-				'Methuselah Online: a experiência completa de Vampire: The Eternal Struggle — monte decks, entre no lobby ou treine contra a IA.',
-			points: ['Multiplayer ao vivo', 'Decks por clã', 'Partidas vs IA'],
-			accent: 'jyhhad'
 		}
 	];
 
@@ -316,6 +296,8 @@
 		--accent-soft: var(--site-accent-soft);
 		--emotive: #2a7a6a;
 		--jyhhad: #8b3a4a;
+		--noticia: #3a6b8a;
+		--barbeiro: #a67c52;
 		--surface: var(--site-surface);
 		--line: var(--site-line);
 		position: relative;
@@ -594,6 +576,14 @@
 		border-top: 2px solid var(--jyhhad);
 	}
 
+	.product-noticia {
+		border-top: 2px solid var(--noticia);
+	}
+
+	.product-barbeiro {
+		border-top: 2px solid var(--barbeiro);
+	}
+
 	.tag {
 		display: inline-block;
 		font-size: 0.72rem;
@@ -609,6 +599,14 @@
 
 	.product-jyhhad .tag {
 		color: var(--site-jyhhad-tag);
+	}
+
+	.product-noticia .tag {
+		color: var(--site-noticia-tag);
+	}
+
+	.product-barbeiro .tag {
+		color: var(--site-barbeiro-tag);
 	}
 
 	.product-card h3,
