@@ -94,6 +94,8 @@
   --site-grid: rgba(12, 18, 16, 0.05);
   --site-emotive-tag: #1f6b5c;
   --site-jyhhad-tag: #9a3d4e;
+  --site-noticia-tag: #2f5f7a;
+  --site-barbeiro-tag: #8a6640;
   --site-ghost-border: rgba(12, 18, 16, 0.18);
   --site-link-underline: rgba(12, 18, 16, 0.28);
 }
@@ -161,6 +163,8 @@
   --site-grid: rgba(232, 239, 233, 0.03);
   --site-emotive-tag: #6ec4b0;
   --site-jyhhad-tag: #d48a96;
+  --site-noticia-tag: #7eb0d0;
+  --site-barbeiro-tag: #d4a87a;
   --site-ghost-border: rgba(232, 239, 233, 0.22);
   --site-link-underline: rgba(232, 239, 233, 0.3);
 }

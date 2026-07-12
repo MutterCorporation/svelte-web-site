@@ -1,18 +1,16 @@
 <script>
 	import { onMount } from 'svelte';
-	import { fade, fly, scale } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 	import { quintOut, cubicOut } from 'svelte/easing';
+	import { products } from '$lib/products.js';
 
 	let mounted = $state(false);
 	let servicesVisible = $state(false);
-	let productsVisible = $state(false);
 	let experienceVisible = $state(false);
 	let contactVisible = $state(false);
 
 	/** @type {HTMLElement | undefined} */
 	let servicesSection = $state();
-	/** @type {HTMLElement | undefined} */
-	let productsSection = $state();
 	/** @type {HTMLElement | undefined} */
 	let experienceSection = $state();
 	/** @type {HTMLElement | undefined} */
@@ -40,27 +38,6 @@
 		{
 			title: 'IA que trabalha por você',
 			text: 'Assistentes inteligentes, RAG e dashboards que entendem o seu contexto e aceleram decisões do dia a dia.'
-		}
-	];
-
-	const products = [
-		{
-			name: 'EmotiveCare',
-			url: 'https://emotivecare.com.br',
-			tag: 'Saúde emocional · IA',
-			summary:
-				'O segundo cérebro emocional: IA que realmente entende o histórico de cada pessoa e acompanha a evolução do bem-estar — inclusive com profissionais de saúde.',
-			points: ['IA com contexto real', 'Painel para terapeutas', 'Jornada contínua'],
-			accent: 'emotive'
-		},
-		{
-			name: 'Jyhhad',
-			url: 'https://jyhhad.muttercorp.com.br',
-			tag: 'Jogos · VTES',
-			summary:
-				'Methuselah Online: a experiência completa de Vampire: The Eternal Struggle — monte decks, entre no lobby ou treine contra a IA.',
-			points: ['Multiplayer ao vivo', 'Decks por clã', 'Partidas vs IA'],
-			accent: 'jyhhad'
 		}
 	];
 
@@ -103,16 +80,14 @@
 				for (const entry of entries) {
 					if (!entry.isIntersecting) continue;
 					if (entry.target === servicesSection) servicesVisible = true;
-					if (entry.target === productsSection) productsVisible = true;
 					if (entry.target === experienceSection) experienceVisible = true;
 					if (entry.target === contactSection) contactVisible = true;
 				}
 			},
-			{ threshold: 0.15 }
+			{ threshold: 0.05, rootMargin: '80px 0px' }
 		);
 
 		if (servicesSection) observer.observe(servicesSection);
-		if (productsSection) observer.observe(productsSection);
 		if (experienceSection) observer.observe(experienceSection);
 		if (contactSection) observer.observe(contactSection);
 
@@ -198,46 +173,42 @@
 		{/if}
 	</section>
 
-	<section id="produtos" class="section products" bind:this={productsSection}>
-		{#if productsVisible}
-			<header class="section-head" in:fade={{ duration: 500 }}>
-				<p class="eyebrow">Produtos</p>
-				<h2>Prova no ar — produtos que já existem e funcionam</h2>
-				<p class="section-copy">
-					Não é só portfólio em PDF. São produtos vivos que você pode abrir, testar e sentir o
-					nível de entrega.
-				</p>
-			</header>
+	<section id="produtos" class="section products">
+		<header class="section-head">
+			<p class="eyebrow">Produtos</p>
+			<h2>Prova no ar — produtos que já existem e funcionam</h2>
+			<p class="section-copy">
+				Não é só portfólio em PDF. São produtos vivos que você pode abrir, testar e sentir o
+				nível de entrega.
+			</p>
+		</header>
 
-			<div class="product-grid">
-				{#each products as product, i}
-					<article
-						class="product-card product-{product.accent}"
-						in:fly={{ y: 40, duration: 650, delay: 80 + i * 100, easing: cubicOut }}
+		<div class="product-grid">
+			{#each products as product, i}
+				<article
+					class="product-card product-{product.accent}"
+					in:fly={{ y: 28, duration: 550, delay: 40 + i * 70, easing: cubicOut }}
+				>
+					<span class="tag">{product.tag}</span>
+					<h3>{product.name}</h3>
+					<p class="summary">{product.summary}</p>
+					<ul class="chip-row">
+						{#each product.points as point}
+							<li>{point}</li>
+						{/each}
+					</ul>
+					<a
+						href={product.url}
+						class="product-link"
+						target="_blank"
+						rel="noopener noreferrer"
 					>
-						<span class="tag">{product.tag}</span>
-						<h3>{product.name}</h3>
-						<p class="summary">{product.summary}</p>
-						<ul class="chip-row">
-							{#each product.points as point, j}
-								<li in:scale={{ start: 0.9, duration: 350, delay: 220 + i * 80 + j * 50 }}>
-									{point}
-								</li>
-							{/each}
-						</ul>
-						<a
-							href={product.url}
-							class="product-link"
-							target="_blank"
-							rel="noopener noreferrer"
-						>
-							Conhecer {product.name}
-							<span aria-hidden="true">→</span>
-						</a>
-					</article>
-				{/each}
-			</div>
-		{/if}
+						Conhecer {product.name}
+						<span aria-hidden="true">→</span>
+					</a>
+				</article>
+			{/each}
+		</div>
 	</section>
 
 	<section id="experiencias" class="section experiences" bind:this={experienceSection}>
@@ -316,6 +287,8 @@
 		--accent-soft: var(--site-accent-soft);
 		--emotive: #2a7a6a;
 		--jyhhad: #8b3a4a;
+		--noticia: #3a6b8a;
+		--barbeiro: #a67c52;
 		--surface: var(--site-surface);
 		--line: var(--site-line);
 		position: relative;
@@ -561,7 +534,7 @@
 
 	.product-grid {
 		display: grid;
-		grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+		grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr));
 		gap: 1.25rem;
 	}
 
@@ -594,6 +567,14 @@
 		border-top: 2px solid var(--jyhhad);
 	}
 
+	.product-noticia {
+		border-top: 2px solid var(--noticia);
+	}
+
+	.product-barbeiro {
+		border-top: 2px solid var(--barbeiro);
+	}
+
 	.tag {
 		display: inline-block;
 		font-size: 0.72rem;
@@ -609,6 +590,14 @@
 
 	.product-jyhhad .tag {
 		color: var(--site-jyhhad-tag);
+	}
+
+	.product-noticia .tag {
+		color: var(--site-noticia-tag);
+	}
+
+	.product-barbeiro .tag {
+		color: var(--site-barbeiro-tag);
 	}
 
 	.product-card h3,
